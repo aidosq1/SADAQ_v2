@@ -1,0 +1,17 @@
+{
+    "Header": {
+        "about": "About Federation",
+        "competitions": "Competitions",
+        "team": "National Team",
+        "ranking": "Rankings",
+        "media": "Media",
+        "login": "Login"
+    },
+    "Hero": {
+        "title": "National Archery Federation of the Republic of Kazakhstan",
+        "slogan": "Accuracy. Traditions. Triumph.",
+        "badge": "Upcoming Tournament",
+        "apply": "Apply Now",
+        "regulations": "Regulations"
+    }
+}

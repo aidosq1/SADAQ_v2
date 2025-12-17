@@ -36,9 +36,9 @@ export function Footer() {
                 <div className="space-y-4">
                     <h3 className="text-lg font-bold">Мы в соцсетях</h3>
                     <div className="flex gap-4">
-                        <Link href="#" className="hover:text-primary"><Instagram className="h-5 w-5" /></Link>
+                        <Link href="https://www.instagram.com/kazarchery_official" target="_blank" className="hover:text-primary"><Instagram className="h-5 w-5" /></Link>
                         <Link href="#" className="hover:text-primary"><VkIcon /></Link>
-                        <Link href="#" className="hover:text-primary"><Youtube className="h-5 w-5" /></Link>
+                        <Link href="https://www.youtube.com/@QR%C5%ABlttyqsadaqatufederasiyasy" target="_blank" className="hover:text-primary"><Youtube className="h-5 w-5" /></Link>
                     </div>
                 </div>
             </div>

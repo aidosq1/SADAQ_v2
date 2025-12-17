@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique // e.g., "Astana", "Almaty"
+  password  String   // Hashed password
+  role      String   @default("RegionalRepresentative")
+  createdAt DateTime @default(now())
+
+  registrations Registration[]
+}
+
+model Tournament {
+  id          Int      @id @default(autoincrement())
+  title       String
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  registrations Registration[]
+}
+
+model Registration {
+  id           Int      @id @default(autoincrement())
+  judgeName    String
+  judgeCategory String?
+  judgeRegion   String?
+  regionName   String   // Name of the region for display
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+
+  tournamentId Int?     // Optional for now if we just have one active
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+
+  athletes     Athlete[]
+}
+
+model Athlete {
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  iin          String?
+  dob          String   // Storing as string or DateTime? String from form "DD.MM.YYYY"
+  gender       String
+  category     String
+  weaponClass  String
+  coachName    String?
+  
+  registrationId Int
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime @default(now())
+}

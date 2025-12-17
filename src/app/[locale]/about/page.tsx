@@ -1,23 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trophy, MapPin, Globe, Medal, Activity } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Page() {
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
-            <section className="relative h-[400px] w-full flex items-center justify-center bg-gray-900 text-white overflow-hidden">
-                <div className="absolute inset-0 bg-black/60 z-10" />
-                {/* Placeholder for hero image - using a gradient/pattern if image not available */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-black opacity-50 z-0" />
+            {/* Hero Section */}
+            <section className="relative h-[500px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
+                <div className="absolute inset-0 bg-black/20 z-10" />
 
-                <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-                        Федерация Легкой Атлетики <br />Республики Казахстан
+                <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
+                    <div className="mb-8 animate-fade-in-up">
+                        <Image src="/logo_federation_circular.png" alt="Logo" width={160} height={160} className="w-36 h-36 object-contain drop-shadow-2xl" />
+                    </div>
+
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
+                        Национальная Федерация стрельбы из лука <br />
+                        <span className="text-white">Республики Казахстан</span>
                     </h1>
-                    <p className="text-xl md:text-2xl font-light opacity-90">
-                        Быстрее. Выше. Сильнее. Вместе.
-                    </p>
+
                 </div>
             </section>
 
@@ -25,22 +28,23 @@ export default function Page() {
             <div className="max-w-7xl mx-auto px-4 -mt-16 relative z-30">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[
-                        { title: "Руководство", icon: <Users className="w-5 h-5" />, href: "/about/leadership" },
-                        { title: "Регионы", icon: <MapPin className="w-5 h-5" />, href: "/about/regions" },
-                        { title: "История", icon: <Trophy className="w-5 h-5" />, href: "/about/history" },
-                        { title: "Документы", icon: <Activity className="w-5 h-5" />, href: "/documents" },
+                        { title: "Руководство", icon: <Users className="w-6 h-6" />, href: "/about/leadership" },
+                        { title: "Регионы", icon: <MapPin className="w-6 h-6" />, href: "/about/regions" },
+                        { title: "История", icon: <Trophy className="w-6 h-6" />, href: "/about/history" },
+                        { title: "Документы", icon: <Activity className="w-6 h-6" />, href: "/documents" },
                     ].map((item, index) => (
-                        <a key={index} href={item.href} className="block group">
-                            <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        <Link key={index} href={item.href} className="block group">
+                            <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white text-foreground">
                                 <CardContent className="flex items-center gap-4 p-6">
-                                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <div className="bg-primary/5 text-primary p-4 rounded-full group-hover:bg-[#B54B35]/10 group-hover:text-[#B54B35] transition-colors duration-300">
                                         {item.icon}
                                     </div>
-                                    <div className="font-bold text-lg">{item.title}</div>
+                                    <div className="font-bold text-lg group-hover:text-[#B54B35] transition-colors">{item.title}</div>
                                 </CardContent>
                             </Card>
-                        </a>
-                    ))}
+                        </Link>
+                    ))
+                    }
                 </div>
             </div>
 
@@ -63,7 +67,7 @@ export default function Page() {
                     </div>
                     <div className="bg-muted rounded-2xl h-[400px] relative overflow-hidden group">
                         {/* Placeholder for inspiring sport image */}
-                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-gray-100">
+                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-secondary/50">
                             <Activity className="w-16 h-16 opacity-20" />
                             {/* Consider adding <Image /> here later */}
                         </div>
@@ -94,7 +98,7 @@ export default function Page() {
                 </section>
 
                 {/* International Recognition */}
-                <section className="bg-gray-50 dark:bg-gray-900 rounded-3xl p-8 md:p-12">
+                <section className="bg-secondary/30 rounded-3xl p-8 md:p-12">
                     <div className="text-center max-w-3xl mx-auto space-y-8">
                         <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
                         <h2 className="text-3xl font-bold">Международное признание</h2>

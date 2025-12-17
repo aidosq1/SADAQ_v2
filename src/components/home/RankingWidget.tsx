@@ -32,7 +32,7 @@ export function RankingWidget() {
                         {athletes.map((athlete, index) => (
                             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                                 <div className="p-1">
-                                    <Card>
+                                    <Card className="bg-white/60 backdrop-blur-md shadow-lg border-white/20 hover:shadow-2xl hover:scale-105 transition-all duration-300">
                                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                                             <div className="relative mb-4">
                                                 <Avatar className="h-24 w-24 border-4 border-background shadow-xl">

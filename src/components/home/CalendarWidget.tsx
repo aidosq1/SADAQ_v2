@@ -6,8 +6,26 @@ import { CalendarDays, FileText, Play, Trophy } from "lucide-react";
 
 export function CalendarWidget() {
     return (
-        <section className="max-w-7xl mx-auto px-4 py-12">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="flex flex-col h-full justify-center">
+            {/* Title for consistency if side-by-side */}
+            <div className="mb-8 flex items-center justify-between">
+                <h2 className="text-3xl font-bold tracking-tight">Календарь</h2>
+                <Button variant="ghost" asChild>
+                    <Link href="/calendar">Все события</Link>
+                </Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+                {/* Changed to grid-cols-1 to stack vertically in the side-by-side view, 
+                    OR keep it grid-cols-3 if we want them tiny? 
+                    User showed horizontal... 
+                    If side by side, spacing is tight. 
+                    Let's try a vertical stack for the widget when it's next to media, 
+                    it looks like "Events List". 
+                    Ref: "Put it horizontally next to media" -> The BLOCKS are horizontal. The items inside might change.
+                    Let's stick to grid-cols-1 so they utilize the height of the media block.
+                */}
+
                 {/* Past Event */}
                 <Card className="border-l-4 border-l-gray-500">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -59,6 +77,7 @@ export function CalendarWidget() {
                     </CardContent>
                 </Card>
             </div>
-        </section>
+        </div>
     );
+
 }

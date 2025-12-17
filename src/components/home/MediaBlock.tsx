@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function MediaBlock() {
     return (
-        <section className="max-w-7xl mx-auto px-4 py-16">
+        <div className="flex flex-col h-full">
             <div className="flex items-center justify-between mb-8">
                 <h2 className="text-3xl font-bold tracking-tight">Медиа-центр</h2>
                 <Button variant="ghost" asChild>
@@ -12,9 +12,9 @@ export function MediaBlock() {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 h-[400px]">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 h-[600px] md:h-auto flex-1">
                 {/* Large Item */}
-                <div className="col-span-2 row-span-2 relative rounded-xl overflow-hidden group cursor-pointer">
+                <div className="col-span-2 row-span-2 relative rounded-xl overflow-hidden group cursor-pointer min-h-[300px]">
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                         style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1511370235399-1802c11d2a20?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80")' }}
@@ -32,19 +32,19 @@ export function MediaBlock() {
                 </div>
 
                 {/* Small Items */}
-                <div className="col-span-1 row-span-1 relative rounded-xl overflow-hidden group cursor-pointer">
+                <div className="col-span-1 row-span-1 relative rounded-xl overflow-hidden group cursor-pointer min-h-[150px]">
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                         style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80")' }}
                     />
                 </div>
-                <div className="col-span-1 row-span-1 relative rounded-xl overflow-hidden group cursor-pointer">
+                <div className="col-span-1 row-span-1 relative rounded-xl overflow-hidden group cursor-pointer min-h-[150px]">
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                         style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1612872087720-48ca556fa550?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80")' }}
                     />
                 </div>
-                <div className="col-span-2 row-span-1 relative rounded-xl overflow-hidden group cursor-pointer bg-slate-100 flex items-center justify-center p-6 text-center">
+                <div className="col-span-2 row-span-1 relative rounded-xl overflow-hidden group cursor-pointer bg-slate-100 flex items-center justify-center p-6 text-center min-h-[150px]">
                     <div>
                         <h3 className="text-xl font-bold mb-2">Наш YouTube Канал</h3>
                         <p className="text-sm text-muted-foreground mb-4">Смотрите прямые трансляции и интервью</p>
@@ -52,6 +52,7 @@ export function MediaBlock() {
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     );
+
 }

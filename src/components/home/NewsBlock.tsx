@@ -9,7 +9,7 @@ export function NewsBlock() {
             title: "Казахстанские лучники завоевали 3 золота на Кубке Азии",
             category: "Сборная",
             date: "15 Дек 2025",
-            image: "https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            image: "/slides/archer_tokyo.png",
             main: true,
         },
         {

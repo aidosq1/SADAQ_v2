@@ -42,6 +42,7 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { KAZAKHSTAN_REGIONS } from "@/lib/constants";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // --- Mock Data ---
 
@@ -54,7 +55,7 @@ interface AthleteRanking {
     name: string;
     region: string;
     gender: "M" | "F";
-    category: "Adults" | "Juniors" | "Cadets";
+    category: "Adults" | "Youth" | "Juniors" | "Cadets" | "Cubs";
     weapon: "Recurve" | "Compound";
     points: number;
     classification?: Classification;
@@ -192,8 +193,10 @@ export default function RankingPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Adults">Взрослые</SelectItem>
-                                    <SelectItem value="Juniors">Юниоры (U21)</SelectItem>
-                                    <SelectItem value="Cadets">Кадеты (U18)</SelectItem>
+                                    <SelectItem value="Youth">Молодёжь</SelectItem>
+                                    <SelectItem value="Juniors">Юниоры</SelectItem>
+                                    <SelectItem value="Cadets">Юноши</SelectItem>
+                                    <SelectItem value="Cubs">Младшие юноши</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -390,25 +393,44 @@ export default function RankingPage() {
                                 </div>
                                 <div className="space-y-4">
                                     <h3 className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">История очков</h3>
-                                    <div className="rounded-md border text-sm">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead className="h-8">Турнир</TableHead>
-                                                    <TableHead className="h-8 text-right">Очки</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableCell className="py-2">Зимний Чемпионат РК</TableCell>
-                                                    <TableCell className="text-right py-2 font-bold text-green-600">+100</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell className="py-2">Кубок Федерации</TableCell>
-                                                    <TableCell className="text-right py-2 font-bold text-green-600">+80</TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
+                                    <div className="h-[200px] w-full rounded-md border p-2">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart
+                                                data={[
+                                                    { name: 'Янв', points: 650 },
+                                                    { name: 'Фев', points: 680 },
+                                                    { name: 'Мар', points: 720 },
+                                                    { name: 'Апр', points: 750 },
+                                                    { name: 'Май', points: selectedAthlete.points },
+                                                ]}
+                                            >
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                <XAxis
+                                                    dataKey="name"
+                                                    tick={{ fontSize: 12 }}
+                                                    tickLine={false}
+                                                    axisLine={false}
+                                                />
+                                                <YAxis
+                                                    hide
+                                                    domain={['dataMin - 100', 'dataMax + 100']}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                    itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                                                />
+                                                <Line
+                                                    type="monotone"
+                                                    dataKey="points"
+                                                    stroke="var(--primary)" // Use CSS variable
+                                                    strokeWidth={3}
+                                                    dot={{ fill: "var(--primary)", r: 4, strokeWidth: 0 }}
+                                                    activeDot={{ r: 6, strokeWidth: 0 }}
+                                                    animationDuration={2000}
+                                                    animationEasing="ease-in-out"
+                                                />
+                                            </LineChart>
+                                        </ResponsiveContainer>
                                     </div>
                                 </div>
                             </div>

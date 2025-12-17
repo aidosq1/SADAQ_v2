@@ -95,8 +95,10 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                 <SelectTrigger className="w-[120px] h-9"><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Adults">Взрослые</SelectItem>
+                                    <SelectItem value="Youth">Молодёжь</SelectItem>
                                     <SelectItem value="Juniors">Юниоры</SelectItem>
-                                    <SelectItem value="Cadets">Кадеты</SelectItem>
+                                    <SelectItem value="Cadets">Юноши</SelectItem>
+                                    <SelectItem value="Cubs">Младшие юноши</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Select value={filterGender} onValueChange={setFilterGender}>
