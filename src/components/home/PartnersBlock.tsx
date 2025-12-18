@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Facebook, Globe, Instagram } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function PartnersBlock() {
+    const t = useTranslations("PartnersBlock");
     const partners = [
         {
             name: "SPORT QORY",
@@ -16,7 +18,7 @@ export function PartnersBlock() {
     return (
         <section className="bg-background py-16 border-t border-border/50">
             <div className="max-w-7xl mx-auto px-4">
-                <h2 className="text-2xl font-bold tracking-tight mb-8 text-center text-muted-foreground opacity-50">Наши партнеры</h2>
+                <h2 className="text-2xl font-bold tracking-tight mb-8 text-center text-muted-foreground opacity-50">{t("title")}</h2>
                 <div className="flex flex-wrap justify-center items-center gap-12">
                     {partners.map((partner, i) => (
                         <div key={i} className="flex flex-col items-center p-8 rounded-xl border border-border/50 bg-card/50 hover:bg-card transition-all duration-300 hover:shadow-lg">

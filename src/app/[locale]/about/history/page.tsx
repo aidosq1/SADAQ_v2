@@ -4,41 +4,44 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Scroll, Calendar, Trophy, Target, Medal } from "lucide-react";
 import { TiltCard } from "@/components/ui/TiltCard";
+import { useTranslations } from "next-intl";
 
 export default function HistoryPage() {
+    const t = useTranslations("HistoryPage");
+
     const events = [
         {
-            year: "Bronze Age",
-            title: "Древние корни",
-            description: "История стрельбы из лука в Казахстане уходит корнями в глубокую древность. Наскальные рисунки и археологические находки подтверждают, что лук был неотъемлемой частью культуры кочевников на протяжении тысячелетий.",
+            year: t("event_bronze_year"),
+            title: t("event_bronze_title"),
+            description: t("event_bronze_desc"),
             icon: <Scroll className="w-6 h-6 text-yellow-600" />,
             align: "right"
         },
         {
             year: "1992",
-            title: "Мировое признание",
-            description: "После обретения независимости, стрельба из лука в Казахстане получила новый импульс. В 1992 году наша страна официально стала членом международной федерации World Archery.",
+            title: t("event_1992_title"),
+            description: t("event_1992_desc"),
             icon: <Calendar className="w-6 h-6 text-blue-600" />,
             align: "left"
         },
         {
             year: "1996",
-            title: "Успех в Атланте",
-            description: "На Олимпийских играх в Атланте женская сборная Казахстана сотворила сенсацию, победив фаворитов — сборную США. Это стало громкой заявкой о себе на мировой арене.",
+            title: t("event_1996_title"),
+            description: t("event_1996_desc"),
             icon: <Trophy className="w-6 h-6 text-yellow-600" />,
             align: "right"
         },
         {
             year: "2004",
-            title: "Основание Федерации",
-            description: "Официально зарегистрирована 'Национальная Федерация стрельбы из лука Республики Казахстан', объединившая усилия тренеров и спортсменов со всей страны.",
+            title: t("event_2004_title"),
+            description: t("event_2004_desc"),
             icon: <Target className="w-6 h-6 text-blue-600" />,
             align: "left"
         },
         {
             year: "2023-2024",
-            title: "Путь в Париж & Золото Кубка Мира",
-            description: "Мужская сборная (Ильфат Абдуллин, Александр Еременко, Даулеткельди Жанбырбай) завоевала олимпийские лицензии в Париж-2024. Адель Жехенбинова и Андрей Тютюн выиграли историческое золото Кубка Мира в миксте.",
+            title: t("event_2023_title"),
+            description: t("event_2023_desc"),
             icon: <Medal className="w-6 h-6 text-yellow-600" />,
             align: "right",
             isLast: true
@@ -50,10 +53,10 @@ export default function HistoryPage() {
             <div className="max-w-4xl mx-auto px-4">
                 <div className="text-center mb-12 space-y-4">
                     <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-                        Наша История
+                        {t("title")}
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                        От наследия Великой Степи до пьедесталов мировых первенств. Путь длиною в тысячелетия.
+                        {t("subtitle")}
                     </p>
                 </div>
 

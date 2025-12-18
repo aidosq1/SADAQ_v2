@@ -17,7 +17,7 @@ export function NewsBlock() {
             title: "Открыта регистрация на Чемпионат РК в закрытых помещениях",
             category: "Регионы",
             date: "14 Дек 2025",
-            image: "https://images.unsplash.com/photo-1612872087720-48ca556fa550?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            image: "/slides/slide3.jpg",
             main: false,
         },
         {
@@ -25,7 +25,15 @@ export function NewsBlock() {
             title: "World Archery обновил правила квалификации на Олимпиаду",
             category: "World Archery",
             date: "12 Дек 2025",
-            image: "https://images.unsplash.com/photo-1599580479132-723a1a0ae636?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            image: "/slides/slide2.jpg",
+            main: false,
+        },
+        {
+            id: 4,
+            title: "Поздравляем с 30-летием Независимости Республики Казахстан!",
+            category: "Праздники",
+            date: "16 Дек 2025",
+            image: "/slides/archer_tokyo.png",
             main: false,
         }
     ];

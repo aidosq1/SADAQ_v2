@@ -2,11 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trophy, MapPin, Globe, Medal, Activity } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function Page() {
+    const t = useTranslations("AboutPage");
+    const tFooter = useTranslations("Footer"); // Reusing for consistent nav items if needed, or stick to AboutPage unique keys
+
     return (
         <div className="flex flex-col min-h-screen">
-            {/* Hero Section */}
             {/* Hero Section */}
             <section className="relative h-[500px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
                 <div className="absolute inset-0 bg-black/20 z-10" />
@@ -17,8 +20,8 @@ export default function Page() {
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
-                        Национальная Федерация стрельбы из лука <br />
-                        <span className="text-white">Республики Казахстан</span>
+                        {t("hero_title_1")} <br />
+                        <span className="text-white">{t("hero_title_2")}</span>
                     </h1>
 
                 </div>
@@ -28,10 +31,10 @@ export default function Page() {
             <div className="max-w-7xl mx-auto px-4 -mt-16 relative z-30">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[
-                        { title: "Руководство", icon: <Users className="w-6 h-6" />, href: "/about/leadership" },
-                        { title: "Регионы", icon: <MapPin className="w-6 h-6" />, href: "/about/regions" },
-                        { title: "История", icon: <Trophy className="w-6 h-6" />, href: "/about/history" },
-                        { title: "Документы", icon: <Activity className="w-6 h-6" />, href: "/documents" },
+                        { title: tFooter("leadership"), icon: <Users className="w-6 h-6" />, href: "/about/leadership" },
+                        { title: t("stat_regions"), icon: <MapPin className="w-6 h-6" />, href: "/about/regions" },
+                        { title: tFooter("history"), icon: <Trophy className="w-6 h-6" />, href: "/about/history" },
+                        { title: t("sec_statute") || "Documents", icon: <Activity className="w-6 h-6" />, href: "/documents" }, // Fallback if key missing, created separate t("DocumentsPage") but can use Footer or explicit
                     ].map((item, index) => (
                         <Link key={index} href={item.href} className="block group">
                             <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white text-foreground">
@@ -53,16 +56,13 @@ export default function Page() {
                 <section className="grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
                         <div className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full font-medium text-sm">
-                            Наша Миссия
+                            {t("mission_badge")}
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                            Формирование здоровой и сильной нации
+                            {t("mission_title")}
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            Наша миссия — формирование здоровой и сильной нации через развитие массового спорта и воспитание чемпионов мирового уровня.
-                            Мы стремимся сделать легкую атлетику самым доступным и популярным видом спорта в Казахстане,
-                            создавая условия для раскрытия потенциала каждого атлета — от школьного стадиона до Олимпийского пьедестала.
-                            Мы верим, что победы наших спортсменов вдохновляют молодежь и укрепляют дух всего народа.
+                            {t("mission_desc")}
                         </p>
                     </div>
                     <div className="bg-muted rounded-2xl h-[400px] relative overflow-hidden group">
@@ -76,13 +76,13 @@ export default function Page() {
 
                 {/* Statistics Section */}
                 <section>
-                    <h2 className="text-3xl font-bold text-center mb-12">Федерация в цифрах</h2>
+                    <h2 className="text-3xl font-bold text-center mb-12">{t("stats_title")}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {[
-                            { number: "20+", label: "Регионов и филиалов", icon: <MapPin className="w-6 h-6" /> },
-                            { number: "15 000+", label: "Активных спортсменов", icon: <Users className="w-6 h-6" /> },
-                            { number: "350+", label: "Тренеров и судей", icon: <BadgeIcon className="w-6 h-6" /> },
-                            { number: "50+", label: "Лет истории", icon: <Trophy className="w-6 h-6" /> },
+                            { number: "20+", label: t("stat_regions"), icon: <MapPin className="w-6 h-6" /> },
+                            { number: "15 000+", label: t("stat_athletes"), icon: <Users className="w-6 h-6" /> },
+                            { number: "350+", label: t("stat_coaches"), icon: <BadgeIcon className="w-6 h-6" /> },
+                            { number: "50+", label: t("stat_years"), icon: <Trophy className="w-6 h-6" /> },
                         ].map((stat, index) => (
                             <Card key={index} className="border-none shadow-lg bg-card text-card-foreground">
                                 <CardContent className="pt-6 text-center space-y-4">
@@ -101,17 +101,18 @@ export default function Page() {
                 <section className="bg-secondary/30 rounded-3xl p-8 md:p-12">
                     <div className="text-center max-w-3xl mx-auto space-y-8">
                         <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
-                        <h2 className="text-3xl font-bold">Международное признание</h2>
+                        <h2 className="text-3xl font-bold">{t("recognition_title")}</h2>
                         <p className="text-lg text-muted-foreground">
-                            Федерация является полноправным членом <span className="font-semibold text-foreground">World Athletics</span> и <span className="font-semibold text-foreground">Asian Athletics Association</span>.
-                            Мы соблюдаем высочайшие стандарты честной игры, антидопинговой политики и спортивной этики, представляя интересы Казахстана на мировой арене.
+                            {t.rich('recognition_desc', {
+                                bold: (chunks) => <span className="font-semibold text-foreground">{chunks}</span>
+                            })}
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-8 md:gap-16 pt-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
                             {/* Placeholders for Partner Logos */}
-                            <div className="font-bold text-xl flex items-center gap-2"><Globe className="w-6 h-6" /> World Athletics</div>
-                            <div className="font-bold text-xl flex items-center gap-2"><Medal className="w-6 h-6" /> Asian Athletics</div>
-                            <div className="font-bold text-xl flex items-center gap-2"><Trophy className="w-6 h-6" /> НОК РК</div>
+                            <div className="font-bold text-xl flex items-center gap-2"><Globe className="w-6 h-6" /> World Archery</div>
+                            <div className="font-bold text-xl flex items-center gap-2"><Medal className="w-6 h-6" /> Asian Archery</div>
+                            <div className="font-bold text-xl flex items-center gap-2"><Trophy className="w-6 h-6" /> NOC KZ</div>
                         </div>
                     </div>
                 </section>

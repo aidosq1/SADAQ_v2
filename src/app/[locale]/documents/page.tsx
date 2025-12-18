@@ -1,58 +1,61 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, Scale, Shield, PenTool } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function DocumentsPage() {
+    const t = useTranslations("DocumentsPage");
+
     const sections = [
         {
-            title: "Уставные документы",
+            title: t("sec_statute"),
             icon: <Scale className="h-5 w-5" />,
             files: [
-                "Устав Федерации (2025)",
-                "Свидетельство о регистрации",
-                "Свидетельство об аккредитации"
+                t("file_statute"),
+                t("file_reg_cert"),
+                t("file_acc_cert"),
             ]
         },
         {
-            title: "Правила и Регламенты",
+            title: t("sec_rules"),
             icon: <PenTool className="h-5 w-5" />,
             files: [
-                "Правила соревнований World Athletics (2024)",
-                "Регламент Чемпионатов Республики Казахстан",
-                "Положение о национальной сборной"
+                t("file_wa_rules"),
+                t("file_rk_rules"),
+                t("file_national_reg"),
             ]
         },
         {
-            title: "Антидопинг",
+            title: t("sec_antidoping"),
             icon: <Shield className="h-5 w-5" />,
             files: [
-                "Антидопинговый кодекс WADA",
-                "Запрещенный список 2025",
-                "Форма запроса на ТИ (TUE)"
+                t("file_wada_code"),
+                t("file_prohibited"),
+                t("file_tue"),
             ]
         },
         {
-            title: "Календарный план",
+            title: t("sec_calendar"),
             icon: <Shield className="h-5 w-5" />, // Using Shield temporarily, should ideally be Calendar but not imported yet
             files: [
-                "Единый республиканский календарный план 2025",
-                "Календарь международных соревнований"
+                t("file_calendar_2025"),
+                t("file_intl_calendar"),
             ]
         },
         {
-            title: "Рейтинги и Протоколы",
+            title: t("sec_ratings"),
             icon: <FileText className="h-5 w-5" />,
             files: [
-                "Текущий рейтинг атлетов (Мужчины)",
-                "Текущий рейтинг атлетов (Женщины)",
-                "Итоговые протоколы ЧРК 2024"
+                t("file_rating_men"),
+                t("file_rating_women"),
+                t("file_protocols_2024"),
             ]
         }
     ];
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-10">
-            <h1 className="text-4xl font-bold mb-8">Документы</h1>
+            <h1 className="text-4xl font-bold mb-8">{t("title")}</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {sections.map((section, idx) => (
                     <Card key={idx}>

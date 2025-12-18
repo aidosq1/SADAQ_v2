@@ -34,8 +34,10 @@ interface JudgeInfo {
 
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export function CoachRegistrationForm() {
+    const t_regions = useTranslations("Regions");
     const { data: session } = useSession();
 
     // --- State ---
@@ -147,8 +149,8 @@ export function CoachRegistrationForm() {
                         </SelectTrigger>
                         <SelectContent>
                             {KAZAKHSTAN_REGIONS.map((region) => (
-                                <SelectItem key={region.id} value={region.name}>
-                                    {region.name}
+                                <SelectItem key={region.id} value={region.id}>
+                                    {t_regions(region.id as any)}
                                 </SelectItem>
                             ))}
                         </SelectContent>

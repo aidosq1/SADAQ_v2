@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Eye, EyeOff, Target, Gavel } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KAZAKHSTAN_REGIONS } from "@/lib/constants";
+import { useTranslations } from "next-intl";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -19,6 +20,7 @@ interface AuthModalProps {
 type UserRole = "coach" | "judge" | null;
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+    const t_regions = useTranslations("Regions");
     const [activeTab, setActiveTab] = useState<"login" | "register">("login");
     const [role, setRole] = useState<UserRole>(null);
     const [showPassword, setShowPassword] = useState(false);
@@ -163,7 +165,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                                     <SelectContent>
                                                         {KAZAKHSTAN_REGIONS.map((region) => (
                                                             <SelectItem key={region.id} value={region.id}>
-                                                                {region.name}
+                                                                {t_regions(region.id as any)}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>

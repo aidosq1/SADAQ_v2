@@ -7,6 +7,13 @@ import Link from "next/link";
 
 const SLIDES = [
     {
+        id: 0,
+        image: "/slides/independence_new.jpg",
+        title: "День Независимости Республики Казахстан",
+        description: "Поздравляем всех жителей страны с 30-летием Независимости! Пусть процветает наш Казахстан!",
+        imageClassName: "object-contain bg-black" // Ensure full image visibility
+    },
+    {
         id: 1,
         image: "/slides/archer_tokyo.png",
         title: "Республиканский турнир по Садақ Ату",
@@ -14,13 +21,13 @@ const SLIDES = [
     },
     {
         id: 2,
-        image: "/slides/slide2.jpg",
+        image: "/slides/archer_tokyo.png",
         title: "Мастер-класс для молодежи",
         description: "Национальные традиции предков: опытные тренеры провели открытый урок по стрельбе из традиционного лука для школьников Кызылорды."
     },
     {
         id: 3,
-        image: "/slides/slide3.jpg",
+        image: "/slides/archer_tokyo.png",
         title: "Новые правила соревнований",
         description: "Федерация утвердила обновленный регламент проведения международных встреч. Ознакомьтесь с изменениями в правилах экипировки."
     }
@@ -67,7 +74,7 @@ export function HeroNewsSlider() {
                             src={slide.image}
                             alt={slide.title}
                             fill
-                            className="object-cover"
+                            className={slide.imageClassName || "object-cover"}
                             priority={index === 0}
                         />
                         {/* Overlay Gradient */}

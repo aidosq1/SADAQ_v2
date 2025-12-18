@@ -1,31 +1,34 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 
 export function Footer() {
+    const t = useTranslations("Footer");
+
     return (
         <footer className="bg-muted/40 py-12 border-t">
             <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div className="space-y-4">
-                    <h3 className="text-lg font-bold">О Федерации</h3>
+                    <h3 className="text-lg font-bold">{t("about")}</h3>
                     <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li><Link href="/about">Руководство</Link></li>
-                        <li><Link href="/about">История</Link></li>
-                        <li><Link href="/about">Вакансии</Link></li>
+                        <li><Link href="/about">{t("leadership")}</Link></li>
+                        <li><Link href="/about">{t("history")}</Link></li>
+                        <li><Link href="/about">{t("vacancies")}</Link></li>
                     </ul>
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="text-lg font-bold">Спортсменам</h3>
+                    <h3 className="text-lg font-bold">{t("athletes")}</h3>
                     <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li><Link href="/calendar">Календарь</Link></li>
-                        <li><Link href="/results">Протоколы</Link></li>
-                        <li><Link href="/ranking">Рейтинги</Link></li>
-                        <li><Link href="/documents">Антидопинг</Link></li>
+                        <li><Link href="/calendar">{t("comp_calendar")}</Link></li>
+                        <li><Link href="/results">{t("protocols")}</Link></li>
+                        <li><Link href="/ranking">{t("ratings")}</Link></li>
+                        <li><Link href="/documents">{t("antidoping")}</Link></li>
                     </ul>
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="text-lg font-bold">Контакты</h3>
+                    <h3 className="text-lg font-bold">{t("contacts")}</h3>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                         <li>Astana, Kazakhstan</li>
                         <li>+7 (777) 123-45-67</li>
@@ -34,7 +37,7 @@ export function Footer() {
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="text-lg font-bold">Мы в соцсетях</h3>
+                    <h3 className="text-lg font-bold">{t("socials")}</h3>
                     <div className="flex gap-4">
                         <Link href="https://www.instagram.com/kazarchery_official" target="_blank" className="hover:text-primary"><Instagram className="h-5 w-5" /></Link>
                         <Link href="#" className="hover:text-primary"><VkIcon /></Link>
@@ -43,7 +46,7 @@ export function Footer() {
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-                © {new Date().getFullYear()} National Archery Federation. All rights reserved.
+                © {new Date().getFullYear()} {t("rights")}
             </div>
         </footer>
     );

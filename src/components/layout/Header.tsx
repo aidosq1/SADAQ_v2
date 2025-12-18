@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { Link, usePathname, useRouter } from "@/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/navigation";
+import { useTranslations } from "next-intl";
+import { useLanguage } from "@/context/LanguageContext";
 
 import { Button } from "@/components/ui/button";
 import { Search, Globe, Menu, ChevronDown } from "lucide-react";
@@ -17,15 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function Header() {
-    const locale = useLocale();
-    const router = useRouter();
-    const pathname = usePathname();
+    const { language, setLanguage } = useLanguage();
     const t = useTranslations("Header");
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-
-    const handleLanguageChange = (newLocale: string) => {
-        router.replace(pathname, { locale: newLocale });
-    };
 
     const navItems = [
         { name: t("competitions"), href: "/calendar" },
@@ -36,10 +31,10 @@ export function Header() {
 
     const aboutItems = [
         { name: t("about"), href: "/about" },
-        { name: "Руководство", href: "/about/leadership" },
-        { name: "Регионы", href: "/about/regions" },
-        { name: "История", href: "/about/history" },
-        { name: "Документы", href: "/documents" },
+        { name: t("leadership"), href: "/about/leadership" },
+        { name: t("regions"), href: "/about/regions" },
+        { name: t("history"), href: "/about/history" },
+        { name: t("documents"), href: "/documents" },
     ];
 
     return (
@@ -72,13 +67,29 @@ export function Header() {
                     </DropdownMenu>
 
                     {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className="text-sm font-medium transition-colors hover:text-white/80 text-white"
-                        >
-                            {item.name}
-                        </Link>
+                        item.name === t("media") ? (
+                            <DropdownMenu key={item.href}>
+                                <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-white/80 text-white focus:outline-none">
+                                    {item.name} <ChevronDown className="h-4 w-4" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/media/news" className="w-full cursor-pointer">{t("news")}</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/media/gallery" className="w-full cursor-pointer">{t("media_gallery")}</Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className="text-sm font-medium transition-colors hover:text-white/80 text-white"
+                            >
+                                {item.name}
+                            </Link>
+                        )
                     ))}
                 </nav>
 
@@ -92,18 +103,18 @@ export function Header() {
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="hidden sm:flex text-white hover:bg-white/10 hover:text-white gap-2 font-medium">
                                 <Globe className="h-4 w-4" />
-                                {locale.toUpperCase()}
+                                {language.toUpperCase()}
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleLanguageChange('kk')}>
-                                <span className={locale === 'kk' ? "font-bold" : ""}>Қазақша</span>
+                            <DropdownMenuItem onClick={() => setLanguage('kk')}>
+                                <span className={language === 'kk' ? "font-bold" : ""}>Қазақша</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleLanguageChange('ru')}>
-                                <span className={locale === 'ru' ? "font-bold" : ""}>Русский</span>
+                            <DropdownMenuItem onClick={() => setLanguage('ru')}>
+                                <span className={language === 'ru' ? "font-bold" : ""}>Русский</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
-                                <span className={locale === 'en' ? "font-bold" : ""}>English</span>
+                            <DropdownMenuItem onClick={() => setLanguage('en')}>
+                                <span className={language === 'en' ? "font-bold" : ""}>English</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

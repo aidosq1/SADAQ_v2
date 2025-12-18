@@ -7,6 +7,7 @@ import {
     DialogDescription,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,7 @@ interface ProtocolViewerProps {
 }
 
 export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolViewerProps) {
+    const t = useTranslations("ProtocolViewer");
     const [activeTab, setActiveTab] = useState("qual");
     const [filterWeapon, setFilterWeapon] = useState("Recurve");
     const [filterAge, setFilterAge] = useState("Adults");
@@ -59,16 +61,6 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            {/* 
-          Customizing DialogContent to match user's requested style::
-          - max-w-5xl, w-full, max-h-[90vh]
-          - rounded-xl, shadow-2xl
-          - overflow-hidden (we handle scroll inside)
-          - p-0 to reset default padding
-          - Custom overlay effect is usually handled by <DialogOverlay> in global styles or via Shadcn primitive props.
-            Shadcn Dialog primitive usually handles the Overlay. Detailed backdrop customization might need global CSS or prop depending on Shadcn version.
-            Here we assume standard Shadcn Dialog behavior but override Content styles. 
-       */}
             <DialogContent className="max-w-7xl w-full max-h-[90vh] p-0 rounded-xl shadow-2xl overflow-hidden flex flex-col bg-white border-0">
 
                 {/* --- 1. HEADER (White background, p-6, border-b) --- */}
@@ -79,7 +71,7 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                 <FileDown className="h-6 w-6 text-primary" /> {tournamentTitle}
                             </DialogTitle>
                             <DialogDescription className="text-sm mt-1 text-muted-foreground">
-                                Официальный протокол соревнований
+                                {t("subtitle")}
                             </DialogDescription>
                         </div>
 
@@ -128,13 +120,13 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                         <div className="px-6 py-4 bg-gray-50 border-b">
                             <TabsList className="bg-white border w-full justify-start h-auto p-1">
                                 <TabsTrigger value="org" className="px-6 py-2">
-                                    <Users className="w-4 h-4 mr-2" /> Организация
+                                    <Users className="w-4 h-4 mr-2" /> {t("tab_org")}
                                 </TabsTrigger>
                                 <TabsTrigger value="qual" className="px-6 py-2">
-                                    <Target className="w-4 h-4 mr-2" /> Квалификация
+                                    <Target className="w-4 h-4 mr-2" /> {t("tab_qual")}
                                 </TabsTrigger>
                                 <TabsTrigger value="results" className="px-6 py-2">
-                                    <Trophy className="w-4 h-4 mr-2" /> Итоговый протокол
+                                    <Trophy className="w-4 h-4 mr-2" /> {t("tab_results")}
                                 </TabsTrigger>
                             </TabsList>
                         </div>
@@ -146,14 +138,14 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                     {/* Judges */}
                                     <div className="space-y-3">
                                         <h3 className="text-lg font-bold flex items-center gap-2">
-                                            <Users className="h-5 w-5 text-muted-foreground" /> Судейская коллегия
+                                            <Users className="h-5 w-5 text-muted-foreground" /> {t("sec_judges")}
                                         </h3>
                                         <div className="rounded-lg border overflow-hidden">
                                             <Table>
                                                 <TableHeader className="bg-muted/30">
                                                     <TableRow>
-                                                        <TableHead>ФИО</TableHead>
-                                                        <TableHead>Роль</TableHead>
+                                                        <TableHead>{t("th_name")}</TableHead>
+                                                        <TableHead>{t("th_role")}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -171,16 +163,16 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                     {/* Participants */}
                                     <div className="space-y-3">
                                         <h3 className="text-lg font-bold flex items-center gap-2">
-                                            <Users className="h-5 w-5 text-muted-foreground" /> Список участников
+                                            <Users className="h-5 w-5 text-muted-foreground" /> {t("sec_participants")}
                                         </h3>
                                         <div className="rounded-lg border overflow-hidden">
                                             <div className="max-h-[300px] overflow-y-auto">
                                                 <Table>
                                                     <TableHeader className="bg-muted/30 sticky top-0">
                                                         <TableRow>
-                                                            <TableHead>Спортсмен</TableHead>
-                                                            <TableHead>Регион</TableHead>
-                                                            <TableHead className="text-right">Разряд</TableHead>
+                                                            <TableHead>{t("th_athlete")}</TableHead>
+                                                            <TableHead>{t("th_region")}</TableHead>
+                                                            <TableHead className="text-right">{t("th_rank")}</TableHead>
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
@@ -203,8 +195,8 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
                                         <div>
-                                            <h3 className="text-xl font-bold">Квалификация</h3>
-                                            <p className="text-sm text-muted-foreground">70 метров, 72 выстрела</p>
+                                            <h3 className="text-xl font-bold">{t("tab_qual")}</h3>
+                                            <p className="text-sm text-muted-foreground">{t("qual_details")}</p>
                                         </div>
                                         <div className="text-sm border px-3 py-1 rounded-md bg-muted/20">
                                             {filterWeapon} / {filterAge} / {filterGender === 'M' ? 'Мужчины' : 'Женщины'}
@@ -216,11 +208,11 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                             <TableHeader className="bg-muted/30">
                                                 <TableRow>
                                                     <TableHead className="w-[60px] text-center">#</TableHead>
-                                                    <TableHead className="w-[30%]">Спортсмен</TableHead>
-                                                    <TableHead>Регион</TableHead>
+                                                    <TableHead className="w-[30%]">{t("th_athlete")}</TableHead>
+                                                    <TableHead>{t("th_region")}</TableHead>
                                                     <TableHead className="text-right">70м (1)</TableHead>
                                                     <TableHead className="text-right">70м (2)</TableHead>
-                                                    <TableHead className="text-right font-bold bg-primary/5 text-primary">Сумма</TableHead>
+                                                    <TableHead className="text-right font-bold bg-primary/5 text-primary">{t("th_sum")}</TableHead>
                                                     <TableHead className="text-right w-[80px]">10s</TableHead>
                                                     <TableHead className="text-right w-[80px]">Xs</TableHead>
                                                 </TableRow>
@@ -249,9 +241,9 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                             <TabsContent value="results" className="mt-0">
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
-                                        <h3 className="text-xl font-bold">Итоговое положение</h3>
+                                        <h3 className="text-xl font-bold">{t("sec_final")}</h3>
                                         <Button variant="outline" size="sm">
-                                            <FileDown className="mr-2 h-4 w-4" /> Скачать результаты
+                                            <FileDown className="mr-2 h-4 w-4" /> {t("btn_download")}
                                         </Button>
                                     </div>
 
@@ -259,10 +251,10 @@ export function ProtocolViewer({ isOpen, onClose, tournamentTitle }: ProtocolVie
                                         <Table>
                                             <TableHeader className="bg-muted/30">
                                                 <TableRow>
-                                                    <TableHead className="w-[80px] text-center">Место</TableHead>
-                                                    <TableHead>Спортсмен</TableHead>
-                                                    <TableHead>Регион</TableHead>
-                                                    <TableHead className="text-right">Очки в рейтинг</TableHead>
+                                                    <TableHead className="w-[80px] text-center">{t("th_place")}</TableHead>
+                                                    <TableHead>{t("th_athlete")}</TableHead>
+                                                    <TableHead>{t("th_region")}</TableHead>
+                                                    <TableHead className="text-right">{t("th_points")}</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>

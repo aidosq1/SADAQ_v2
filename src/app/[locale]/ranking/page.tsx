@@ -68,7 +68,7 @@ const rankingData: AthleteRanking[] = [
         rank: 1,
         prevRank: 1,
         name: "Ильфат Абдуллин",
-        region: "Алматинская область",
+        region: "almaty_reg",
         gender: "M",
         category: "Adults",
         weapon: "Recurve",
@@ -81,7 +81,7 @@ const rankingData: AthleteRanking[] = [
         rank: 2,
         prevRank: 3,
         name: "Даулеткельди Жанбырбай",
-        region: "г. Шымкент",
+        region: "shymkent",
         gender: "M",
         category: "Adults",
         weapon: "Recurve",
@@ -93,7 +93,7 @@ const rankingData: AthleteRanking[] = [
         rank: 3,
         prevRank: 2,
         name: "Санжар Мусаев",
-        region: "г. Астана",
+        region: "astana",
         gender: "M",
         category: "Adults",
         weapon: "Recurve",
@@ -105,7 +105,7 @@ const rankingData: AthleteRanking[] = [
         rank: 1,
         prevRank: 1,
         name: "Андрей Тютюн",
-        region: "Алматинская область",
+        region: "almaty_reg",
         gender: "M",
         category: "Adults",
         weapon: "Compound",
@@ -117,7 +117,7 @@ const rankingData: AthleteRanking[] = [
         rank: 2,
         prevRank: 2,
         name: "Акбарали Карабаев",
-        region: "г. Шымкент",
+        region: "shymkent",
         gender: "M",
         category: "Adults",
         weapon: "Compound",
@@ -129,7 +129,7 @@ const rankingData: AthleteRanking[] = [
         rank: 1,
         prevRank: 4,
         name: "Алина Ильясова",
-        region: "Западно-Казахстанская область",
+        region: "west_kaz",
         gender: "F",
         category: "Adults",
         weapon: "Recurve",
@@ -148,7 +148,15 @@ function TrendIcon({ current, prev }: { current: number; prev: number }) {
 
 
 
+// ... imports
+import { useTranslations } from "next-intl";
+
+// ... helper components and types ...
+
 export default function RankingPage() {
+    const t = useTranslations("RankingPage");
+    const t_regions = useTranslations("Regions");
+
     // Filters state
     const [filterCategory, setFilterCategory] = useState<string>("Adults");
     const [filterGender, setFilterGender] = useState<string>("M");
@@ -160,8 +168,9 @@ export default function RankingPage() {
     // Selected Athlete for Modal
     const [selectedAthlete, setSelectedAthlete] = useState<AthleteRanking | null>(null);
 
-    // Filtering Logic
+    // Filtering Logic (same as before)
     const filteredRankings = rankingData
+        // ... filter logic ...
         .filter((a) => {
             if (filterCategory !== "all" && a.category !== filterCategory) return false;
             if (filterGender !== "all" && a.gender !== filterGender) return false;
@@ -175,9 +184,9 @@ export default function RankingPage() {
     return (
         <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
             <div>
-                <h1 className="text-4xl font-bold mb-2">Национальный Рейтинг</h1>
+                <h1 className="text-4xl font-bold mb-2">{t("title")}</h1>
                 <p className="text-muted-foreground text-lg">
-                    Официальный рейтинг спортсменов Федерации. Обновляется автоматически по итогам турниров.
+                    {t("subtitle")}
                 </p>
             </div>
 
@@ -186,59 +195,59 @@ export default function RankingPage() {
                 <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div className="space-y-2">
-                            <Label>Возрастная категория</Label>
+                            <Label>{t("filter_age_category")}</Label>
                             <Select value={filterCategory} onValueChange={setFilterCategory}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Adults">Взрослые</SelectItem>
-                                    <SelectItem value="Youth">Молодёжь</SelectItem>
-                                    <SelectItem value="Juniors">Юниоры</SelectItem>
-                                    <SelectItem value="Cadets">Юноши</SelectItem>
-                                    <SelectItem value="Cubs">Младшие юноши</SelectItem>
+                                    <SelectItem value="Adults">{t("age_adults")}</SelectItem>
+                                    <SelectItem value="Youth">{t("age_youth")}</SelectItem>
+                                    <SelectItem value="Juniors">{t("age_juniors")}</SelectItem>
+                                    <SelectItem value="Cadets">{t("age_cadets")}</SelectItem>
+                                    <SelectItem value="Cubs">{t("age_cubs")}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Пол</Label>
+                            <Label>{t("filter_gender")}</Label>
                             <Select value={filterGender} onValueChange={setFilterGender}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="M">Мужчины</SelectItem>
-                                    <SelectItem value="F">Женщины</SelectItem>
+                                    <SelectItem value="M">{t("gender_male")}</SelectItem>
+                                    <SelectItem value="F">{t("gender_female")}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Дисциплина</Label>
+                            <Label>{t("filter_discipline")}</Label>
                             <Select value={filterWeapon} onValueChange={setFilterWeapon}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Recurve">Классический лук</SelectItem>
-                                    <SelectItem value="Compound">Блочный лук</SelectItem>
+                                    <SelectItem value="Recurve">{t("disc_recurve")}</SelectItem>
+                                    <SelectItem value="Compound">{t("disc_compound")}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
 
                         <div className="space-y-2">
-                            <Label>Регион</Label>
+                            <Label>{t("filter_region")}</Label>
                             <Select value={filterRegion} onValueChange={setFilterRegion}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">Все регионы</SelectItem>
+                                    <SelectItem value="all">{t("all_regions")}</SelectItem>
                                     {KAZAKHSTAN_REGIONS.map((region) => (
                                         <SelectItem key={region.id} value={region.name}>
-                                            {region.name}
+                                            {t_regions(region.id)}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -246,14 +255,14 @@ export default function RankingPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Период</Label>
+                            <Label>{t("filter_period")}</Label>
                             <Select value={filterPeriod} onValueChange={setFilterPeriod}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="2025">Сезон 2025 (Текущий)</SelectItem>
-                                    <SelectItem value="2024">Архив 2024</SelectItem>
+                                    <SelectItem value="2025">{t("period_current")}</SelectItem>
+                                    <SelectItem value="2024">{t("period_archive_2024")}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -266,14 +275,14 @@ export default function RankingPage() {
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Поиск спортсмена..."
+                        placeholder={t("search_placeholder")}
                         className="pl-8"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
                 <div className="text-sm text-muted-foreground hidden md:block">
-                    Показано: {filteredRankings.length}
+                    {t("shown_label")}: {filteredRankings.length}
                 </div>
             </div>
 
@@ -282,18 +291,18 @@ export default function RankingPage() {
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
-                            <TableHead className="w-[80px] text-center">Ранг</TableHead>
+                            <TableHead className="w-[80px] text-center">{t("th_rank")}</TableHead>
                             <TableHead className="w-[60px]"></TableHead>
-                            <TableHead>Спортсмен</TableHead>
-                            <TableHead>Регион</TableHead>
-                            <TableHead className="text-right">Очки</TableHead>
+                            <TableHead>{t("th_athlete")}</TableHead>
+                            <TableHead>{t("th_region")}</TableHead>
+                            <TableHead className="text-right">{t("th_points")}</TableHead>
                             <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {filteredRankings.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">Нет данных для выбранных фильтров</TableCell>
+                                <TableCell colSpan={6} className="h-24 text-center">{t("no_data")}</TableCell>
                             </TableRow>
                         ) : (
                             filteredRankings.map((athlete, index) => (
@@ -306,7 +315,7 @@ export default function RankingPage() {
                                         #{index + 1}
                                     </TableCell>
                                     <TableCell>
-                                        <div className="flex justify-center" title="Динамика">
+                                        <div className="flex justify-center" title={t("trend_tooltip")}>
                                             <TrendIcon current={index + 1} prev={athlete.prevRank} />
                                         </div>
                                     </TableCell>
@@ -326,7 +335,7 @@ export default function RankingPage() {
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell>{athlete.region}</TableCell>
+                                    <TableCell>{t_regions(athlete.region as any)}</TableCell>
                                     <TableCell className="text-right font-mono font-bold text-lg text-primary">
                                         {athlete.points}
                                     </TableCell>
@@ -358,12 +367,12 @@ export default function RankingPage() {
                                     <div className="space-y-1 pt-1">
                                         <DialogTitle className="text-2xl font-bold">{selectedAthlete.name}</DialogTitle>
                                         <DialogDescription className="text-base flex items-center gap-2">
-                                            <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {selectedAthlete.region}</span>
+                                            <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {t_regions(selectedAthlete.region as any)}</span>
                                             <span className="text-muted-foreground">•</span>
-                                            <span className="font-bold text-primary">Ранг #{selectedAthlete.rank}</span>
+                                            <span className="font-bold text-primary">{t("rank_label")} #{selectedAthlete.rank}</span>
                                         </DialogDescription>
                                         <div className="flex gap-2 pt-2">
-                                            <Badge variant="outline">{selectedAthlete.classification || "Спортсмен"}</Badge>
+                                            <Badge variant="outline">{selectedAthlete.classification || t("athlete_fallback")}</Badge>
                                         </div>
                                     </div>
                                 </div>
@@ -371,28 +380,34 @@ export default function RankingPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
                                 <div className="space-y-4">
-                                    <h3 className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">Основная информация</h3>
+                                    <h3 className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">{t("dialog_info_title")}</h3>
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between py-1 border-b">
-                                            <span className="text-muted-foreground">Тренер</span>
+                                            <span className="text-muted-foreground">{t("dialog_coach")}</span>
                                             <span className="font-medium text-primary cursor-pointer hover:underline" title="+7 (777) 000-00-00">Константин Ким</span>
                                         </div>
                                         <div className="flex justify-between py-1 border-b">
-                                            <span className="text-muted-foreground">Вид оружия</span>
-                                            <span className="font-medium">{selectedAthlete.weapon === "Recurve" ? "Классический" : "Блочный"}</span>
+                                            <span className="text-muted-foreground">{t("dialog_weapon")}</span>
+                                            <span className="font-medium">{selectedAthlete.weapon === "Recurve" ? t("disc_recurve") : t("disc_compound")}</span>
                                         </div>
                                         <div className="flex justify-between py-1 border-b">
-                                            <span className="text-muted-foreground">Категория</span>
-                                            <span className="font-medium">{selectedAthlete.category === "Adults" ? "Взрослые" : "Молодежь"}</span>
+                                            <span className="text-muted-foreground">{t("dialog_category")}</span>
+                                            <span className="font-medium">
+                                                {selectedAthlete.category === "Adults" ? t("age_adults") :
+                                                    selectedAthlete.category === "Youth" ? t("age_youth") :
+                                                        selectedAthlete.category === "Juniors" ? t("age_juniors") :
+                                                            selectedAthlete.category === "Cadets" ? t("age_cadets") :
+                                                                selectedAthlete.category === "Cubs" ? t("age_cubs") : selectedAthlete.category}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between py-1 border-b">
-                                            <span className="text-muted-foreground">Возраст</span>
-                                            <span className="font-medium">26 лет</span>
+                                            <span className="text-muted-foreground">{t("dialog_age")}</span>
+                                            <span className="font-medium">26 {t("years")}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <h3 className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">История очков</h3>
+                                    <h3 className="font-semibold text-muted-foreground uppercase text-xs tracking-wider">{t("dialog_history_title")}</h3>
                                     <div className="h-[200px] w-full rounded-md border p-2">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart
@@ -438,7 +453,7 @@ export default function RankingPage() {
                             <DialogFooter>
                                 <Button className="w-full sm:w-auto" asChild>
                                     <Link href={`/team/${selectedAthlete.id}`}>
-                                        Перейти в полный профиль <ArrowRight className="ml-2 h-4 w-4" />
+                                        {t("btn_full_profile")} <ArrowRight className="ml-2 h-4 w-4" />
                                     </Link>
                                 </Button>
                             </DialogFooter>

@@ -12,15 +12,16 @@ export function Hero() {
     const t = useTranslations("Hero");
 
     // This data would ideally come from a CMS or API
+    // This data would ideally come from a CMS or API
     const NEXT_EVENT = {
-        badge: t("badge"),
+        badge: t("event_badge"),
         title: {
-            prefix: "Чемпионат",
-            highlight: "Казахстана 2025"
+            prefix: t("event_title_prefix"),
+            highlight: t("event_title_highlight")
         },
-        description: "Главное событие года в мире стрельбы из лука. Лучшие спортсмены страны соберутся в Алматы.",
-        date: "15–20 Февраля",
-        location: "Алматы, Трамплины",
+        description: t("event_desc"),
+        date: t("event_date"),
+        location: t("event_location"),
         disciplines: "Recurve & Compound",
         link: "/calendar/register",
         regulationsLink: "/calendar"
@@ -50,17 +51,17 @@ export function Hero() {
                 {/* Left Content */}
                 <div className="space-y-8 text-left">
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#B54B35]/30 bg-[#B54B35]/5 text-[#B54B35] text-xs font-bold tracking-widest uppercase">
+                    <Link href="/calendar" className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#B54B35]/30 bg-[#B54B35]/5 text-[#B54B35] text-xs font-bold tracking-widest uppercase hover:bg-[#B54B35]/10 transition-colors">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#B54B35]" />
                         {NEXT_EVENT.badge}
-                    </div>
+                    </Link>
 
                     {/* Main Heading */}
                     <div className="space-y-0">
-                        <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-gray-900 leading-[0.9] tracking-tight">
+                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-gray-900 leading-[0.9] tracking-tight">
                             {NEXT_EVENT.title.prefix}
                         </h1>
-                        <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-[#B54B35] leading-[0.9] tracking-tight italic">
+                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-[#B54B35] leading-[0.9] tracking-tight italic">
                             {NEXT_EVENT.title.highlight}
                         </h1>
                     </div>
