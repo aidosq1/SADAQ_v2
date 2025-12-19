@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 
 // Import local JSON directly
-import topoData from "@/app/about/regions/kazakhstan.json";
+import topoData from "@/app/[locale]/about/regions/kazakhstan.json";
 
 interface KazakhstanMapProps {
     onRegionSelect?: (regionName: string) => void;

@@ -46,7 +46,7 @@ export function Footer() {
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-                © {new Date().getFullYear()} {t("rights")}
+                © 2025 {t("rights")}
             </div>
         </footer>
     );

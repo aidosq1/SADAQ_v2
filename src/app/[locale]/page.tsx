@@ -10,6 +10,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       <Hero />
+      <NewsBlock />
       <section className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-1">
           <CalendarWidget />
@@ -18,9 +19,8 @@ export default function Home() {
           <MediaBlock />
         </div>
       </section>
-
-
+      <RankingWidget />
       <PartnersBlock />
-    </main >
+    </main>
   );
 }

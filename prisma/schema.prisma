@@ -3,15 +3,17 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// ==================== EXISTING MODELS ====================
+
 model User {
   id        Int      @id @default(autoincrement())
-  username  String   @unique // e.g., "Astana", "Almaty"
-  password  String   // Hashed password
-  role      String   @default("RegionalRepresentative")
+  username  String   @unique
+  password  String
+  role      String   @default("RegionalRepresentative") // Admin, Editor, RegionalRepresentative
   createdAt DateTime @default(now())
 
   registrations Registration[]
@@ -20,9 +22,13 @@ model User {
 model Tournament {
   id          Int      @id @default(autoincrement())
   title       String
+  titleKk     String?
+  titleEn     String?
   startDate   DateTime
   endDate     DateTime
   location    String
+  locationKk  String?
+  locationEn  String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
 
@@ -30,35 +36,187 @@ model Tournament {
 }
 
 model Registration {
-  id           Int      @id @default(autoincrement())
-  judgeName    String
+  id            Int          @id @default(autoincrement())
+  judgeName     String
   judgeCategory String?
   judgeRegion   String?
-  regionName   String   // Name of the region for display
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  regionName    String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   userId       Int
-  user         User     @relation(fields: [userId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
 
-  tournamentId Int?     // Optional for now if we just have one active
-  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+  tournamentId Int?
+  tournament   Tournament?  @relation(fields: [tournamentId], references: [id])
 
   athletes     Athlete[]
 }
 
 model Athlete {
-  id           Int      @id @default(autoincrement())
-  fullName     String
-  iin          String?
-  dob          String   // Storing as string or DateTime? String from form "DD.MM.YYYY"
-  gender       String
-  category     String
-  weaponClass  String
-  coachName    String?
-  
+  id             Int          @id @default(autoincrement())
+  fullName       String
+  iin            String?
+  dob            String
+  gender         String
+  category       String
+  weaponClass    String
+  coachName      String?
+
   registrationId Int
   registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
-  createdAt    DateTime @default(now())
+  createdAt      DateTime     @default(now())
+}
+
+// ==================== CMS MODELS ====================
+
+model News {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  titleKk     String?
+  titleEn     String?
+  content     String
+  contentKk   String?
+  contentEn   String?
+  excerpt     String?
+  excerptKk   String?
+  excerptEn   String?
+  category    String
+  image       String?
+  isMain      Boolean  @default(false)
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Slide {
+  id            Int      @id @default(autoincrement())
+  title         String
+  titleKk       String?
+  titleEn       String?
+  description   String?
+  descriptionKk String?
+  descriptionEn String?
+  image         String
+  imageClass    String?
+  linkUrl       String?
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TeamMember {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  name        String
+  nameKk      String?
+  nameEn      String?
+  type        String   // Recurve | Compound
+  gender      String   // M | F
+  category    String   // Adults | Youth | Juniors | Cadets | Cubs
+  region      String
+  coachName   String?
+  coachNameKk String?
+  coachNameEn String?
+  birthYear   Int?
+  image       String?
+  bio         String?
+  bioKk       String?
+  bioEn       String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rankings    RankingEntry[]
+}
+
+model Staff {
+  id            Int      @id @default(autoincrement())
+  name          String
+  nameKk        String?
+  nameEn        String?
+  role          String
+  roleTitle     String
+  roleTitleKk   String?
+  roleTitleEn   String?
+  description   String?
+  descriptionKk String?
+  descriptionEn String?
+  department    String   // leadership | coaching | committee
+  image         String?
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Partner {
+  id            Int      @id @default(autoincrement())
+  name          String
+  logo          String?
+  websiteUrl    String?
+  instagramUrl  String?
+  facebookUrl   String?
+  description   String?
+  descriptionKk String?
+  descriptionEn String?
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  title       String
+  titleKk     String?
+  titleEn     String?
+  section     String   // statute | rules | antidoping | calendar | ratings
+  fileUrl     String
+  fileType    String?
+  fileSize    Int?
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RankingEntry {
+  id            Int        @id @default(autoincrement())
+  teamMemberId  Int
+  teamMember    TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+
+  points        Int
+  rank          Int
+  previousRank  Int?
+  classification String?  // International | National | Candidate | 1st Class
+  season        String
+  recordedAt    DateTime @default(now())
+
+  @@unique([teamMemberId, season])
+  @@index([season, points])
+}
+
+model GalleryItem {
+  id            Int       @id @default(autoincrement())
+  title         String
+  titleKk       String?
+  titleEn       String?
+  description   String?
+  descriptionKk String?
+  descriptionEn String?
+  type          String    // photo | video
+  url           String
+  thumbnailUrl  String?
+  albumName     String?
+  eventDate     DateTime?
+  sortOrder     Int       @default(0)
+  isPublished   Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
