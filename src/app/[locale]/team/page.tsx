@@ -25,7 +25,7 @@ async function getAthletes(category: string, gender: string, type: string) {
       },
       orderBy: { athlete: { sortOrder: 'asc' } },
     });
-    return memberships.map(m => m.athlete);
+    return memberships.map(m => ({ ...m.athlete, type: m.type }));
   } catch (error) {
     return [];
   }

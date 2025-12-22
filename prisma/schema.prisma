@@ -8,31 +8,31 @@ datasource db {
 }
 
 model Athlete {
-  id                       Int                      @id @default(autoincrement())
-  slug                     String                   @unique
-  name                     String
-  nameKk                   String?
-  nameEn                   String?
-  iin                      String?
-  birthYear                Int?
-  dob                      String?
-  gender                   String
-  region                   String?
-  regionId                 Int?
-  regionRef                Region?                  @relation(fields: [regionId], references: [id])
-  image                    String?
-  bio                      String?
-  bioKk                    String?
-  bioEn                    String?
-  isActive                 Boolean                  @default(true)
-  sortOrder                Int                      @default(0)
-  createdAt                DateTime                 @default(now())
-  updatedAt                DateTime                 @default(now())
-  athleteRegistrations     AthleteRegistration[]
-  nationalTeamMemberships  NationalTeamMembership[]
-  rankings                 RankingEntry[]
-  coaches                  AthleteCoach[]
-  tournamentResults        TournamentResult[]
+  id                      Int                      @id @default(autoincrement())
+  slug                    String                   @unique
+  name                    String
+  nameKk                  String?
+  nameEn                  String?
+  iin                     String?
+  birthYear               Int?
+  dob                     String?
+  gender                  String
+  region                  String?
+  image                   String?
+  bio                     String?
+  bioKk                   String?
+  bioEn                   String?
+  isActive                Boolean                  @default(true)
+  sortOrder               Int                      @default(0)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @default(now())
+  regionId                Int?
+  regionRef               Region?                  @relation(fields: [regionId], references: [id])
+  coaches                 AthleteCoach[]
+  athleteRegistrations    AthleteRegistration[]
+  nationalTeamMemberships NationalTeamMembership[]
+  rankings                RankingEntry[]
+  tournamentResults       TournamentResult[]
 
   @@index([isActive])
   @@index([regionId])
@@ -47,7 +47,6 @@ model Coach {
   iin                  String?
   dob                  String?
   regionId             Int?
-  region               Region?               @relation(fields: [regionId], references: [id])
   image                String?
   bio                  String?
   bioKk                String?
@@ -58,34 +57,35 @@ model Coach {
   updatedAt            DateTime              @default(now())
   athletes             AthleteCoach[]
   athleteRegistrations AthleteRegistration[]
+  region               Region?               @relation(fields: [regionId], references: [id])
 
   @@index([isActive])
   @@index([regionId])
 }
 
 model Judge {
-  id                  Int                  @id @default(autoincrement())
-  name                String
-  nameKk              String?
-  nameEn              String?
-  iin                 String?
-  dob                 String?
-  category            String               // National, International, Regional
-  categoryKk          String?
-  categoryEn          String?
-  regionId            Int?
-  region              Region?              @relation(fields: [regionId], references: [id])
-  image               String?
-  bio                 String?
-  bioKk               String?
-  bioEn               String?
-  certifications      String?              // судейские лицензии/сертификаты
-  isActive            Boolean              @default(true)
-  sortOrder           Int                  @default(0)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @default(now()) @updatedAt
-  registrationJudges  RegistrationJudge[]
-  registrations  Registration[]
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  nameKk             String?
+  nameEn             String?
+  iin                String?
+  dob                String?
+  category           String
+  categoryKk         String?
+  categoryEn         String?
+  regionId           Int?
+  image              String?
+  bio                String?
+  bioKk              String?
+  bioEn              String?
+  certifications     String?
+  isActive           Boolean             @default(true)
+  sortOrder          Int                 @default(0)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
+  region             Region?             @relation(fields: [regionId], references: [id])
+  registrations      Registration[]
+  registrationJudges RegistrationJudge[]
 
   @@index([isActive])
   @@index([regionId])
@@ -110,11 +110,11 @@ model AthleteRegistration {
   id             Int          @id @default(autoincrement())
   athleteId      Int
   registrationId Int
-  coachId        Int?
   createdAt      DateTime     @default(now())
+  coachId        Int?
   athlete        Athlete      @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
   coach          Coach?       @relation(fields: [coachId], references: [id])
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
   @@unique([athleteId, registrationId])
   @@index([athleteId])
@@ -142,7 +142,7 @@ model Document {
 
 model Gallery {
   id            Int            @id @default(autoincrement())
-  slug          String         @unique // To be generated from title
+  slug          String         @unique
   title         String
   titleKk       String?
   titleEn       String?
@@ -164,13 +164,36 @@ model Gallery {
 model GalleryImage {
   id        Int      @id @default(autoincrement())
   galleryId Int
-  gallery   Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   url       String
-  title     String? 
+  title     String?
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
+  gallery   Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
 
   @@index([galleryId])
+}
+
+model GalleryItem {
+  id            Int       @id @default(autoincrement())
+  title         String
+  titleKk       String?
+  titleEn       String?
+  description   String?
+  descriptionKk String?
+  descriptionEn String?
+  type          String    @default("photo")
+  url           String
+  thumbnailUrl  String?
+  albumName     String?
+  eventDate     DateTime?
+  sortOrder     Int       @default(0)
+  isPublished   Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  @@index([albumName])
+  @@index([eventDate])
+  @@index([isPublished])
 }
 
 model HistoryEvent {
@@ -221,11 +244,11 @@ model News {
   excerptEn    String?
   category     String
   image        String?
-  showInSlider Boolean  @default(false)
-  sliderOrder  Int      @default(0)
   publishedAt  DateTime @default(now())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
+  showInSlider Boolean  @default(false)
+  sliderOrder  Int      @default(0)
 
   @@index([category])
   @@index([publishedAt])
@@ -305,35 +328,35 @@ model Region {
   isActive      Boolean        @default(true)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @default(now()) @updatedAt
-  coaches       Coach[]
   athletes      Athlete[]
+  coaches       Coach[]
   judges        Judge[]
-  users         User[]
   registrations Registration[]
+  users         User[]
 
   @@index([isActive])
 }
 
 model Registration {
   id                   Int                   @id @default(autoincrement())
-  registrationNumber   String                @unique
-  judgeId              Int?
   regionName           String
-  regionId             Int?
-  status               RegistrationStatus    @default(PENDING)
-  rejectionReason      String?
-  approvedAt           DateTime?
-  approvedBy           String?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @default(now()) @updatedAt
   userId               Int
   tournamentCategoryId Int?
+  approvedAt           DateTime?
+  approvedBy           String?
+  judgeId              Int?
+  regionId             Int?
+  registrationNumber   String                @unique
+  rejectionReason      String?
+  status               RegistrationStatus    @default(PENDING)
   athleteRegistrations AthleteRegistration[]
-  registrationJudges   RegistrationJudge[]
   judge                Judge?                @relation(fields: [judgeId], references: [id])
   region               Region?               @relation(fields: [regionId], references: [id])
   tournamentCategory   TournamentCategory?   @relation(fields: [tournamentCategoryId], references: [id])
   user                 User                  @relation(fields: [userId], references: [id])
+  registrationJudges   RegistrationJudge[]
 
   @@unique([tournamentCategoryId, regionId])
   @@index([tournamentCategoryId])
@@ -343,14 +366,13 @@ model Registration {
   @@index([regionId])
 }
 
-// Связь судей с заявкой (несколько судей от региона)
 model RegistrationJudge {
   id             Int          @id @default(autoincrement())
   registrationId Int
   judgeId        Int
   createdAt      DateTime     @default(now())
-  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
   judge          Judge        @relation(fields: [judgeId], references: [id])
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
   @@unique([registrationId, judgeId])
   @@index([registrationId])
@@ -417,17 +439,14 @@ model Tournament {
   location             String
   locationKk           String?
   locationEn           String?
-  regulationUrl        String?
   createdAt            DateTime             @default(now())
   description          String?
   descriptionEn        String?
   descriptionKk        String?
   isFeatured           Boolean              @default(false)
-
-  // Simplified registration management
-  isRegistrationOpen   Boolean              @default(true)   // Manual on/off toggle
-  registrationDeadline DateTime?                              // Auto-close after this date
-
+  isRegistrationOpen   Boolean              @default(true)
+  registrationDeadline DateTime?
+  regulationUrl        String?
   categories           TournamentCategory[]
 
   @@index([startDate])
@@ -437,12 +456,12 @@ model Tournament {
 model TournamentCategory {
   id            Int                @id @default(autoincrement())
   tournamentId  Int
-  tournament    Tournament         @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  category      String             // "adults", "juniors", "cadets"
-  gender        String             // "male", "female", "mixed"
-  type          String             // "recurve", "compound", "barebow"
+  category      String
+  gender        String
+  type          String
   protocols     Protocol[]
   registrations Registration[]
+  tournament    Tournament         @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   results       TournamentResult[]
 
   @@unique([tournamentId, category, gender, type])
@@ -452,13 +471,13 @@ model TournamentCategory {
 model TournamentResult {
   id                   Int                @id @default(autoincrement())
   tournamentCategoryId Int
-  tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id], onDelete: Cascade)
   athleteId            Int
-  athlete              Athlete            @relation(fields: [athleteId], references: [id])
   place                Int
   points               Int
   score                Int?
   createdAt            DateTime           @default(now())
+  athlete              Athlete            @relation(fields: [athleteId], references: [id])
+  tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id], onDelete: Cascade)
 
   @@unique([tournamentCategoryId, athleteId])
   @@index([athleteId])
@@ -470,35 +489,33 @@ model User {
   username      String         @unique
   password      String
   role          String         @default("RegionalRepresentative")
+  createdAt     DateTime       @default(now())
+  email         String?
   region        String?
   regionId      Int?
-  regionRef     Region?        @relation(fields: [regionId], references: [id])
-  email         String?
-  createdAt     DateTime       @default(now())
   registrations Registration[]
+  regionRef     Region?        @relation(fields: [regionId], references: [id])
 
   @@index([regionId])
-}
-
-// Enums for registration status
-
-enum RegistrationStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  WITHDRAWN
 }
 
 model Translation {
   id        Int      @id @default(autoincrement())
   namespace String
   key       String
-  ru        String   @db.Text
-  kk        String?  @db.Text
-  en        String?  @db.Text
+  ru        String
+  kk        String?
+  en        String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([namespace, key])
   @@index([namespace])
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WITHDRAWN
 }

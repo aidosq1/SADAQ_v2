@@ -52,10 +52,7 @@ export async function POST(req: Request) {
             include: {
                 athlete: {
                     select: {
-                        id: true,
-                        category: true,
-                        gender: true,
-                        type: true
+                        id: true
                     }
                 },
                 tournamentCategory: {

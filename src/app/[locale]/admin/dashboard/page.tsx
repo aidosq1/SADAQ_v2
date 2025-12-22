@@ -14,7 +14,7 @@ async function getStats() {
     prisma.staff.count(),
     prisma.partner.count(),
     prisma.document.count(),
-    prisma.galleryItem.count(),
+    prisma.gallery.count(),
     prisma.rankingEntry.count(),
   ]);
 

@@ -55,9 +55,9 @@ export function RankingWidget() {
 
   if (loading) {
     return (
-      <section className="py-16 bg-[hsl(var(--light-gray))]">
+      <section className="py-16 bg-[hsl(var(--light-cream))]">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-navy))] mx-auto" />
+          <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-maroon))] mx-auto" />
         </div>
       </section>
     );
@@ -68,7 +68,7 @@ export function RankingWidget() {
   }
 
   return (
-    <section className="py-16 bg-[hsl(var(--light-gray))]">
+    <section className="py-16 bg-[hsl(var(--light-cream))]">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="flex items-end justify-between mb-10">
@@ -76,13 +76,13 @@ export function RankingWidget() {
             <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wider mb-2 block">
               {topAthletesText}
             </span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-navy))] gold-accent">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent">
               {sectionTitle}
             </h2>
           </div>
           <Link
             href="/ranking"
-            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-blue))] hover:underline"
+            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
           >
             {viewAllText} <ArrowRight className="h-4 w-4" />
           </Link>
@@ -92,7 +92,7 @@ export function RankingWidget() {
         <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] overflow-hidden mt-8">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[hsl(var(--border-light))] bg-[hsl(var(--light-gray))]">
+              <tr className="border-b border-[hsl(var(--border-light))] bg-[hsl(var(--light-cream))]">
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                   #
                 </th>
@@ -108,14 +108,14 @@ export function RankingWidget() {
               {rankings.map((ranking) => (
                 <tr
                   key={ranking.id}
-                  className="border-b border-[hsl(var(--border-light))] last:border-b-0 hover:bg-[hsl(var(--light-gray))] transition-colors"
+                  className="border-b border-[hsl(var(--border-light))] last:border-b-0 hover:bg-[hsl(var(--light-cream))] transition-colors"
                 >
                   <td className="py-4 px-4">
                     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                      ranking.rank === 1 ? 'bg-[#FFD700] text-[hsl(var(--official-navy))]' :
-                      ranking.rank === 2 ? 'bg-[#C0C0C0] text-[hsl(var(--official-navy))]' :
+                      ranking.rank === 1 ? 'bg-[#FFD700] text-[hsl(var(--official-maroon))]' :
+                      ranking.rank === 2 ? 'bg-[#C0C0C0] text-[hsl(var(--official-maroon))]' :
                       ranking.rank === 3 ? 'bg-[#CD7F32] text-white' :
-                      'bg-[hsl(var(--light-gray))] text-[hsl(var(--official-navy))]'
+                      'bg-[hsl(var(--light-cream))] text-[hsl(var(--official-maroon))]'
                     }`}>
                       {ranking.rank}
                     </span>
@@ -127,17 +127,17 @@ export function RankingWidget() {
                           src={ranking.athlete.image || undefined}
                           alt={getLocalizedName(ranking.athlete, locale)}
                         />
-                        <AvatarFallback className="text-sm bg-[hsl(var(--light-gray))]">
+                        <AvatarFallback className="text-sm bg-[hsl(var(--light-cream))]">
                           {ranking.athlete.name[0]}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium text-[hsl(var(--official-navy))]">
+                      <span className="font-medium text-[hsl(var(--official-maroon))]">
                         {getLocalizedName(ranking.athlete, locale)}
                       </span>
                     </Link>
                   </td>
                   <td className="py-4 px-4 text-right">
-                    <span className="font-mono text-lg font-bold text-[hsl(var(--official-navy))]">
+                    <span className="font-mono text-lg font-bold text-[hsl(var(--official-maroon))]">
                       {ranking.points}
                     </span>
                   </td>
@@ -151,7 +151,7 @@ export function RankingWidget() {
         <div className="mt-6 md:hidden text-center">
           <Link
             href="/ranking"
-            className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-blue))]"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))]"
           >
             {viewAllText} <ArrowRight className="h-4 w-4" />
           </Link>

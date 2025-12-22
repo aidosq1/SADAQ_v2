@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { slugify } from '@/lib/utils'; // Assuming this utility exists or I'll implement a simple one
+// Using local generateSlug function below
 
 // Helper if slugify doesn't exist in utils, but usually it does. 
 // If not, I'll iterate or just do a simple replacement.

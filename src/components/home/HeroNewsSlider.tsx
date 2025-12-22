@@ -77,7 +77,7 @@ export function HeroNewsSlider() {
 
   if (loading) {
     return (
-      <div className="relative w-full h-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+      <div className="relative w-full h-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
         <div className="text-[hsl(var(--muted-foreground))]">...</div>
       </div>
     );
@@ -85,7 +85,7 @@ export function HeroNewsSlider() {
 
   if (slides.length === 0) {
     return (
-      <div className="relative w-full h-full bg-[hsl(var(--official-navy))] flex items-center justify-center text-white">
+      <div className="relative w-full h-full bg-[hsl(var(--official-maroon))] flex items-center justify-center text-white">
         <div className="text-center px-8">
           <h2 className="text-2xl font-heading font-bold mb-2">
             {locale === 'kk' ? 'Қазақстан Садақ Ату Федерациясы' : locale === 'en' ? 'Kazakhstan Archery Federation' : 'Федерация Стрельбы из Лука Казахстана'}

@@ -78,7 +78,7 @@ export function Hero() {
     };
 
     return (
-        <section className="bg-[hsl(var(--light-gray))]">
+        <section className="bg-[hsl(var(--light-cream))]">
             <div className="max-w-7xl mx-auto px-4 py-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {/* News Slider - Left Side */}
@@ -92,15 +92,15 @@ export function Hero() {
                     <div className="lg:col-span-5 flex flex-col gap-4">
                         {/* Stats Card */}
                         <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] p-6 shadow-sm">
-                            <h2 className="text-lg font-heading font-semibold text-[hsl(var(--official-navy))] mb-4 gold-accent">
+                            <h2 className="text-lg font-heading font-semibold text-[hsl(var(--official-maroon))] mb-4 gold-accent">
                                 {t("federation_stats")}
                             </h2>
                             <div className="grid grid-cols-3 gap-4 mt-6">
                                 <div className="text-center">
-                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
-                                        <Users className="w-5 h-5 text-[hsl(var(--official-navy))]" />
+                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                                        <Users className="w-5 h-5 text-[hsl(var(--official-maroon))]" />
                                     </div>
-                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-navy))]">
+                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
                                         {stats.athletes}+
                                     </div>
                                     <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
@@ -108,10 +108,10 @@ export function Hero() {
                                     </div>
                                 </div>
                                 <div className="text-center border-x border-[hsl(var(--border-light))]">
-                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
-                                        <MapPin className="w-5 h-5 text-[hsl(var(--official-navy))]" />
+                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                                        <MapPin className="w-5 h-5 text-[hsl(var(--official-maroon))]" />
                                     </div>
-                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-navy))]">
+                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
                                         {stats.regions}
                                     </div>
                                     <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
@@ -119,10 +119,10 @@ export function Hero() {
                                     </div>
                                 </div>
                                 <div className="text-center">
-                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
-                                        <Trophy className="w-5 h-5 text-[hsl(var(--official-navy))]" />
+                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                                        <Trophy className="w-5 h-5 text-[hsl(var(--official-maroon))]" />
                                     </div>
-                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-navy))]">
+                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
                                         {stats.medals}+
                                     </div>
                                     <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
@@ -141,7 +141,7 @@ export function Hero() {
                                         {t("upcoming_event")}
                                     </span>
                                 </div>
-                                <h3 className="font-heading font-semibold text-[hsl(var(--official-navy))] mb-2 line-clamp-2">
+                                <h3 className="font-heading font-semibold text-[hsl(var(--official-maroon))] mb-2 line-clamp-2">
                                     {getLocalizedTitle(upcomingEvent)}
                                 </h3>
                                 <p className="text-sm text-[hsl(var(--muted-foreground))]">
@@ -149,7 +149,7 @@ export function Hero() {
                                 </p>
                                 <Link
                                     href="/calendar"
-                                    className="inline-block mt-4 text-sm font-medium text-[hsl(var(--official-blue))] hover:underline"
+                                    className="inline-block mt-4 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
                                 >
                                     {t("view_calendar")} →
                                 </Link>

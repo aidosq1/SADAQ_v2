@@ -43,7 +43,7 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
   if (news.length === 0) return null;
 
   return (
-    <section className="py-16 bg-[hsl(var(--light-gray))]">
+    <section className="py-16 bg-[hsl(var(--light-cream))]">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-end justify-between mb-10">
@@ -51,13 +51,13 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
             <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wider mb-2 block">
               {translations.pressCenter}
             </span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-navy))] gold-accent">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent">
               {translations.sectionTitle}
             </h2>
           </div>
           <Link
             href="/media/news"
-            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-blue))] hover:underline"
+            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
           >
             {translations.allNewsText}
             <ArrowRight className="w-4 h-4" />
@@ -95,7 +95,7 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
                   <Calendar className="w-3 h-3" />
                   {formatDate(item.publishedAt, locale)}
                 </div>
-                <h3 className="font-heading font-semibold text-[hsl(var(--official-navy))] leading-snug line-clamp-2 group-hover:text-[hsl(var(--official-blue))] transition-colors">
+                <h3 className="font-heading font-semibold text-[hsl(var(--official-maroon))] leading-snug line-clamp-2 group-hover:text-[hsl(var(--official-red))] transition-colors">
                   {getLocalizedTitle(item, locale)}
                 </h3>
               </div>
@@ -107,7 +107,7 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
         <div className="mt-8 md:hidden text-center">
           <Link
             href="/media/news"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[hsl(var(--official-navy))] text-white font-medium rounded-lg hover:bg-[hsl(var(--official-navy))]/90 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[hsl(var(--official-maroon))] text-white font-medium rounded-lg hover:bg-[hsl(var(--official-maroon))]/90 transition-colors"
           >
             {translations.allNewsText}
             <ArrowRight className="w-4 h-4" />

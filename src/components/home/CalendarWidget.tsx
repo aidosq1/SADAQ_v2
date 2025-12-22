@@ -113,7 +113,7 @@ export function CalendarWidget() {
     if (loading) {
         return (
             <div className="flex flex-col h-full justify-center items-center min-h-[300px]">
-                <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-navy))]" />
+                <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-maroon))]" />
             </div>
         );
     }
@@ -123,13 +123,13 @@ export function CalendarWidget() {
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-navy))] gold-accent">
+                    <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent">
                         {t("title")}
                     </h2>
                 </div>
                 <Link
                     href="/calendar"
-                    className="hidden sm:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-blue))] hover:underline"
+                    className="hidden sm:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
                 >
                     {t("all_events")} <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -150,7 +150,7 @@ export function CalendarWidget() {
                             <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
 
-                        <h3 className="font-heading font-semibold text-sm mb-2 line-clamp-1 group-hover:text-[hsl(var(--official-blue))] transition-colors">
+                        <h3 className="font-heading font-semibold text-sm mb-2 line-clamp-1 group-hover:text-[hsl(var(--official-red))] transition-colors">
                             {getLocalizedTitle(tournament)}
                         </h3>
 
@@ -189,7 +189,7 @@ export function CalendarWidget() {
             <div className="mt-4 sm:hidden text-center">
                 <Link
                     href="/calendar"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-blue))]"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))]"
                 >
                     {t("all_events")} <ArrowRight className="h-4 w-4" />
                 </Link>

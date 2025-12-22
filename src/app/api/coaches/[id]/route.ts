@@ -24,8 +24,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
                 nameEn: true,
                 slug: true,
                 image: true,
-                type: true,
-                category: true,
                 gender: true,
               },
             },

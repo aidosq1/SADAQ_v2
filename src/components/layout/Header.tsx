@@ -49,7 +49,7 @@ export function Header() {
     return (
         <header className="fixed top-0 z-50 w-full">
             {/* Top Bar - Navy */}
-            <div className="bg-[hsl(var(--official-navy))] text-white">
+            <div className="bg-[hsl(var(--official-maroon))] text-white">
                 <div className="max-w-7xl mx-auto px-4 h-8 flex items-center justify-between text-xs">
                     {/* Social Links */}
                     <div className="flex items-center gap-3">
@@ -109,7 +109,7 @@ export function Header() {
                             <span className="text-[10px] font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
                                 {language === 'kk' ? 'Қазақстан Республикасының' : language === 'en' ? 'Republic of Kazakhstan' : 'Республики Казахстан'}
                             </span>
-                            <span className="text-sm font-semibold text-[hsl(var(--official-navy))] tracking-tight">
+                            <span className="text-sm font-semibold text-[hsl(var(--official-maroon))] tracking-tight">
                                 {language === 'kk' ? 'Ұлттық Садақ Ату Федерациясы' : language === 'en' ? 'National Archery Federation' : 'Национальная Федерация Стрельбы из Лука'}
                             </span>
                         </div>
@@ -119,7 +119,7 @@ export function Header() {
                     <nav className="hidden md:flex gap-1 lg:gap-2 items-center">
                         {/* About Dropdown */}
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-navy))] hover:text-[hsl(var(--official-blue))] transition-colors focus:outline-none">
+                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
                                 {t("about")} <ChevronDown className="h-4 w-4" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start" className="min-w-[200px]">
@@ -138,7 +138,7 @@ export function Header() {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className="px-3 py-2 text-sm font-medium text-[hsl(var(--official-navy))] hover:text-[hsl(var(--official-blue))] transition-colors"
+                                className="px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors"
                             >
                                 {item.name}
                             </Link>
@@ -146,7 +146,7 @@ export function Header() {
 
                         {/* Media Dropdown */}
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-navy))] hover:text-[hsl(var(--official-blue))] transition-colors focus:outline-none">
+                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
                                 {t("media")} <ChevronDown className="h-4 w-4" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start">
@@ -177,7 +177,7 @@ export function Header() {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="border-[hsl(var(--official-navy))] text-[hsl(var(--official-navy))] hover:bg-[hsl(var(--official-navy))] hover:text-white"
+                                    className="border-[hsl(var(--official-maroon))] text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--official-maroon))] hover:text-white"
                                     asChild
                                 >
                                     <Link href="/admin/dashboard">
@@ -188,7 +188,7 @@ export function Header() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="text-[hsl(var(--official-navy))] hover:bg-[hsl(var(--light-gray))]"
+                                    className="text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--light-cream))]"
                                     onClick={() => signOut({ callbackUrl: "/" })}
                                 >
                                     <LogOut className="h-4 w-4" />
@@ -198,7 +198,7 @@ export function Header() {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="hidden sm:flex border-[hsl(var(--official-navy))] text-[hsl(var(--official-navy))] hover:bg-[hsl(var(--official-navy))] hover:text-white"
+                                className="hidden sm:flex border-[hsl(var(--official-maroon))] text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--official-maroon))] hover:text-white"
                                 asChild
                             >
                                 <Link href="/auth/signin">{t("login")}</Link>
@@ -211,7 +211,7 @@ export function Header() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="md:hidden text-[hsl(var(--official-navy))]"
+                                    className="md:hidden text-[hsl(var(--official-maroon))]"
                                 >
                                     <Menu className="h-5 w-5" />
                                 </Button>

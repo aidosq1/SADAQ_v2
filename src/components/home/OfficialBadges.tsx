@@ -69,7 +69,7 @@ export function OfficialBadges() {
   return (
     <section className="py-12 bg-white border-t border-[hsl(var(--border-light))]">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-xl font-heading font-semibold text-[hsl(var(--official-navy))] text-center mb-8 gold-accent mx-auto w-fit">
+        <h2 className="text-xl font-heading font-semibold text-[hsl(var(--official-maroon))] text-center mb-8 gold-accent mx-auto w-fit">
           {getTitle()}
         </h2>
 
@@ -91,7 +91,7 @@ export function OfficialBadges() {
                   className="object-contain"
                 />
               </div>
-              <span className="text-xs text-center text-[hsl(var(--muted-foreground))] group-hover:text-[hsl(var(--official-navy))] transition-colors max-w-[120px] leading-tight">
+              <span className="text-xs text-center text-[hsl(var(--muted-foreground))] group-hover:text-[hsl(var(--official-maroon))] transition-colors max-w-[120px] leading-tight">
                 {badge.name[locale as keyof typeof badge.name]}
               </span>
             </a>

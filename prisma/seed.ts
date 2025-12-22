@@ -27,6 +27,7 @@ async function main() {
     'News',
     'Gallery',
     'GalleryImage',
+    'GalleryItem',
     'Document',
     'HistoryEvent',
     'Partner',

@@ -62,12 +62,12 @@
 }
 
 :root {
-  /* ===== Official SADAQ Color Scheme ===== */
-  --official-navy: 210 60% 15%;       /* #0D2137 - Primary brand */
-  --official-blue: 210 80% 35%;       /* #1156A0 - Links */
-  --official-gold: 45 70% 50%;        /* #D4A217 - Accent */
+  /* ===== Official SADAQ Color Scheme (based on logo) ===== */
+  --official-maroon: 355 60% 31%;     /* #7D2027 - Primary brand */
+  --official-red: 355 50% 40%;        /* #994040 - Links */
+  --official-gold: 43 45% 55%;        /* #C4A35A - Accent */
   --pure-white: 0 0% 100%;            /* #FFFFFF - Background */
-  --light-gray: 0 0% 96%;             /* #F5F5F5 - Sections */
+  --light-cream: 35 50% 94%;          /* #F5E6C8 - Sections */
   --text-dark: 0 0% 13%;              /* #222222 - Text */
   --border-light: 0 0% 85%;           /* #DADADA - Borders */
 
@@ -81,16 +81,16 @@
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 13%;
 
-  --primary: 210 60% 15%;             /* Navy */
+  --primary: 355 60% 31%;             /* Бордовый */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 0 0% 96%;              /* Light Gray */
+  --secondary: 35 50% 94%;            /* Кремовый */
   --secondary-foreground: 0 0% 13%;
 
-  --muted: 0 0% 96%;
+  --muted: 35 50% 94%;
   --muted-foreground: 0 0% 45%;
 
-  --accent: 45 70% 50%;               /* Gold */
+  --accent: 43 45% 55%;               /* Золотой */
   --accent-foreground: 0 0% 13%;
 
   --destructive: 0 84.2% 60.2%;
@@ -98,7 +98,7 @@
 
   --border: 0 0% 85%;
   --input: 0 0% 85%;
-  --ring: 210 60% 15%;
+  --ring: 355 60% 31%;
 
   --radius: 0.5rem;
 
@@ -163,8 +163,8 @@
   }
 
   /* ===== Section Background ===== */
-  .section-gray {
-    background: hsl(var(--light-gray));
+  .section-cream {
+    background: hsl(var(--light-cream));
   }
 
   /* ===== Medal Frames for Ranking (simplified) ===== */
@@ -182,7 +182,7 @@
 
   /* ===== Official Badge Style ===== */
   .official-badge {
-    background: hsl(var(--official-navy));
+    background: hsl(var(--official-maroon));
     color: white;
     padding: 0.25rem 0.75rem;
     font-size: 0.75rem;

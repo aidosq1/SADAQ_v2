@@ -42,7 +42,7 @@ export function PartnersBlock() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center gap-8">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="w-20 h-20 bg-[hsl(var(--light-gray))] rounded-full animate-pulse" />
+              <div key={i} className="w-20 h-20 bg-[hsl(var(--light-cream))] rounded-full animate-pulse" />
             ))}
           </div>
         </div>
@@ -59,7 +59,7 @@ export function PartnersBlock() {
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-navy))] gold-accent mx-auto w-fit">
+          <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent mx-auto w-fit">
             {sectionTitle}
           </h2>
         </div>
@@ -84,7 +84,7 @@ export function PartnersBlock() {
                       className="object-contain w-16 h-16 md:w-20 md:h-20"
                     />
                   ) : (
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
                       <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
                         {partner.name.slice(0, 2)}
                       </span>
@@ -105,7 +105,7 @@ export function PartnersBlock() {
                       className="object-contain w-16 h-16 md:w-20 md:h-20"
                     />
                   ) : (
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
                       <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
                         {partner.name.slice(0, 2)}
                       </span>
