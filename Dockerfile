@@ -51,9 +51,9 @@ COPY --from=builder /app/messages ./messages
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Install prisma CLI and ts-node for migrations and seeding
+# Install prisma CLI and ts-node for migrations and seeding (v2)
 COPY --from=builder /app/package.json /app/package-lock.json ./
-RUN npm install prisma @prisma/client ts-node typescript @types/node --omit=dev && npm cache clean --force
+RUN npm install prisma @prisma/client ts-node typescript @types/node && npm cache clean --force
 
 RUN mkdir -p ./public/uploads && chown -R nextjs:nodejs ./public/uploads
 
