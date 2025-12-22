@@ -2,7 +2,7 @@
 # Stage 1: Dependencies
 # ============================================
 FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -16,6 +16,7 @@ RUN npx prisma generate
 # Stage 2: Builder
 # ============================================
 FROM node:20-alpine AS builder
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -24,12 +25,17 @@ COPY . .
 ARG NEXT_PUBLIC_APP_URL
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 
+# Dummy env vars for build (not used at runtime)
+ENV NEXTAUTH_SECRET=build-time-secret-not-used
+ENV DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
+
 RUN npx prisma generate && npm run build
 
 # ============================================
 # Stage 3: Runner (Production)
 # ============================================
 FROM node:20-alpine AS runner
+RUN apk add --no-cache openssl
 WORKDIR /app
 
 ENV NODE_ENV=production
