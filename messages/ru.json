@@ -8,10 +8,13 @@
         "news": "Новости",
         "media_gallery": "Медиа",
         "login": "Войти",
+        "logout": "Выйти",
+        "admin": "Админка",
         "leadership": "Руководство",
         "regions": "Регионы",
         "history": "История",
-        "documents": "Документы"
+        "documents": "Документы",
+        "apply": "Подать заявку"
     },
     "Hero": {
         "title": "Национальная Федерация стрельбы из лука Республики Казахстан",
@@ -24,7 +27,24 @@
         "event_title_highlight": "Казахстана 2025",
         "event_desc": "Главное событие года в мире стрельбы из лука. Лучшие спортсмены страны соберутся в Алматы.",
         "event_date": "15–20 Февраля",
-        "event_location": "Алматы, Трамплины"
+        "event_location": "Алматы, Трамплины",
+        "official_federation": "Официальный сайт Федерации",
+        "federation_short": "ҚАЗАҚСТАН",
+        "archery": "СТРЕЛЬБА ИЗ ЛУКА",
+        "federation_name": "Национальная Федерация стрельбы из лука",
+        "federation_desc": "Развиваем традиции стрельбы из лука в Казахстане. Воспитываем чемпионов мирового уровня.",
+        "athletes": "Спортсменов",
+        "regions": "Регионов",
+        "medals": "Медалей",
+        "view_calendar": "Календарь соревнований",
+        "about_federation": "О Федерации",
+        "federation_stats": "Федерация в цифрах",
+        "upcoming_event": "Ближайшее событие",
+        "quick_links": "Быстрый доступ",
+        "national_team": "Сборная команда",
+        "rankings": "Рейтинги",
+        "documents": "Документы",
+        "no_events": "Нет предстоящих событий"
     },
     "Footer": {
         "about": "О Федерации",
@@ -37,6 +57,9 @@
         "ratings": "Рейтинги",
         "antidoping": "Антидопинг",
         "contacts": "Контакты",
+        "address": "г. Астана, Казахстан",
+        "phone": "+7 (7172) 123-45-67",
+        "email": "info@archery.kz",
         "socials": "Мы в соцсетях",
         "rights": "National Archery Federation. All rights reserved."
     },
@@ -98,7 +121,9 @@
         "director_almaty": "Иванова Елена",
         "city_shymkent": "г. Шымкент",
         "address_shymkent": "ул. Мадели Кожа, 1, Стадион им. Кажимукана",
-        "director_shymkent": "Сапаров Болат"
+        "director_shymkent": "Сапаров Болат",
+        "email": "Электронная почта",
+        "no_branches": "Нет данных"
     },
     "HistoryPage": {
         "title": "Наша История",
@@ -135,7 +160,8 @@
         "file_intl_calendar": "Календарь международных соревнований",
         "file_rating_men": "Текущий рейтинг атлетов (Мужчины)",
         "file_rating_women": "Текущий рейтинг атлетов (Женщины)",
-        "file_protocols_2024": "Итоговые протоколы ЧРК 2024"
+        "file_protocols_2024": "Итоговые протоколы ЧРК 2024",
+        "no_documents": "Документы не найдены"
     },
     "Regions": {
         "astana": "г. Астана",
@@ -196,7 +222,27 @@
         "city_astana": "Астана",
         "city_bangkok": "Бангкок",
         "city_almaty": "Алматы",
-        "city_almaty_region": "Алматинская обл."
+        "city_almaty_region": "Алматинская обл.",
+        "no_tournaments": "Турниры не найдены"
+    },
+    "TournamentPage": {
+        "back_to_calendar": "Календарь",
+        "registration": "Регистрация",
+        "categories_title": "Категории и результаты",
+        "results_not_published": "Результаты ещё не опубликованы",
+        "protocols": "Протоколы",
+        "regulation": "Регламент",
+        "place": "Место",
+        "athlete": "Спортсмен",
+        "region": "Регион",
+        "points": "Очки",
+        "score": "Счёт",
+        "categories_count": "категорий",
+        "status_finished": "Завершён",
+        "status_ongoing": "Идёт",
+        "status_planned": "Запланирован",
+        "not_found": "Турнир не найден",
+        "no_categories": "Категории турнира ещё не добавлены"
     },
     "CalendarWidget": {
         "title": "Календарь",
@@ -221,6 +267,7 @@
         "title": "Медиа-центр",
         "all_albums": "Все альбомы",
         "video_review": "Видео-обзор",
+        "photo_album": "Фотоальбом",
         "world_cup_2024": "Финал Кубка Мира 2024",
         "youtube_channel": "Наш YouTube Канал",
         "youtube_desc": "Смотрите прямые трансляции и интервью",
@@ -233,7 +280,6 @@
         "filter_gender": "Пол",
         "filter_discipline": "Дисциплина",
         "filter_region": "Регион",
-        "filter_period": "Период",
         "age_adults": "Взрослые",
         "age_youth": "Молодёжь",
         "age_juniors": "Юниоры",
@@ -244,8 +290,6 @@
         "disc_recurve": "Классический лук",
         "disc_compound": "Блочный лук",
         "all_regions": "Все регионы",
-        "period_current": "Сезон 2025 (Текущий)",
-        "period_archive_2024": "Архив 2024",
         "search_placeholder": "Поиск спортсмена...",
         "shown_label": "Показано",
         "th_rank": "Ранг",
@@ -253,6 +297,8 @@
         "th_region": "Регион",
         "th_points": "Очки",
         "no_data": "Нет данных для выбранных фильтров",
+        "classification_International": "Международный",
+        "classification_National": "Национальный",
         "trend_tooltip": "Динамика",
         "rank_label": "Ранг",
         "athlete_fallback": "Спортсмен",
@@ -283,5 +329,33 @@
         "th_sum": "Сумма",
         "btn_download": "Скачать результаты",
         "qual_details": "70 метров, 72 выстрела"
+    },
+    "NewsPage": {
+        "title": "Новости Федерации",
+        "subtitle": "Последние новости и события из мира стрельбы из лука Казахстана",
+        "all_categories": "Все категории",
+        "no_news": "Новостей пока нет",
+        "read_more": "Читать далее",
+        "back_to_news": "Назад к новостям",
+        "published": "Опубликовано",
+        "load_more": "Загрузить еще",
+        "share": "Поделиться"
+    },
+    "GalleryPage": {
+        "title": "Медиа Галерея",
+        "subtitle": "Фото и видео с турниров и мероприятий Федерации",
+        "filter_all": "Все",
+        "filter_photo": "Фото",
+        "filter_video": "Видео",
+        "no_items": "Нет материалов",
+        "load_more": "Загрузить еще",
+        "close": "Закрыть"
+    },
+    "OfficialBadges": {
+        "title": "Официальные аффилиации",
+        "world_archery": "Всемирная федерация стрельбы из лука",
+        "asian_archery": "Азиатская федерация стрельбы из лука",
+        "ministry": "Министерство туризма и спорта РК",
+        "noc": "Национальный олимпийский комитет"
     }
 }

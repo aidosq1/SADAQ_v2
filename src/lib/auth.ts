@@ -1,9 +1,12 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+// Проверка обязательных переменных окружения
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is required');
+}
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -20,6 +23,7 @@ export const authOptions: NextAuthOptions = {
 
                 const user = await prisma.user.findUnique({
                     where: { username: credentials.username },
+                    include: { regionRef: true },
                 });
 
                 if (!user) {
@@ -36,6 +40,8 @@ export const authOptions: NextAuthOptions = {
                     id: user.id.toString(),
                     name: user.username,
                     role: user.role,
+                    regionId: user.regionId,
+                    region: user.regionRef?.name || user.region,
                 };
             },
         }),
@@ -45,6 +51,8 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.role = (user as any).role;
                 token.id = user.id;
+                token.regionId = (user as any).regionId;
+                token.region = (user as any).region;
             }
             return token;
         },
@@ -52,6 +60,8 @@ export const authOptions: NextAuthOptions = {
             if (session.user) {
                 (session.user as any).role = token.role;
                 (session.user as any).id = token.id;
+                (session.user as any).regionId = token.regionId;
+                (session.user as any).region = token.region;
             }
             return session;
         },
@@ -62,5 +72,5 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
-    secret: process.env.NEXTAUTH_SECRET || "supersecret",
+    secret: process.env.NEXTAUTH_SECRET,
 };

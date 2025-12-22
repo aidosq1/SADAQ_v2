@@ -14,16 +14,12 @@ export default async function AdminLayout({
     redirect("/auth/signin");
   }
 
-  // Check if user has admin or editor role
-  const allowedRoles = ["Admin", "Editor"];
-  const userRole = session.user?.role as string | undefined;
-
-  // For RegionalRepresentative, only allow access to dashboard
-  // This check happens at page level for more granular control
+  const userRole = session.user?.role || "RegionalRepresentative";
+  const userRegion = session.user?.region;
 
   return (
     <div className="flex min-h-screen bg-background">
-      <AdminSidebar />
+      <AdminSidebar userRole={userRole} userRegion={userRegion} />
       <main className="flex-1 p-8 overflow-auto">
         {children}
       </main>

@@ -14,7 +14,7 @@ export async function GET(
     const ranking = await prisma.rankingEntry.findUnique({
       where: { id: rankingId },
       include: {
-        teamMember: true,
+        athlete: true,
       },
     });
 
@@ -24,7 +24,6 @@ export async function GET(
 
     return successResponse(ranking);
   } catch (error) {
-    console.error('Ranking GET by ID error:', error);
     return errorResponse('Failed to fetch ranking', 500);
   }
 }
@@ -46,13 +45,12 @@ export async function PATCH(
       where: { id: rankingId },
       data: body,
       include: {
-        teamMember: true,
+        athlete: true,
       },
     });
 
     return successResponse(ranking);
   } catch (error) {
-    console.error('Ranking PATCH error:', error);
     return errorResponse('Failed to update ranking', 500);
   }
 }
@@ -75,7 +73,6 @@ export async function DELETE(
 
     return successResponse({ deleted: true });
   } catch (error) {
-    console.error('Ranking DELETE error:', error);
     return errorResponse('Failed to delete ranking', 500);
   }
 }

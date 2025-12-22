@@ -1,18 +1,16 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CoachRegistrationForm } from "@/components/registration/CoachRegistrationForm";
+import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
-import { Newspaper, Image, Users, Trophy, Handshake, FileText, Images, UserCog } from "lucide-react";
+import { Newspaper, Users, Trophy, Handshake, FileText, Images, UserCog } from "lucide-react";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 
 async function getStats() {
-  const [news, slides, team, staff, partners, documents, gallery, rankings] = await Promise.all([
+  const [news, team, staff, partners, documents, gallery, rankings] = await Promise.all([
     prisma.news.count(),
-    prisma.slide.count(),
-    prisma.teamMember.count(),
+    prisma.nationalTeamMembership.count({ where: { isActive: true } }),
     prisma.staff.count(),
     prisma.partner.count(),
     prisma.document.count(),
@@ -20,12 +18,11 @@ async function getStats() {
     prisma.rankingEntry.count(),
   ]);
 
-  return { news, slides, team, staff, partners, documents, gallery, rankings };
+  return { news, team, staff, partners, documents, gallery, rankings };
 }
 
 const statCards = [
   { key: "news", icon: Newspaper, href: "/admin/news", color: "text-blue-500" },
-  { key: "slides", icon: Image, href: "/admin/slides", color: "text-purple-500" },
   { key: "team", icon: Users, href: "/admin/team", color: "text-green-500" },
   { key: "staff", icon: UserCog, href: "/admin/staff", color: "text-orange-500" },
   { key: "rankings", icon: Trophy, href: "/admin/rankings", color: "text-yellow-500" },
@@ -36,7 +33,6 @@ const statCards = [
 
 const labels: Record<string, Record<string, string>> = {
   news: { ru: "Новости", kk: "Жаңалықтар", en: "News" },
-  slides: { ru: "Слайды", kk: "Слайдтар", en: "Slides" },
   team: { ru: "Команда", kk: "Команда", en: "Team" },
   staff: { ru: "Персонал", kk: "Қызметкерлер", en: "Staff" },
   rankings: { ru: "Рейтинг", kk: "Рейтинг", en: "Rankings" },
@@ -61,8 +57,6 @@ export default async function AdminDashboardPage() {
   const regionLabel = locale === "kk" ? "Аймақ" : locale === "en" ? "Region" : "Регион";
   const roleLabel = locale === "kk" ? "Рөл" : locale === "en" ? "Role" : "Роль";
   const contentSectionTitle = locale === "kk" ? "Контент статистикасы" : locale === "en" ? "Content Statistics" : "Статистика контента";
-  const registrationTitle = locale === "kk" ? "Турнирге өтініш беру" : locale === "en" ? "Tournament Registration" : "Подача заявки на турнир";
-  const tournamentName = locale === "kk" ? "Қазақстан Республикасының Чемпионаты 2025" : locale === "en" ? "Championship of Kazakhstan 2025" : "Чемпионат Республики Казахстан 2025";
 
   return (
     <div className="space-y-8">
@@ -104,17 +98,6 @@ export default async function AdminDashboardPage() {
           </div>
         </section>
       )}
-
-      {/* Tournament Registration */}
-      <section>
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">{registrationTitle}</h2>
-          <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-secondary/30 px-3 py-1 rounded-full">
-            <span className="font-medium">{tournamentName}</span>
-          </div>
-        </div>
-        <CoachRegistrationForm />
-      </section>
     </div>
   );
 }

@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
 
     return successResponse(items, { total, page, limit });
   } catch (error) {
-    console.error('Gallery GET error:', error);
     return errorResponse('Failed to fetch gallery items', 500);
   }
 }
@@ -75,7 +74,6 @@ export async function POST(request: NextRequest) {
 
     return successResponse(item);
   } catch (error) {
-    console.error('Gallery POST error:', error);
     return errorResponse('Failed to create gallery item', 500);
   }
 }

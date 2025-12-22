@@ -21,7 +21,6 @@ export async function GET(
 
     return successResponse(staff);
   } catch (error) {
-    console.error('Staff GET by ID error:', error);
     return errorResponse('Failed to fetch staff member', 500);
   }
 }
@@ -46,7 +45,6 @@ export async function PATCH(
 
     return successResponse(staff);
   } catch (error) {
-    console.error('Staff PATCH error:', error);
     return errorResponse('Failed to update staff member', 500);
   }
 }
@@ -69,7 +67,6 @@ export async function DELETE(
 
     return successResponse({ deleted: true });
   } catch (error) {
-    console.error('Staff DELETE error:', error);
     return errorResponse('Failed to delete staff member', 500);
   }
 }

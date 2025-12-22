@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
 
     return successResponse(documents);
   } catch (error) {
-    console.error('Documents GET error:', error);
     return errorResponse('Failed to fetch documents', 500);
   }
 }
@@ -61,7 +60,6 @@ export async function POST(request: NextRequest) {
 
     return successResponse(document);
   } catch (error) {
-    console.error('Documents POST error:', error);
     return errorResponse('Failed to create document', 500);
   }
 }

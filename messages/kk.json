@@ -8,10 +8,13 @@
         "news": "Жаңалықтар",
         "media_gallery": "Медиа",
         "login": "Кіру",
+        "logout": "Шығу",
+        "admin": "Әкімшілік",
         "leadership": "Басшылық",
         "regions": "Аймақтар",
         "history": "Тарих",
-        "documents": "Құжаттар"
+        "documents": "Құжаттар",
+        "apply": "Өтінім беру"
     },
     "Hero": {
         "title": "Қазақстан Республикасының Ұлттық садақ ату федерациясы",
@@ -24,7 +27,24 @@
         "event_title_highlight": "Қазақстан 2025",
         "event_desc": "Садақ ату әлеміндегі жылдың басты оқиғасы. Елдің үздік спортшылары Алматыда жиналады.",
         "event_date": "15–20 Ақпан",
-        "event_location": "Алматы, Трамплиндер"
+        "event_location": "Алматы, Трамплиндер",
+        "official_federation": "Федерацияның ресми сайты",
+        "federation_short": "ҚАЗАҚСТАН",
+        "archery": "САДАҚ АТУ",
+        "federation_name": "Ұлттық Садақ Ату Федерациясы",
+        "federation_desc": "Қазақстанда садақ ату дәстүрлерін дамытамыз. Әлемдік деңгейдегі чемпиондарды тәрбиелейміз.",
+        "athletes": "Спортшылар",
+        "regions": "Аймақтар",
+        "medals": "Медальдар",
+        "view_calendar": "Жарыстар күнтізбесі",
+        "about_federation": "Федерация туралы",
+        "federation_stats": "Федерация сандарда",
+        "upcoming_event": "Жақын арадағы оқиға",
+        "quick_links": "Жылдам сілтемелер",
+        "national_team": "Ұлттық құрама",
+        "rankings": "Рейтингтер",
+        "documents": "Құжаттар",
+        "no_events": "Алдағы оқиғалар жоқ"
     },
     "Footer": {
         "about": "Федерация туралы",
@@ -37,6 +57,9 @@
         "ratings": "Рейтингтер",
         "antidoping": "Антидопинг",
         "contacts": "Байланыс",
+        "address": "Астана қ., Қазақстан",
+        "phone": "+7 (7172) 123-45-67",
+        "email": "info@archery.kz",
         "socials": "Біз әлеуметтік желілердеміз",
         "rights": "National Archery Federation. All rights reserved."
     },
@@ -52,7 +75,8 @@
         "stat_coaches": "Бапкерлер мен төрешілер",
         "stat_years": "Тарих жылы",
         "recognition_title": "Халықаралық тану",
-        "recognition_desc": "Федерация <bold>World Archery</bold> және <bold>Asian Archery Federation</bold> толыққанды мүшесі болып табылады. Біз әділ ойын, допингке қарсы саясат және спорттық этиканың ең жоғары стандарттарын сақтаймыз, Қазақстанның мүддесін әлемдік аренада қорғаймыз."
+        "recognition_desc": "Федерация <bold>World Archery</bold> және <bold>Asian Archery Federation</bold> толыққанды мүшесі болып табылады. Біз әділ ойын, допингке қарсы саясат және спорттық этиканың ең жоғары стандарттарын сақтаймыз, Қазақстанның мүддесін әлемдік аренада қорғаймыз.",
+        "sec_statute": "Құжаттар"
     },
     "LeadershipPage": {
         "title": "Федерация Басшылығы",
@@ -97,7 +121,9 @@
         "director_almaty": "Иванова Елена",
         "city_shymkent": "Шымкент қ.",
         "address_shymkent": "Мәделі Қожа көш., 1, Қажымұқан атындағы стадион",
-        "director_shymkent": "Сапаров Болат"
+        "director_shymkent": "Сапаров Болат",
+        "email": "Электрондық пошта",
+        "no_branches": "Деректер жоқ"
     },
     "HistoryPage": {
         "title": "Біздің Тарих",
@@ -134,7 +160,8 @@
         "file_intl_calendar": "Халықаралық жарыстар күнтізбесі",
         "file_rating_men": "Спортшылардың ағымдағы рейтингі (Ерлер)",
         "file_rating_women": "Спортшылардың ағымдағы рейтингі (Әйелдер)",
-        "file_protocols_2024": "ҚРЧ 2024 қорытынды хаттамалары"
+        "file_protocols_2024": "ҚРЧ 2024 қорытынды хаттамалары",
+        "no_documents": "Құжаттар табылмады"
     },
     "Regions": {
         "astana": "Астана қ.",
@@ -195,7 +222,27 @@
         "city_astana": "Астана",
         "city_bangkok": "Бангкок",
         "city_almaty": "Алматы",
-        "city_almaty_region": "Алматы обл."
+        "city_almaty_region": "Алматы обл.",
+        "no_tournaments": "Турнирлер табылмады"
+    },
+    "TournamentPage": {
+        "back_to_calendar": "Күнтізбе",
+        "registration": "Тіркелу",
+        "categories_title": "Санаттар мен нәтижелер",
+        "results_not_published": "Нәтижелер әлі жарияланбаған",
+        "protocols": "Хаттамалар",
+        "regulation": "Ереже",
+        "place": "Орын",
+        "athlete": "Спортшы",
+        "region": "Аймақ",
+        "points": "Ұпай",
+        "score": "Есеп",
+        "categories_count": "санат",
+        "status_finished": "Аяқталды",
+        "status_ongoing": "Өтуде",
+        "status_planned": "Жоспарланған",
+        "not_found": "Турнир табылмады",
+        "no_categories": "Турнир санаттары әлі қосылмаған"
     },
     "CalendarWidget": {
         "title": "Күнтізбе",
@@ -220,6 +267,7 @@
         "title": "Медиа-орталық",
         "all_albums": "Барлық альбомдар",
         "video_review": "Бейнешолу",
+        "photo_album": "Фотоальбом",
         "world_cup_2024": "Әлем Кубогының Финалы 2024",
         "youtube_channel": "Біздің YouTube арна",
         "youtube_desc": "Тікелей эфирлер мен сұхбаттарды көріңіз",
@@ -232,7 +280,6 @@
         "filter_gender": "Жынысы",
         "filter_discipline": "Санат",
         "filter_region": "Аймақ",
-        "filter_period": "Кезең",
         "age_adults": "Ересектер",
         "age_youth": "Жастар",
         "age_juniors": "Юниорлар",
@@ -243,8 +290,6 @@
         "disc_recurve": "Классикалық садақ",
         "disc_compound": "Блоктық садақ",
         "all_regions": "Барлық аймақтар",
-        "period_current": "Маусым 2025 (Ағымдағы)",
-        "period_archive_2024": "Мұрағат 2024",
         "search_placeholder": "Спортшыны іздеу...",
         "shown_label": "Көрсетілді",
         "th_rank": "Ранг",
@@ -252,6 +297,8 @@
         "th_region": "Аймақ",
         "th_points": "Ұпай",
         "no_data": "Таңдалған сүзгілер бойынша деректер жоқ",
+        "classification_International": "Халықаралық",
+        "classification_National": "Ұлттық",
         "trend_tooltip": "Динамика",
         "rank_label": "Ранг",
         "athlete_fallback": "Спортшы",
@@ -282,5 +329,33 @@
         "th_sum": "Қосынды",
         "btn_download": "Нәтижелерді жүктеу",
         "qual_details": "70 метр, 72 оқ"
+    },
+    "NewsPage": {
+        "title": "Федерация жаңалықтары",
+        "subtitle": "Қазақстан садақ ату әлемінен соңғы жаңалықтар мен оқиғалар",
+        "all_categories": "Барлық санаттар",
+        "no_news": "Әзірше жаңалықтар жоқ",
+        "read_more": "Толығырақ оқу",
+        "back_to_news": "Жаңалықтарға оралу",
+        "published": "Жарияланды",
+        "load_more": "Тағы жүктеу",
+        "share": "Бөлісу"
+    },
+    "GalleryPage": {
+        "title": "Медиа Галерея",
+        "subtitle": "Федерация турнирлері мен іс-шараларынан фото және видео",
+        "filter_all": "Барлығы",
+        "filter_photo": "Фото",
+        "filter_video": "Видео",
+        "no_items": "Материалдар жоқ",
+        "load_more": "Тағы жүктеу",
+        "close": "Жабу"
+    },
+    "OfficialBadges": {
+        "title": "Ресми аффилиациялар",
+        "world_archery": "Дүниежүзілік садақ ату федерациясы",
+        "asian_archery": "Азия садақ ату федерациясы",
+        "ministry": "ҚР Туризм және спорт министрлігі",
+        "noc": "Ұлттық Олимпиадалық комитет"
     }
 }

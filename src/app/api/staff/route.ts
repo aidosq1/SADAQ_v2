@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
 
     return successResponse(staff);
   } catch (error) {
-    console.error('Staff GET error:', error);
     return errorResponse('Failed to fetch staff', 500);
   }
 }
@@ -67,7 +66,6 @@ export async function POST(request: NextRequest) {
 
     return successResponse(staff);
   } catch (error) {
-    console.error('Staff POST error:', error);
     return errorResponse('Failed to create staff member', 500);
   }
 }

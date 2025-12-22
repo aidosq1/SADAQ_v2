@@ -21,7 +21,6 @@ export async function GET(
 
     return successResponse(document);
   } catch (error) {
-    console.error('Document GET by ID error:', error);
     return errorResponse('Failed to fetch document', 500);
   }
 }
@@ -46,7 +45,6 @@ export async function PATCH(
 
     return successResponse(document);
   } catch (error) {
-    console.error('Document PATCH error:', error);
     return errorResponse('Failed to update document', 500);
   }
 }
@@ -69,7 +67,6 @@ export async function DELETE(
 
     return successResponse({ deleted: true });
   } catch (error) {
-    console.error('Document DELETE error:', error);
     return errorResponse('Failed to delete document', 500);
   }
 }

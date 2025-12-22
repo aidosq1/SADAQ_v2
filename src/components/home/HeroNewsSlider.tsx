@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 
@@ -16,6 +16,7 @@ interface Slide {
   descriptionEn?: string | null;
   image: string;
   imageClass?: string | null;
+  linkUrl?: string | null;
 }
 
 function getLocalizedField(item: Slide, field: 'title' | 'description', locale: string): string {
@@ -43,8 +44,8 @@ export function HeroNewsSlider() {
         if (data.success && data.data?.length > 0) {
           setSlides(data.data);
         }
-      } catch (error) {
-        console.error('Failed to fetch slides:', error);
+      } catch {
+        // silently fail
       } finally {
         setLoading(false);
       }
@@ -57,33 +58,49 @@ export function HeroNewsSlider() {
     setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   }, [slides.length]);
 
+  const prevSlide = useCallback(() => {
+    if (slides.length === 0) return;
+    setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  }, [slides.length]);
+
   const goToSlide = (index: number) => {
     setCurrent(index);
   };
 
   useEffect(() => {
     if (isPaused || slides.length === 0) return;
-    const interval = setInterval(nextSlide, 5000);
+    const interval = setInterval(nextSlide, 6000);
     return () => clearInterval(interval);
   }, [isPaused, nextSlide, slides.length]);
 
-  const readMoreText = locale === 'kk' ? 'Толық оқу' : locale === 'en' ? 'Read more' : 'Читать полностью';
+  const readMoreText = locale === 'kk' ? 'Толық оқу' : locale === 'en' ? 'Read more' : 'Подробнее';
 
   if (loading) {
     return (
-      <div className="relative w-full h-full overflow-hidden bg-black text-white flex items-center justify-center rounded-none md:rounded-l-none">
-        <div className="animate-pulse text-white/50">Loading...</div>
+      <div className="relative w-full h-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+        <div className="text-[hsl(var(--muted-foreground))]">...</div>
       </div>
     );
   }
 
   if (slides.length === 0) {
-    return null;
+    return (
+      <div className="relative w-full h-full bg-[hsl(var(--official-navy))] flex items-center justify-center text-white">
+        <div className="text-center px-8">
+          <h2 className="text-2xl font-heading font-bold mb-2">
+            {locale === 'kk' ? 'Қазақстан Садақ Ату Федерациясы' : locale === 'en' ? 'Kazakhstan Archery Federation' : 'Федерация Стрельбы из Лука Казахстана'}
+          </h2>
+          <p className="text-white/70">
+            {locale === 'kk' ? 'Ресми веб-сайт' : locale === 'en' ? 'Official Website' : 'Официальный сайт'}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div
-      className="relative w-full h-full overflow-hidden bg-black text-white group rounded-none md:rounded-l-none"
+      className="relative w-full h-full overflow-hidden group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -91,10 +108,9 @@ export function HeroNewsSlider() {
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-opacity ease-in-out ${index === current
-            ? "opacity-100 z-10 duration-700 delay-[250ms]"
-            : "opacity-0 z-0 duration-[250ms]"
-            }`}
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            index === current ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
         >
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -105,48 +121,77 @@ export function HeroNewsSlider() {
               className={slide.imageClass || "object-cover"}
               priority={index === 0}
             />
-            {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
           </div>
 
           {/* Content */}
           <div className="absolute inset-0 flex items-end p-6 md:p-8">
-            <div className="w-full">
-              <div className={`transform transition-all duration-700 delay-500 ${index === current ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                }`}>
-                <h2 className="font-heading text-xl md:text-2xl font-bold mb-3 leading-tight drop-shadow-lg line-clamp-3">
-                  {getLocalizedField(slide, 'title', locale)}
-                </h2>
-                <p className="font-sans text-sm text-white/90 mb-4 font-light leading-relaxed line-clamp-3">
+            <div className="w-full max-w-xl">
+              {/* Category Badge */}
+              <span className="official-badge mb-3 inline-block">
+                {locale === 'kk' ? 'Жаңалықтар' : locale === 'en' ? 'News' : 'Новости'}
+              </span>
+
+              <h2 className="font-heading text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 leading-tight line-clamp-2">
+                {getLocalizedField(slide, 'title', locale)}
+              </h2>
+
+              {getLocalizedField(slide, 'description', locale) && (
+                <p className="text-sm md:text-base text-white/80 mb-4 line-clamp-2">
                   {getLocalizedField(slide, 'description', locale)}
                 </p>
-                <Link
-                  href="/media"
-                  className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-xs font-medium uppercase tracking-wider group/link"
-                >
-                  {readMoreText}
-                  <ArrowRight className="w-3 h-3 transition-transform group-hover/link:translate-x-1" />
-                </Link>
-              </div>
+              )}
+
+              <Link
+                href={slide.linkUrl || "/media/news"}
+                className="inline-flex items-center gap-2 text-[hsl(var(--official-gold))] hover:text-white transition-colors text-sm font-medium"
+              >
+                {readMoreText}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
       ))}
 
-      {/* Dots Indicator */}
-      <div className="absolute top-4 right-4 z-20 flex justify-end gap-1.5">
-        {slides.map((_, index) => (
+      {/* Navigation Arrows */}
+      {slides.length > 1 && (
+        <>
           <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`transition-all duration-300 rounded-full ${index === current
-              ? "w-4 h-1 bg-white"
-              : "w-1 h-1 bg-white/40 hover:bg-white/70"
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </>
+      )}
+
+      {/* Dots Indicator */}
+      {slides.length > 1 && (
+        <div className="absolute bottom-4 right-4 z-20 flex gap-1.5">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`transition-all duration-300 rounded-full ${
+                index === current
+                  ? "w-6 h-2 bg-[hsl(var(--official-gold))]"
+                  : "w-2 h-2 bg-white/40 hover:bg-white/70"
               }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

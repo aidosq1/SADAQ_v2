@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Oswald, Ubuntu } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
@@ -9,15 +9,17 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import { Providers } from "@/components/providers";
 
-const playfair = Playfair_Display({
+const oswald = Oswald({
   subsets: ["latin", "cyrillic"],
   variable: "--font-heading",
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-const inter = Inter({
+const ubuntu = Ubuntu({
   subsets: ["latin", "cyrillic"],
   variable: "--font-sans",
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
@@ -44,12 +46,12 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${playfair.variable} min-h-screen bg-background font-sans antialiased`}
+        className={`${ubuntu.variable} ${oswald.variable} min-h-screen bg-background font-sans antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <Header />
-            <div className="flex-1">{children}</div>
+            <main className="flex-1 pt-24">{children}</main>
             <Footer />
           </Providers>
         </NextIntlClientProvider>

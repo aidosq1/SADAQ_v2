@@ -7,152 +7,219 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ==================== EXISTING MODELS ====================
-
-model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  role      String   @default("RegionalRepresentative") // Admin, Editor, RegionalRepresentative
-  createdAt DateTime @default(now())
-
-  registrations Registration[]
-}
-
-model Tournament {
-  id          Int      @id @default(autoincrement())
-  title       String
-  titleKk     String?
-  titleEn     String?
-  startDate   DateTime
-  endDate     DateTime
-  location    String
-  locationKk  String?
-  locationEn  String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-
-  registrations Registration[]
-}
-
-model Registration {
-  id            Int          @id @default(autoincrement())
-  judgeName     String
-  judgeCategory String?
-  judgeRegion   String?
-  regionName    String
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  userId       Int
-  user         User         @relation(fields: [userId], references: [id])
-
-  tournamentId Int?
-  tournament   Tournament?  @relation(fields: [tournamentId], references: [id])
-
-  athletes     Athlete[]
-}
-
 model Athlete {
-  id             Int          @id @default(autoincrement())
-  fullName       String
-  iin            String?
-  dob            String
-  gender         String
-  category       String
-  weaponClass    String
-  coachName      String?
+  id                       Int                      @id @default(autoincrement())
+  slug                     String                   @unique
+  name                     String
+  nameKk                   String?
+  nameEn                   String?
+  iin                      String?
+  birthYear                Int?
+  dob                      String?
+  gender                   String
+  region                   String?
+  regionId                 Int?
+  regionRef                Region?                  @relation(fields: [regionId], references: [id])
+  image                    String?
+  bio                      String?
+  bioKk                    String?
+  bioEn                    String?
+  isActive                 Boolean                  @default(true)
+  sortOrder                Int                      @default(0)
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @default(now())
+  athleteRegistrations     AthleteRegistration[]
+  nationalTeamMemberships  NationalTeamMembership[]
+  rankings                 RankingEntry[]
+  coaches                  AthleteCoach[]
+  tournamentResults        TournamentResult[]
 
-  registrationId Int
-  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
-
-  createdAt      DateTime     @default(now())
+  @@index([isActive])
+  @@index([regionId])
+  @@index([gender])
 }
 
-// ==================== CMS MODELS ====================
+model Coach {
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  nameKk               String?
+  nameEn               String?
+  iin                  String?
+  dob                  String?
+  regionId             Int?
+  region               Region?               @relation(fields: [regionId], references: [id])
+  image                String?
+  bio                  String?
+  bioKk                String?
+  bioEn                String?
+  isActive             Boolean               @default(true)
+  sortOrder            Int                   @default(0)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now())
+  athletes             AthleteCoach[]
+  athleteRegistrations AthleteRegistration[]
 
-model News {
+  @@index([isActive])
+  @@index([regionId])
+}
+
+model Judge {
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  nameKk              String?
+  nameEn              String?
+  iin                 String?
+  dob                 String?
+  category            String               // National, International, Regional
+  categoryKk          String?
+  categoryEn          String?
+  regionId            Int?
+  region              Region?              @relation(fields: [regionId], references: [id])
+  image               String?
+  bio                 String?
+  bioKk               String?
+  bioEn               String?
+  certifications      String?              // судейские лицензии/сертификаты
+  isActive            Boolean              @default(true)
+  sortOrder           Int                  @default(0)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now()) @updatedAt
+  registrationJudges  RegistrationJudge[]
+  registrations  Registration[]
+
+  @@index([isActive])
+  @@index([regionId])
+  @@index([category])
+}
+
+model AthleteCoach {
+  id        Int      @id @default(autoincrement())
+  athleteId Int
+  coachId   Int
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  athlete   Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  coach     Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+
+  @@unique([athleteId, coachId])
+  @@index([athleteId])
+  @@index([coachId])
+}
+
+model AthleteRegistration {
+  id             Int          @id @default(autoincrement())
+  athleteId      Int
+  registrationId Int
+  coachId        Int?
+  createdAt      DateTime     @default(now())
+  athlete        Athlete      @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  coach          Coach?       @relation(fields: [coachId], references: [id])
+
+  @@unique([athleteId, registrationId])
+  @@index([athleteId])
+  @@index([registrationId])
+  @@index([coachId])
+}
+
+model Document {
   id          Int      @id @default(autoincrement())
-  slug        String   @unique
   title       String
   titleKk     String?
   titleEn     String?
-  content     String
-  contentKk   String?
-  contentEn   String?
-  excerpt     String?
-  excerptKk   String?
-  excerptEn   String?
-  category    String
-  image       String?
-  isMain      Boolean  @default(false)
+  section     String
+  fileUrl     String
+  fileType    String?
+  fileSize    Int?
+  sortOrder   Int      @default(0)
   isPublished Boolean  @default(true)
-  publishedAt DateTime @default(now())
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@index([isPublished])
+  @@index([section])
 }
 
-model Slide {
-  id            Int      @id @default(autoincrement())
+model GalleryItem {
+  id            Int       @id @default(autoincrement())
   title         String
   titleKk       String?
   titleEn       String?
   description   String?
   descriptionKk String?
   descriptionEn String?
-  image         String
-  imageClass    String?
-  linkUrl       String?
-  sortOrder     Int      @default(0)
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  type          String
+  url           String
+  thumbnailUrl  String?
+  albumName     String?
+  eventDate     DateTime?
+  sortOrder     Int       @default(0)
+  isPublished   Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  @@index([eventDate])
+  @@index([isPublished])
+  @@index([type])
 }
 
-model TeamMember {
-  id          Int      @id @default(autoincrement())
-  slug        String   @unique
-  name        String
-  nameKk      String?
-  nameEn      String?
-  type        String   // Recurve | Compound
-  gender      String   // M | F
-  category    String   // Adults | Youth | Juniors | Cadets | Cubs
-  region      String
-  coachName   String?
-  coachNameKk String?
-  coachNameEn String?
-  birthYear   Int?
-  image       String?
-  bio         String?
-  bioKk       String?
-  bioEn       String?
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  rankings    RankingEntry[]
-}
-
-model Staff {
+model HistoryEvent {
   id            Int      @id @default(autoincrement())
-  name          String
-  nameKk        String?
-  nameEn        String?
-  role          String
-  roleTitle     String
-  roleTitleKk   String?
-  roleTitleEn   String?
-  description   String?
+  year          String
+  title         String
+  titleKk       String?
+  titleEn       String?
+  description   String
   descriptionKk String?
   descriptionEn String?
-  department    String   // leadership | coaching | committee
-  image         String?
+  iconType      String   @default("calendar")
   sortOrder     Int      @default(0)
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model NationalTeamMembership {
+  id        Int      @id @default(autoincrement())
+  athleteId Int
+  category  String
+  gender    String
+  type      String
+  joinedAt  DateTime @default(now())
+  isActive  Boolean  @default(true)
+  athlete   Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@unique([athleteId, category, gender, type])
+  @@index([athleteId])
+  @@index([category, gender, type])
+}
+
+model News {
+  id           Int      @id @default(autoincrement())
+  slug         String   @unique
+  title        String
+  titleKk      String?
+  titleEn      String?
+  content      String
+  contentKk    String?
+  contentEn    String?
+  excerpt      String?
+  excerptKk    String?
+  excerptEn    String?
+  category     String
+  image        String?
+  showInSlider Boolean  @default(false)
+  sliderOrder  Int      @default(0)
+  publishedAt  DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  @@index([category])
+  @@index([publishedAt])
+  @@index([showInSlider])
 }
 
 model Partner {
@@ -168,55 +235,260 @@ model Partner {
   sortOrder     Int      @default(0)
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime @default(now()) @updatedAt
 }
 
-model Document {
-  id          Int      @id @default(autoincrement())
-  title       String
-  titleKk     String?
-  titleEn     String?
-  section     String   // statute | rules | antidoping | calendar | ratings
-  fileUrl     String
-  fileType    String?
-  fileSize    Int?
-  sortOrder   Int      @default(0)
-  isPublished Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Protocol {
+  id                   Int                 @id @default(autoincrement())
+  title                String
+  titleKk              String?
+  titleEn              String?
+  eventDate            DateTime
+  location             String
+  locationKk           String?
+  locationEn           String?
+  fileUrl              String?
+  year                 Int
+  sortOrder            Int                 @default(0)
+  isPublished          Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @default(now()) @updatedAt
+  tournamentCategoryId Int?
+  tournamentCategory   TournamentCategory? @relation(fields: [tournamentCategoryId], references: [id])
+
+  @@index([isPublished])
+  @@index([tournamentCategoryId])
+  @@index([year])
 }
 
 model RankingEntry {
-  id            Int        @id @default(autoincrement())
-  teamMemberId  Int
-  teamMember    TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  id             Int      @id @default(autoincrement())
+  points         Int
+  rank           Int
+  classification String?
+  athleteId      Int
+  category       String
+  gender         String
+  type           String
+  updatedAt      DateTime @default(now()) @updatedAt
+  athlete        Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
 
-  points        Int
-  rank          Int
-  previousRank  Int?
-  classification String?  // International | National | Candidate | 1st Class
-  season        String
-  recordedAt    DateTime @default(now())
-
-  @@unique([teamMemberId, season])
-  @@index([season, points])
+  @@unique([athleteId, category, gender, type])
+  @@index([athleteId])
+  @@index([category, gender, type, points])
 }
 
-model GalleryItem {
-  id            Int       @id @default(autoincrement())
-  title         String
-  titleKk       String?
-  titleEn       String?
+model Region {
+  id            Int            @id @default(autoincrement())
+  name          String
+  nameKk        String?
+  nameEn        String?
+  director      String
+  directorKk    String?
+  directorEn    String?
+  address       String
+  addressKk     String?
+  addressEn     String?
+  phone         String
+  email         String?
+  sortOrder     Int            @default(0)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  coaches       Coach[]
+  athletes      Athlete[]
+  judges        Judge[]
+  users         User[]
+  registrations Registration[]
+
+  @@index([isActive])
+}
+
+model Registration {
+  id                   Int                   @id @default(autoincrement())
+  registrationNumber   String                @unique
+  judgeId              Int?
+  regionName           String
+  regionId             Int?
+  status               RegistrationStatus    @default(PENDING)
+  rejectionReason      String?
+  approvedAt           DateTime?
+  approvedBy           String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now()) @updatedAt
+  userId               Int
+  tournamentCategoryId Int?
+  athleteRegistrations AthleteRegistration[]
+  registrationJudges   RegistrationJudge[]
+  judge                Judge?                @relation(fields: [judgeId], references: [id])
+  region               Region?               @relation(fields: [regionId], references: [id])
+  tournamentCategory   TournamentCategory?   @relation(fields: [tournamentCategoryId], references: [id])
+  user                 User                  @relation(fields: [userId], references: [id])
+
+  @@unique([tournamentCategoryId, regionId])
+  @@index([tournamentCategoryId])
+  @@index([userId])
+  @@index([status])
+  @@index([judgeId])
+  @@index([regionId])
+}
+
+// Связь судей с заявкой (несколько судей от региона)
+model RegistrationJudge {
+  id             Int          @id @default(autoincrement())
+  registrationId Int
+  judgeId        Int
+  createdAt      DateTime     @default(now())
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  judge          Judge        @relation(fields: [judgeId], references: [id])
+
+  @@unique([registrationId, judgeId])
+  @@index([registrationId])
+  @@index([judgeId])
+}
+
+model SiteContent {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  section   String
+  value     String
+  valueKk   String?
+  valueEn   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([section])
+}
+
+model SiteStat {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  label     String
+  labelKk   String?
+  labelEn   String?
+  iconType  String   @default("default")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Staff {
+  id            Int      @id @default(autoincrement())
+  name          String
+  nameKk        String?
+  nameEn        String?
+  role          String
+  roleTitle     String
+  roleTitleKk   String?
+  roleTitleEn   String?
   description   String?
   descriptionKk String?
   descriptionEn String?
-  type          String    // photo | video
-  url           String
-  thumbnailUrl  String?
-  albumName     String?
-  eventDate     DateTime?
-  sortOrder     Int       @default(0)
-  isPublished   Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  department    String
+  image         String?
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+}
+
+model Tournament {
+  id                   Int                  @id @default(autoincrement())
+  title                String
+  titleKk              String?
+  titleEn              String?
+  startDate            DateTime
+  endDate              DateTime
+  location             String
+  locationKk           String?
+  locationEn           String?
+  regulationUrl        String?
+  createdAt            DateTime             @default(now())
+  description          String?
+  descriptionEn        String?
+  descriptionKk        String?
+  isFeatured           Boolean              @default(false)
+
+  // Simplified registration management
+  isRegistrationOpen   Boolean              @default(true)   // Manual on/off toggle
+  registrationDeadline DateTime?                              // Auto-close after this date
+
+  categories           TournamentCategory[]
+
+  @@index([startDate])
+  @@index([isRegistrationOpen])
+}
+
+model TournamentCategory {
+  id            Int                @id @default(autoincrement())
+  tournamentId  Int
+  tournament    Tournament         @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  category      String             // "adults", "juniors", "cadets"
+  gender        String             // "male", "female", "mixed"
+  type          String             // "recurve", "compound", "barebow"
+  protocols     Protocol[]
+  registrations Registration[]
+  results       TournamentResult[]
+
+  @@unique([tournamentId, category, gender, type])
+  @@index([tournamentId])
+}
+
+model TournamentResult {
+  id                   Int                @id @default(autoincrement())
+  tournamentCategoryId Int
+  tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id], onDelete: Cascade)
+  athleteId            Int
+  athlete              Athlete            @relation(fields: [athleteId], references: [id])
+  place                Int
+  points               Int
+  score                Int?
+  createdAt            DateTime           @default(now())
+
+  @@unique([tournamentCategoryId, athleteId])
+  @@index([athleteId])
+  @@index([tournamentCategoryId])
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  username      String         @unique
+  password      String
+  role          String         @default("RegionalRepresentative")
+  region        String?
+  regionId      Int?
+  regionRef     Region?        @relation(fields: [regionId], references: [id])
+  email         String?
+  createdAt     DateTime       @default(now())
+  registrations Registration[]
+
+  @@index([regionId])
+}
+
+// Enums for registration status
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+model Translation {
+  id        Int      @id @default(autoincrement())
+  namespace String
+  key       String
+  ru        String   @db.Text
+  kk        String?  @db.Text
+  en        String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([namespace, key])
+  @@index([namespace])
 }

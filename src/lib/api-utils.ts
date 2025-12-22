@@ -26,6 +26,38 @@ export async function requireAuth(allowedRoles?: string[]) {
   return { authorized: true, session };
 }
 
+// Enhanced auth check with region support for RegionalRepresentative role
+export async function requireAuthWithRegion(allowedRoles?: string[]) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return { authorized: false as const, error: errorResponse('Unauthorized', 401) };
+  }
+
+  const user = session.user as {
+    id?: string;
+    role?: string;
+    regionId?: number | null;
+    region?: string | null;
+  };
+
+  if (allowedRoles && user.role && !allowedRoles.includes(user.role)) {
+    return { authorized: false as const, error: errorResponse('Forbidden', 403) };
+  }
+
+  const isAdmin = user.role === 'Admin' || user.role === 'Editor';
+
+  return {
+    authorized: true as const,
+    session,
+    isAdmin,
+    userId: user.id ? parseInt(user.id) : null,
+    userRole: user.role,
+    userRegionId: isAdmin ? null : (user.regionId || null), // null for admins means no filtering
+    userRegion: user.region,
+  };
+}
+
 export function generateSlug(title: string): string {
   // Transliterate Cyrillic to Latin
   const cyrillicToLatin: Record<string, string> = {

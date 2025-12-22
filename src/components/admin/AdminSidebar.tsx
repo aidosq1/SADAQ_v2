@@ -1,50 +1,86 @@
 "use client";
 
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Newspaper,
-  Image,
   Users,
+  UserCog,
   Trophy,
   Handshake,
   FileText,
   Images,
-  UserCog,
   LogOut,
+  CalendarDays,
+  FileEdit,
+  ClipboardCheck,
+  Medal,
+  Scale,
+  MapPin,
+  LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
-const menuItems = [
-  { href: "/admin/dashboard", icon: LayoutDashboard, labelKey: "dashboard" },
-  { href: "/admin/news", icon: Newspaper, labelKey: "news" },
-  { href: "/admin/slides", icon: Image, labelKey: "slides" },
-  { href: "/admin/team", icon: Users, labelKey: "team" },
-  { href: "/admin/staff", icon: UserCog, labelKey: "staff" },
-  { href: "/admin/rankings", icon: Trophy, labelKey: "rankings" },
-  { href: "/admin/partners", icon: Handshake, labelKey: "partners" },
-  { href: "/admin/documents", icon: FileText, labelKey: "documents" },
-  { href: "/admin/gallery", icon: Images, labelKey: "gallery" },
+type UserRole = "Admin" | "Editor" | "RegionalRepresentative";
+
+interface MenuItem {
+  href: string;
+  icon: LucideIcon;
+  labelKey: string;
+  allowedRoles: UserRole[];
+}
+
+const menuItems: MenuItem[] = [
+  { href: "/admin/dashboard", icon: LayoutDashboard, labelKey: "dashboard", allowedRoles: ["Admin", "Editor", "RegionalRepresentative"] },
+  { href: "/admin/tournaments", icon: CalendarDays, labelKey: "tournaments", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/registrations", icon: ClipboardCheck, labelKey: "registrations", allowedRoles: ["Admin", "Editor", "RegionalRepresentative"] },
+  { href: "/admin/results", icon: Medal, labelKey: "results", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/news", icon: Newspaper, labelKey: "news", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/team", icon: Users, labelKey: "team", allowedRoles: ["Admin", "Editor", "RegionalRepresentative"] },
+  { href: "/admin/coaches", icon: UserCog, labelKey: "coaches", allowedRoles: ["Admin", "Editor", "RegionalRepresentative"] },
+  { href: "/admin/judges", icon: Scale, labelKey: "judges", allowedRoles: ["Admin", "Editor", "RegionalRepresentative"] },
+  { href: "/admin/rankings", icon: Trophy, labelKey: "rankings", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/partners", icon: Handshake, labelKey: "partners", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/documents", icon: FileText, labelKey: "documents", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/gallery", icon: Images, labelKey: "gallery", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/content", icon: FileEdit, labelKey: "content", allowedRoles: ["Admin", "Editor"] },
+  { href: "/admin/regions", icon: MapPin, labelKey: "regions", allowedRoles: ["Admin"] },
 ];
 
 const labels: Record<string, Record<string, string>> = {
   dashboard: { ru: "Главная", kk: "Басты бет", en: "Dashboard" },
+  tournaments: { ru: "Турниры", kk: "Турнирлер", en: "Tournaments" },
+  registrations: { ru: "Заявки", kk: "Өтінімдер", en: "Registrations" },
+  results: { ru: "Результаты", kk: "Нәтижелер", en: "Results" },
   news: { ru: "Новости", kk: "Жаңалықтар", en: "News" },
-  slides: { ru: "Слайдер", kk: "Слайдер", en: "Slides" },
   team: { ru: "Команда", kk: "Команда", en: "Team" },
-  staff: { ru: "Персонал", kk: "Қызметкерлер", en: "Staff" },
+  coaches: { ru: "Тренеры", kk: "Жаттықтырушылар", en: "Coaches" },
+  judges: { ru: "Судьи", kk: "Төрешілер", en: "Judges" },
   rankings: { ru: "Рейтинг", kk: "Рейтинг", en: "Rankings" },
   partners: { ru: "Партнёры", kk: "Серіктестер", en: "Partners" },
   documents: { ru: "Документы", kk: "Құжаттар", en: "Documents" },
   gallery: { ru: "Галерея", kk: "Галерея", en: "Gallery" },
+  content: { ru: "Контент", kk: "Контент", en: "Content" },
+  regions: { ru: "Регионы", kk: "Аймақтар", en: "Regions" },
 };
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  userRole?: string;
+  userRegion?: string | null;
+}
+
+export function AdminSidebar({ userRole = "RegionalRepresentative", userRegion }: AdminSidebarProps) {
   const pathname = usePathname();
   const locale = useLocale();
+
+  // Filter menu items based on user role
+  const visibleMenuItems = menuItems.filter((item) =>
+    item.allowedRoles.includes(userRole as UserRole)
+  );
 
   return (
     <aside className="w-64 bg-card border-r min-h-screen p-4 flex flex-col">
@@ -58,10 +94,13 @@ export function AdminSidebar() {
             <p className="text-xs text-muted-foreground">Admin Panel</p>
           </div>
         </Link>
+        {userRegion && (
+          <p className="text-xs text-muted-foreground mt-2 px-1">{userRegion}</p>
+        )}
       </div>
 
       <nav className="flex-1 space-y-1">
-        {menuItems.map((item) => {
+        {visibleMenuItems.map((item) => {
           const isActive = pathname.includes(item.href);
           return (
             <Link
@@ -82,11 +121,13 @@ export function AdminSidebar() {
       </nav>
 
       <div className="pt-4 border-t">
-        <Button variant="ghost" className="w-full justify-start gap-3" asChild>
-          <Link href="/api/auth/signout">
-            <LogOut className="h-5 w-5" />
-            {locale === "kk" ? "Шығу" : locale === "en" ? "Sign Out" : "Выйти"}
-          </Link>
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3"
+          onClick={() => signOut({ callbackUrl: "/" })}
+        >
+          <LogOut className="h-5 w-5" />
+          {locale === "kk" ? "Шығу" : locale === "en" ? "Sign Out" : "Выйти"}
         </Button>
       </div>
     </aside>

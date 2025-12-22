@@ -6,26 +6,22 @@ import { successResponse, errorResponse, requireAuth, parseQueryParams } from '@
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const season = searchParams.get('season') || new Date().getFullYear().toString();
-    const type = searchParams.get('type'); // Recurve | Compound
-    const gender = searchParams.get('gender'); // M | F
-    const category = searchParams.get('category'); // Adults, Youth, etc.
+    const type = searchParams.get('type') || 'Recurve'; // Recurve | Compound
+    const gender = searchParams.get('gender') || 'M'; // M | F
+    const category = searchParams.get('category') || 'Adults'; // Adults, Youth, etc.
     const { limit, page, skip } = parseQueryParams(searchParams);
 
-    // Build team member filter
-    const teamMemberFilter = {
-      isActive: true,
-      ...(type && { type }),
-      ...(gender && { gender }),
-      ...(category && { category }),
+    // Filter by category/gender/type
+    const where = {
+      type,
+      gender,
+      category,
+      athlete: { isActive: true },
     };
 
     const [rankings, total] = await Promise.all([
       prisma.rankingEntry.findMany({
-        where: {
-          season,
-          teamMember: teamMemberFilter,
-        },
+        where,
         orderBy: [
           { rank: 'asc' },
           { points: 'desc' },
@@ -33,20 +29,19 @@ export async function GET(request: NextRequest) {
         take: limit,
         skip,
         include: {
-          teamMember: true,
+          athlete: {
+            include: {
+              regionRef: { select: { name: true, nameKk: true, nameEn: true } }
+            }
+          },
         },
       }),
-      prisma.rankingEntry.count({
-        where: {
-          season,
-          teamMember: teamMemberFilter,
-        },
-      }),
+      prisma.rankingEntry.count({ where }),
     ]);
 
-    return successResponse(rankings, { total, page, limit, season });
+    return successResponse(rankings, { total, page, limit, category, gender, type });
   } catch (error) {
-    console.error('Rankings GET error:', error);
+    console.error('Rankings API error:', error);
     return errorResponse('Failed to fetch rankings', 500);
   }
 }
@@ -58,51 +53,56 @@ export async function POST(request: NextRequest) {
     if (!auth.authorized) return auth.error;
 
     const body = await request.json();
-    const { teamMemberId, points, rank, previousRank, classification, season } = body;
+    const { athleteId, points, rank, classification, category, gender, type } = body;
 
-    if (!teamMemberId || points === undefined || rank === undefined || !season) {
-      return errorResponse('Missing required fields: teamMemberId, points, rank, season');
+    if (!athleteId || points === undefined || rank === undefined || !category || !gender || !type) {
+      return errorResponse('Missing required fields: athleteId, points, rank, category, gender, type');
     }
 
-    // Check if team member exists
-    const teamMember = await prisma.teamMember.findUnique({
-      where: { id: teamMemberId },
+    // Check if athlete exists
+    const athlete = await prisma.athlete.findUnique({
+      where: { id: athleteId },
     });
 
-    if (!teamMember) {
-      return errorResponse('Team member not found', 404);
+    if (!athlete) {
+      return errorResponse('Athlete not found', 404);
     }
 
-    // Upsert ranking entry
+    // Upsert ranking entry by athleteId + category + gender + type
     const ranking = await prisma.rankingEntry.upsert({
       where: {
-        teamMemberId_season: {
-          teamMemberId,
-          season,
+        athleteId_category_gender_type: {
+          athleteId,
+          category,
+          gender,
+          type,
         },
       },
       update: {
         points,
         rank,
-        previousRank,
         classification,
       },
       create: {
-        teamMemberId,
+        athleteId,
         points,
         rank,
-        previousRank,
         classification,
-        season,
+        category,
+        gender,
+        type,
       },
       include: {
-        teamMember: true,
+        athlete: {
+          include: {
+            regionRef: { select: { name: true, nameKk: true, nameEn: true } }
+          }
+        },
       },
     });
 
     return successResponse(ranking);
   } catch (error) {
-    console.error('Rankings POST error:', error);
     return errorResponse('Failed to create ranking', 500);
   }
 }

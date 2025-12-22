@@ -21,7 +21,6 @@ export async function GET(
 
     return successResponse(item);
   } catch (error) {
-    console.error('Gallery item GET by ID error:', error);
     return errorResponse('Failed to fetch gallery item', 500);
   }
 }
@@ -51,7 +50,6 @@ export async function PATCH(
 
     return successResponse(item);
   } catch (error) {
-    console.error('Gallery item PATCH error:', error);
     return errorResponse('Failed to update gallery item', 500);
   }
 }
@@ -74,7 +72,6 @@ export async function DELETE(
 
     return successResponse({ deleted: true });
   } catch (error) {
-    console.error('Gallery item DELETE error:', error);
     return errorResponse('Failed to delete gallery item', 500);
   }
 }

@@ -32,7 +32,6 @@ export async function GET(
 
     return successResponse(news);
   } catch (error) {
-    console.error('News GET by ID error:', error);
     return errorResponse('Failed to fetch news', 500);
   }
 }
@@ -57,7 +56,6 @@ export async function PATCH(
 
     return successResponse(news);
   } catch (error) {
-    console.error('News PATCH error:', error);
     return errorResponse('Failed to update news', 500);
   }
 }
@@ -80,7 +78,6 @@ export async function DELETE(
 
     return successResponse({ deleted: true });
   } catch (error) {
-    console.error('News DELETE error:', error);
     return errorResponse('Failed to delete news', 500);
   }
 }

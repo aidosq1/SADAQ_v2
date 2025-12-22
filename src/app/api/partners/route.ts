@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
 
     return successResponse(partners);
   } catch (error) {
-    console.error('Partners GET error:', error);
     return errorResponse('Failed to fetch partners', 500);
   }
 }
@@ -60,7 +59,6 @@ export async function POST(request: NextRequest) {
 
     return successResponse(partner);
   } catch (error) {
-    console.error('Partners POST error:', error);
     return errorResponse('Failed to create partner', 500);
   }
 }

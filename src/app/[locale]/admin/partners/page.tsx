@@ -67,8 +67,8 @@ export default function AdminPartnersPage() {
       if (data.success) {
         setPartners(data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch partners:", error);
+    } catch {
+      // silently fail
     } finally {
       setLoading(false);
     }
@@ -152,8 +152,8 @@ export default function AdminPartnersPage() {
         body: JSON.stringify({ isActive: !item.isActive }),
       });
       fetchPartners();
-    } catch (error) {
-      console.error("Toggle error:", error);
+    } catch {
+      // silently fail
     }
   }
 

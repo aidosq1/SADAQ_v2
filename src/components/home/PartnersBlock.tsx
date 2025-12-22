@@ -2,28 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Facebook, Globe, Instagram } from "lucide-react";
-import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useLocale } from "next-intl";
 
 interface Partner {
   id: number;
   name: string;
   logo?: string | null;
   websiteUrl?: string | null;
-  instagramUrl?: string | null;
-  facebookUrl?: string | null;
-}
-
-function getHostname(url: string): string {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return url;
-  }
 }
 
 export function PartnersBlock() {
-  const t = useTranslations("PartnersBlock");
+  const locale = useLocale();
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,8 +25,8 @@ export function PartnersBlock() {
         if (data.success && data.data) {
           setPartners(data.data);
         }
-      } catch (error) {
-        console.error('Failed to fetch partners:', error);
+      } catch {
+        // silently fail
       } finally {
         setLoading(false);
       }
@@ -44,13 +34,16 @@ export function PartnersBlock() {
     fetchPartners();
   }, []);
 
+  const sectionTitle = locale === 'kk' ? 'Серіктестер' : locale === 'en' ? 'Partners & Affiliations' : 'Партнёры и аффилиации';
+
   if (loading) {
     return (
-      <section className="bg-background py-16 border-t border-border/50">
+      <section className="py-12 bg-white border-t border-[hsl(var(--border-light))]">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-2xl font-bold tracking-tight mb-8 text-center text-muted-foreground opacity-50">{t("title")}</h2>
-          <div className="flex justify-center">
-            <div className="animate-pulse text-muted-foreground">Loading...</div>
+          <div className="flex justify-center gap-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="w-20 h-20 bg-[hsl(var(--light-gray))] rounded-full animate-pulse" />
+            ))}
           </div>
         </div>
       </section>
@@ -62,51 +55,67 @@ export function PartnersBlock() {
   }
 
   return (
-    <section className="bg-background py-16 border-t border-border/50">
+    <section className="py-12 bg-white border-t border-[hsl(var(--border-light))]">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-2xl font-bold tracking-tight mb-8 text-center text-muted-foreground opacity-50">{t("title")}</h2>
-        <div className="flex flex-wrap justify-center items-center gap-12">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-navy))] gold-accent mx-auto w-fit">
+            {sectionTitle}
+          </h2>
+        </div>
+
+        {/* Partners Grid */}
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
           {partners.map((partner) => (
-            <div key={partner.id} className="flex flex-col items-center p-8 rounded-xl border border-border/50 bg-card/50 hover:bg-card transition-all duration-300 hover:shadow-lg">
-              <div className="text-3xl font-black text-foreground mb-6 tracking-tight">
-                {partner.name}
-              </div>
-
-              <div className="flex flex-col gap-3 w-full">
-                {partner.websiteUrl && (
-                  <Link
-                    href={partner.websiteUrl}
-                    target="_blank"
-                    className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors p-2 rounded-md hover:bg-muted"
-                  >
-                    <Globe className="w-4 h-4" />
-                    <span className="font-medium">{getHostname(partner.websiteUrl)}</span>
-                  </Link>
-                )}
-
-                <div className="flex gap-2 justify-center w-full pt-2 border-t border-border/50">
-                  {partner.instagramUrl && (
-                    <Link
-                      href={partner.instagramUrl}
-                      target="_blank"
-                      className="p-2 text-muted-foreground hover:text-[#E1306C] transition-colors hover:bg-muted rounded-md"
-                      title="Instagram"
-                    >
-                      <Instagram className="w-5 h-5" />
-                    </Link>
+            <div key={partner.id}>
+              {partner.websiteUrl ? (
+                <Link
+                  href={partner.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2"
+                >
+                  {partner.logo ? (
+                    <Image
+                      src={partner.logo}
+                      alt={partner.name}
+                      width={80}
+                      height={80}
+                      className="object-contain w-16 h-16 md:w-20 md:h-20"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                      <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
+                        {partner.name.slice(0, 2)}
+                      </span>
+                    </div>
                   )}
-                  {partner.facebookUrl && (
-                    <Link
-                      href={partner.facebookUrl}
-                      target="_blank"
-                      className="p-2 text-muted-foreground hover:text-[#1877F2] transition-colors hover:bg-muted rounded-md"
-                      title="Facebook"
-                    >
-                      <Facebook className="w-5 h-5" />
-                    </Link>
+                  <span className="text-[10px] text-center text-[hsl(var(--muted-foreground))] max-w-[100px] leading-tight">
+                    {partner.name}
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex flex-col items-center gap-2">
+                  {partner.logo ? (
+                    <Image
+                      src={partner.logo}
+                      alt={partner.name}
+                      width={80}
+                      height={80}
+                      className="object-contain w-16 h-16 md:w-20 md:h-20"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                      <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
+                        {partner.name.slice(0, 2)}
+                      </span>
+                    </div>
                   )}
+                  <span className="text-[10px] text-center text-[hsl(var(--muted-foreground))] max-w-[100px] leading-tight">
+                    {partner.name}
+                  </span>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>

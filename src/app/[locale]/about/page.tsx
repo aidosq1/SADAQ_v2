@@ -1,12 +1,108 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Trophy, MapPin, Globe, Medal, Activity } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, Trophy, MapPin, Globe, Medal, Activity, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+
+interface SiteStat {
+    id: number;
+    key: string;
+    value: string;
+    label: string;
+    labelKk?: string;
+    labelEn?: string;
+    iconType: string;
+    sortOrder: number;
+    isActive: boolean;
+}
+
+interface Partner {
+    id: number;
+    name: string;
+    logo?: string;
+    websiteUrl?: string;
+    isActive: boolean;
+}
+
+interface SiteContent {
+    id: number;
+    key: string;
+    section: string;
+    value: string;
+    valueKk?: string;
+    valueEn?: string;
+}
+
+const iconMap: Record<string, React.ReactNode> = {
+    mapPin: <MapPin className="w-6 h-6" />,
+    users: <Users className="w-6 h-6" />,
+    badge: <BadgeIcon className="w-6 h-6" />,
+    trophy: <Trophy className="w-6 h-6" />,
+    default: <Activity className="w-6 h-6" />,
+};
 
 export default function Page() {
     const t = useTranslations("AboutPage");
-    const tFooter = useTranslations("Footer"); // Reusing for consistent nav items if needed, or stick to AboutPage unique keys
+    const tFooter = useTranslations("Footer");
+    const locale = useLocale();
+
+    const [stats, setStats] = useState<SiteStat[]>([]);
+    const [partners, setPartners] = useState<Partner[]>([]);
+    const [content, setContent] = useState<Record<string, SiteContent>>({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const [statsRes, partnersRes, contentRes] = await Promise.all([
+                    fetch('/api/stats?isActive=true'),
+                    fetch('/api/partners?isActive=true'),
+                    fetch('/api/content?section=about')
+                ]);
+
+                const statsData = await statsRes.json();
+                const partnersData = await partnersRes.json();
+                const contentData = await contentRes.json();
+
+                if (statsData.data) setStats(statsData.data);
+                if (partnersData.data) setPartners(partnersData.data);
+                if (contentData.data) {
+                    const contentMap: Record<string, SiteContent> = {};
+                    contentData.data.forEach((item: SiteContent) => {
+                        contentMap[item.key] = item;
+                    });
+                    setContent(contentMap);
+                }
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, []);
+
+    const getLocalizedLabel = (stat: SiteStat) => {
+        if (locale === 'kk' && stat.labelKk) return stat.labelKk;
+        if (locale === 'en' && stat.labelEn) return stat.labelEn;
+        return stat.label;
+    };
+
+    const getContent = (key: string, fallback: string | React.ReactNode) => {
+        const item = content[key];
+        if (!item) return fallback;
+        if (locale === 'kk' && item.valueKk) return item.valueKk;
+        if (locale === 'en' && item.valueEn) return item.valueEn;
+        return item.value;
+    };
+
+    // Rich text components for translations with HTML-like tags
+    const richTextComponents = {
+        bold: (chunks: React.ReactNode) => <strong className="font-bold">{chunks}</strong>
+    };
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -20,10 +116,9 @@ export default function Page() {
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
-                        {t("hero_title_1")} <br />
-                        <span className="text-white">{t("hero_title_2")}</span>
+                        {getContent("about_hero_title_1", t("hero_title_1"))} <br />
+                        <span className="text-white">{getContent("about_hero_title_2", t("hero_title_2"))}</span>
                     </h1>
-
                 </div>
             </section>
 
@@ -34,7 +129,7 @@ export default function Page() {
                         { title: tFooter("leadership"), icon: <Users className="w-6 h-6" />, href: "/about/leadership" },
                         { title: t("stat_regions"), icon: <MapPin className="w-6 h-6" />, href: "/about/regions" },
                         { title: tFooter("history"), icon: <Trophy className="w-6 h-6" />, href: "/about/history" },
-                        { title: t("sec_statute") || "Documents", icon: <Activity className="w-6 h-6" />, href: "/documents" }, // Fallback if key missing, created separate t("DocumentsPage") but can use Footer or explicit
+                        { title: t("sec_statute") || "Documents", icon: <Activity className="w-6 h-6" />, href: "/documents" },
                     ].map((item, index) => (
                         <Link key={index} href={item.href} className="block group">
                             <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white text-foreground">
@@ -46,8 +141,7 @@ export default function Page() {
                                 </CardContent>
                             </Card>
                         </Link>
-                    ))
-                    }
+                    ))}
                 </div>
             </div>
 
@@ -56,20 +150,18 @@ export default function Page() {
                 <section className="grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
                         <div className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full font-medium text-sm">
-                            {t("mission_badge")}
+                            {getContent("mission_badge", t("mission_badge"))}
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                            {t("mission_title")}
+                            {getContent("mission_title", t("mission_title"))}
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            {t("mission_desc")}
+                            {getContent("mission_desc", t("mission_desc"))}
                         </p>
                     </div>
                     <div className="bg-muted rounded-2xl h-[400px] relative overflow-hidden group">
-                        {/* Placeholder for inspiring sport image */}
                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-secondary/50">
                             <Activity className="w-16 h-16 opacity-20" />
-                            {/* Consider adding <Image /> here later */}
                         </div>
                     </div>
                 </section>
@@ -77,42 +169,58 @@ export default function Page() {
                 {/* Statistics Section */}
                 <section>
                     <h2 className="text-3xl font-bold text-center mb-12">{t("stats_title")}</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {[
-                            { number: "20+", label: t("stat_regions"), icon: <MapPin className="w-6 h-6" /> },
-                            { number: "15 000+", label: t("stat_athletes"), icon: <Users className="w-6 h-6" /> },
-                            { number: "350+", label: t("stat_coaches"), icon: <BadgeIcon className="w-6 h-6" /> },
-                            { number: "50+", label: t("stat_years"), icon: <Trophy className="w-6 h-6" /> },
-                        ].map((stat, index) => (
-                            <Card key={index} className="border-none shadow-lg bg-card text-card-foreground">
-                                <CardContent className="pt-6 text-center space-y-4">
-                                    <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 text-primary mb-2">
-                                        {stat.icon}
-                                    </div>
-                                    <div className="text-4xl font-bold text-primary">{stat.number}</div>
-                                    <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{stat.label}</div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+
+                    {loading ? (
+                        <div className="flex justify-center py-12">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {stats.map((stat) => (
+                                <Card key={stat.id} className="border-none shadow-lg bg-card text-card-foreground">
+                                    <CardContent className="pt-6 text-center space-y-4">
+                                        <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 text-primary mb-2">
+                                            {iconMap[stat.iconType] || iconMap.default}
+                                        </div>
+                                        <div className="text-4xl font-bold text-primary">{stat.value}</div>
+                                        <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                                            {getLocalizedLabel(stat)}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
                 {/* International Recognition */}
                 <section className="bg-secondary/30 rounded-3xl p-8 md:p-12">
                     <div className="text-center max-w-3xl mx-auto space-y-8">
                         <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
-                        <h2 className="text-3xl font-bold">{t("recognition_title")}</h2>
+                        <h2 className="text-3xl font-bold">{getContent("recognition_title", t("recognition_title"))}</h2>
                         <p className="text-lg text-muted-foreground">
-                            {t.rich('recognition_desc', {
-                                bold: (chunks) => <span className="font-semibold text-foreground">{chunks}</span>
-                            })}
+                            {getContent("recognition_desc", t.rich("recognition_desc", richTextComponents))}
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-8 md:gap-16 pt-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-                            {/* Placeholders for Partner Logos */}
-                            <div className="font-bold text-xl flex items-center gap-2"><Globe className="w-6 h-6" /> World Archery</div>
-                            <div className="font-bold text-xl flex items-center gap-2"><Medal className="w-6 h-6" /> Asian Archery</div>
-                            <div className="font-bold text-xl flex items-center gap-2"><Trophy className="w-6 h-6" /> NOC KZ</div>
+                            {partners.length > 0 ? (
+                                partners.map((partner) => (
+                                    <div key={partner.id} className="font-bold text-xl flex items-center gap-2">
+                                        {partner.logo ? (
+                                            <img src={partner.logo} alt={partner.name} className="h-8 w-auto object-contain" />
+                                        ) : (
+                                            <Globe className="w-6 h-6" />
+                                        )}
+                                        {partner.name}
+                                    </div>
+                                ))
+                            ) : (
+                                <>
+                                    <div className="font-bold text-xl flex items-center gap-2"><Globe className="w-6 h-6" /> World Archery</div>
+                                    <div className="font-bold text-xl flex items-center gap-2"><Medal className="w-6 h-6" /> Asian Archery</div>
+                                    <div className="font-bold text-xl flex items-center gap-2"><Trophy className="w-6 h-6" /> NOC KZ</div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -128,4 +236,3 @@ function BadgeIcon({ className }: { className?: string }) {
         </svg>
     )
 }
-

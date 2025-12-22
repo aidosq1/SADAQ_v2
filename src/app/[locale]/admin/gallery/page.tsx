@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslationForm } from "@/hooks/useTranslationForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,15 +21,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Pencil, Trash2, Image, Video, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Image, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 
@@ -57,6 +51,10 @@ const defaultFormData = {
   isPublished: true,
 };
 
+const TRANSLATION_FIELDS = {
+  title: { kk: "titleKk", en: "titleEn" },
+};
+
 export default function AdminGalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +62,10 @@ export default function AdminGalleryPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState(defaultFormData);
+  const { formData, setFormData, handleTranslationBlur } = useTranslationForm(
+    defaultFormData,
+    TRANSLATION_FIELDS
+  );
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -78,8 +79,8 @@ export default function AdminGalleryPage() {
       if (data.success) {
         setItems(data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch gallery:", error);
+    } catch {
+      // silently fail
     } finally {
       setLoading(false);
     }
@@ -168,8 +169,8 @@ export default function AdminGalleryPage() {
         body: JSON.stringify({ isPublished: !item.isPublished }),
       });
       fetchItems();
-    } catch (error) {
-      console.error("Toggle error:", error);
+    } catch {
+      // silently fail
     }
   }
 
@@ -208,24 +209,14 @@ export default function AdminGalleryPage() {
               items.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    {item.type === "photo" ? (
-                      <div
-                        className="w-16 h-12 bg-cover bg-center rounded"
-                        style={{ backgroundImage: `url(${item.thumbnailUrl || item.url})` }}
-                      />
-                    ) : (
-                      <div className="w-16 h-12 bg-muted rounded flex items-center justify-center">
-                        <Video className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                    )}
+                    <div
+                      className="w-16 h-12 bg-cover bg-center rounded"
+                      style={{ backgroundImage: `url(${item.thumbnailUrl || item.url})` }}
+                    />
                   </TableCell>
                   <TableCell className="font-medium">{item.title}</TableCell>
                   <TableCell>
-                    {item.type === "photo" ? (
-                      <span className="flex items-center gap-1"><Image className="h-4 w-4" /> Фото</span>
-                    ) : (
-                      <span className="flex items-center gap-1"><Video className="h-4 w-4" /> Видео</span>
-                    )}
+                    <span className="flex items-center gap-1"><Image className="h-4 w-4" /> Фото</span>
                   </TableCell>
                   <TableCell>{item.albumName || "-"}</TableCell>
                   <TableCell>
@@ -269,7 +260,11 @@ export default function AdminGalleryPage() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label>Название (рус) *</Label>
-              <Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+              <Input
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onBlur={() => handleTranslationBlur("title")}
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -281,19 +276,6 @@ export default function AdminGalleryPage() {
                 <Label>Название (англ)</Label>
                 <Input value={formData.titleEn} onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })} />
               </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Тип</Label>
-              <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="photo">Фото</SelectItem>
-                  <SelectItem value="video">Видео</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <ImageUpload

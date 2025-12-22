@@ -8,10 +8,13 @@
         "news": "News",
         "media_gallery": "Media",
         "login": "Login",
+        "logout": "Sign Out",
+        "admin": "Admin",
         "leadership": "Leadership",
         "regions": "Regions",
         "history": "History",
-        "documents": "Documents"
+        "documents": "Documents",
+        "apply": "Apply"
     },
     "Hero": {
         "title": "National Archery Federation of the Republic of Kazakhstan",
@@ -24,7 +27,24 @@
         "event_title_highlight": "Kazakhstan 2025",
         "event_desc": "The main event of the year in the world of archery. The best athletes of the country will gather in Almaty.",
         "event_date": "February 15–20",
-        "event_location": "Almaty, Ski Jumps"
+        "event_location": "Almaty, Ski Jumps",
+        "official_federation": "Official Federation Website",
+        "federation_short": "KAZAKHSTAN",
+        "archery": "ARCHERY",
+        "federation_name": "National Archery Federation",
+        "federation_desc": "Developing archery traditions in Kazakhstan. Training world-class champions.",
+        "athletes": "Athletes",
+        "regions": "Regions",
+        "medals": "Medals",
+        "view_calendar": "Competition Calendar",
+        "about_federation": "About Federation",
+        "federation_stats": "Federation in Numbers",
+        "upcoming_event": "Upcoming Event",
+        "quick_links": "Quick Links",
+        "national_team": "National Team",
+        "rankings": "Rankings",
+        "documents": "Documents",
+        "no_events": "No upcoming events"
     },
     "Footer": {
         "about": "About Federation",
@@ -37,6 +57,9 @@
         "ratings": "Rankings",
         "antidoping": "Anti-doping",
         "contacts": "Contacts",
+        "address": "Astana, Kazakhstan",
+        "phone": "+7 (7172) 123-45-67",
+        "email": "info@archery.kz",
         "socials": "Social Media",
         "rights": "National Archery Federation. All rights reserved."
     },
@@ -52,7 +75,8 @@
         "stat_coaches": "Coaches and Judges",
         "stat_years": "Years of History",
         "recognition_title": "International Recognition",
-        "recognition_desc": "The Federation is a full member of <bold>World Archery</bold> and <bold>Asian Archery Federation</bold>. We adhere to the highest standards of fair play, anti-doping policy, and sports ethics, representing the interests of Kazakhstan on the world stage."
+        "recognition_desc": "The Federation is a full member of <bold>World Archery</bold> and <bold>Asian Archery Federation</bold>. We adhere to the highest standards of fair play, anti-doping policy, and sports ethics, representing the interests of Kazakhstan on the world stage.",
+        "sec_statute": "Documents"
     },
     "LeadershipPage": {
         "title": "Federation Leadership",
@@ -97,7 +121,9 @@
         "director_almaty": "Elena Ivanova",
         "city_shymkent": "Shymkent city",
         "address_shymkent": "Madeli Kozha St, 1, Kazhimukan Stadium",
-        "director_shymkent": "Bolat Saparov"
+        "director_shymkent": "Bolat Saparov",
+        "email": "Email",
+        "no_branches": "No data"
     },
     "HistoryPage": {
         "title": "Our History",
@@ -134,7 +160,8 @@
         "file_intl_calendar": "International Competitions Calendar",
         "file_rating_men": "Current Athletes Ranking (Men)",
         "file_rating_women": "Current Athletes Ranking (Women)",
-        "file_protocols_2024": "Final Protocols of RKC 2024"
+        "file_protocols_2024": "Final Protocols of RKC 2024",
+        "no_documents": "No documents found"
     },
     "Regions": {
         "astana": "Astana city",
@@ -195,7 +222,27 @@
         "city_astana": "Astana",
         "city_bangkok": "Bangkok",
         "city_almaty": "Almaty",
-        "city_almaty_region": "Almaty Region"
+        "city_almaty_region": "Almaty Region",
+        "no_tournaments": "No tournaments found"
+    },
+    "TournamentPage": {
+        "back_to_calendar": "Calendar",
+        "registration": "Registration",
+        "categories_title": "Categories and Results",
+        "results_not_published": "Results not yet published",
+        "protocols": "Protocols",
+        "regulation": "Regulation",
+        "place": "Place",
+        "athlete": "Athlete",
+        "region": "Region",
+        "points": "Points",
+        "score": "Score",
+        "categories_count": "categories",
+        "status_finished": "Finished",
+        "status_ongoing": "Ongoing",
+        "status_planned": "Planned",
+        "not_found": "Tournament not found",
+        "no_categories": "Tournament categories not added yet"
     },
     "CalendarWidget": {
         "title": "Calendar",
@@ -220,6 +267,7 @@
         "title": "Media Center",
         "all_albums": "All Albums",
         "video_review": "Video Review",
+        "photo_album": "Photo Album",
         "world_cup_2024": "World Cup Final 2024",
         "youtube_channel": "Our YouTube Channel",
         "youtube_desc": "Watch live broadcasts and interviews",
@@ -232,7 +280,6 @@
         "filter_gender": "Gender",
         "filter_discipline": "Discipline",
         "filter_region": "Region",
-        "filter_period": "Period",
         "age_adults": "Adults",
         "age_youth": "Youth",
         "age_juniors": "Juniors",
@@ -243,8 +290,6 @@
         "disc_recurve": "Recurve Bow",
         "disc_compound": "Compound Bow",
         "all_regions": "All regions",
-        "period_current": "Season 2025 (Current)",
-        "period_archive_2024": "Archive 2024",
         "search_placeholder": "Search athlete...",
         "shown_label": "Shown",
         "th_rank": "Rank",
@@ -252,6 +297,8 @@
         "th_region": "Region",
         "th_points": "Points",
         "no_data": "No data matching filters",
+        "classification_International": "International",
+        "classification_National": "National",
         "trend_tooltip": "Trend",
         "rank_label": "Rank",
         "athlete_fallback": "Athlete",
@@ -282,5 +329,33 @@
         "th_sum": "Total",
         "btn_download": "Download Results",
         "qual_details": "70 meters, 72 arrows"
+    },
+    "NewsPage": {
+        "title": "Federation News",
+        "subtitle": "Latest news and events from the world of archery in Kazakhstan",
+        "all_categories": "All categories",
+        "no_news": "No news yet",
+        "read_more": "Read more",
+        "back_to_news": "Back to news",
+        "published": "Published",
+        "load_more": "Load more",
+        "share": "Share"
+    },
+    "GalleryPage": {
+        "title": "Media Gallery",
+        "subtitle": "Photos and videos from Federation tournaments and events",
+        "filter_all": "All",
+        "filter_photo": "Photos",
+        "filter_video": "Videos",
+        "no_items": "No items",
+        "load_more": "Load more",
+        "close": "Close"
+    },
+    "OfficialBadges": {
+        "title": "Official Affiliations",
+        "world_archery": "World Archery Federation",
+        "asian_archery": "Asian Archery Federation",
+        "ministry": "Ministry of Tourism and Sports of RK",
+        "noc": "National Olympic Committee"
     }
 }

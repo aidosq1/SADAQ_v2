@@ -1,67 +1,52 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { successResponse, errorResponse, requireAuth, parseQueryParams } from '@/lib/api-utils';
+import { successResponse, errorResponse, parseQueryParams } from '@/lib/api-utils';
 
 // GET /api/slides - Public
+// Returns news items that have showInSlider=true
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const isActive = searchParams.get('isActive');
     const { limit } = parseQueryParams(searchParams);
 
-    const where = {
-      ...(isActive !== null && { isActive: isActive !== 'false' }),
-    };
-
-    const slides = await prisma.slide.findMany({
-      where,
-      orderBy: { sortOrder: 'asc' },
+    const slides = await prisma.news.findMany({
+      where: {
+        showInSlider: true,
+      },
+      orderBy: { sliderOrder: 'asc' },
       take: limit,
-    });
-
-    return successResponse(slides);
-  } catch (error) {
-    console.error('Slides GET error:', error);
-    return errorResponse('Failed to fetch slides', 500);
-  }
-}
-
-// POST /api/slides - Protected
-export async function POST(request: NextRequest) {
-  try {
-    const auth = await requireAuth(['Admin', 'Editor']);
-    if (!auth.authorized) return auth.error;
-
-    const body = await request.json();
-    const {
-      title, titleKk, titleEn,
-      description, descriptionKk, descriptionEn,
-      image, imageClass, linkUrl, sortOrder, isActive
-    } = body;
-
-    if (!title || !image) {
-      return errorResponse('Missing required fields: title, image');
-    }
-
-    const slide = await prisma.slide.create({
-      data: {
-        title,
-        titleKk,
-        titleEn,
-        description,
-        descriptionKk,
-        descriptionEn,
-        image,
-        imageClass,
-        linkUrl,
-        sortOrder: sortOrder ?? 0,
-        isActive: isActive ?? true,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        titleKk: true,
+        titleEn: true,
+        excerpt: true,
+        excerptKk: true,
+        excerptEn: true,
+        image: true,
+        sliderOrder: true,
+        publishedAt: true,
       },
     });
 
-    return successResponse(slide);
+    // Transform to match expected slide format
+    const transformedSlides = slides.map(news => ({
+      id: news.id,
+      title: news.title,
+      titleKk: news.titleKk,
+      titleEn: news.titleEn,
+      description: news.excerpt,
+      descriptionKk: news.excerptKk,
+      descriptionEn: news.excerptEn,
+      image: news.image,
+      linkUrl: `/media/news/${news.slug}`,
+      sortOrder: news.sliderOrder,
+      isActive: true,
+    }));
+
+    return successResponse(transformedSlides);
   } catch (error) {
-    console.error('Slides POST error:', error);
-    return errorResponse('Failed to create slide', 500);
+    return errorResponse('Failed to fetch slides', 500);
   }
 }

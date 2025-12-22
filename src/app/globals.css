@@ -2,8 +2,6 @@
 
 @plugin "tailwindcss-animate";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -64,77 +62,48 @@
 }
 
 :root {
-  /* Heritage Light Theme - Warm Cream & Terracotta */
-  --background: 60 11% 98%;
-  /* #FAFAF8 - Warm Off-White */
-  --foreground: 22 12% 26%;
-  /* #4A403A - Dark Brown */
+  /* ===== Official SADAQ Color Scheme ===== */
+  --official-navy: 210 60% 15%;       /* #0D2137 - Primary brand */
+  --official-blue: 210 80% 35%;       /* #1156A0 - Links */
+  --official-gold: 45 70% 50%;        /* #D4A217 - Accent */
+  --pure-white: 0 0% 100%;            /* #FFFFFF - Background */
+  --light-gray: 0 0% 96%;             /* #F5F5F5 - Sections */
+  --text-dark: 0 0% 13%;              /* #222222 - Text */
+  --border-light: 0 0% 85%;           /* #DADADA - Borders */
+
+  /* ===== Theme Variables ===== */
+  --background: 0 0% 100%;            /* Pure White */
+  --foreground: 0 0% 13%;             /* Dark Text */
 
   --card: 0 0% 100%;
-  /* White for contrast */
-  --card-foreground: 22 12% 26%;
+  --card-foreground: 0 0% 13%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 22 12% 26%;
+  --popover-foreground: 0 0% 13%;
 
-  --primary: 20 16% 15%;
-  /* #2C2420 - Darker Brown */
-  --primary-foreground: 36 29% 96%;
+  --primary: 210 60% 15%;             /* Navy */
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 36 20% 90%;
-  /* Light Beige */
-  --secondary-foreground: 20 16% 15%;
+  --secondary: 0 0% 96%;              /* Light Gray */
+  --secondary-foreground: 0 0% 13%;
 
-  --muted: 36 20% 92%;
-  --muted-foreground: 25 10% 45%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
 
-  --accent: 0 64% 29%;
-  /* #7B1B1B - Bordeaux */
-  --accent-foreground: 0 0% 100%;
+  --accent: 45 70% 50%;               /* Gold */
+  --accent-foreground: 0 0% 13%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 30 20% 88%;
-  /* #E8E0D5 */
-  --input: 30 20% 88%;
-  --ring: 0 64% 29%;
-  /* Accent color for rings */
+  --border: 0 0% 85%;
+  --input: 0 0% 85%;
+  --ring: 210 60% 15%;
 
   --radius: 0.5rem;
 
   --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
-}
-
-.dark {
-  --background: 20 16% 15%;
-  --foreground: 36 29% 96%;
-
-  --card: 22 12% 20%;
-  --card-foreground: 36 29% 96%;
-
-  --popover: 22 12% 20%;
-  --popover-foreground: 36 29% 96%;
-
-  --primary: 36 29% 96%;
-  --primary-foreground: 20 16% 15%;
-
-  --secondary: 22 12% 26%;
-  --secondary-foreground: 36 29% 96%;
-
-  --muted: 22 12% 26%;
-  --muted-foreground: 25 10% 65%;
-
-  --accent: 12 56% 47%;
-  --accent-foreground: 0 0% 100%;
-
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 22 12% 26%;
-  --input: 22 12% 26%;
-  --ring: 12 56% 47%;
 }
 
 @layer base {
@@ -157,29 +126,68 @@
 }
 
 @layer utilities {
-  .animate-scroll {
-    animation: scroll 20s linear infinite;
+  /* ===== Simple Card Hover ===== */
+  .hover-lift {
+    transition: box-shadow 0.3s ease;
   }
 
-  .pause {
-    animation-play-state: paused;
+  .hover-lift:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   }
 
-  .hover\:pause:hover {
-    animation-play-state: paused;
+  /* ===== Partners Grayscale Hover ===== */
+  .grayscale-hover {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: filter 0.3s ease, opacity 0.3s ease;
   }
 
-  .clip-path-triangle {
-    clip-path: polygon(100% 0, 0 0, 100% 100%);
-  }
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
+  .grayscale-hover:hover {
+    filter: grayscale(0%);
+    opacity: 1;
   }
 
-  100% {
-    transform: translateX(-50%);
+  /* ===== Gold Accent Line ===== */
+  .gold-accent {
+    position: relative;
+  }
+
+  .gold-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: hsl(var(--official-gold));
+  }
+
+  /* ===== Section Background ===== */
+  .section-gray {
+    background: hsl(var(--light-gray));
+  }
+
+  /* ===== Medal Frames for Ranking (simplified) ===== */
+  .frame-gold {
+    border: 2px solid hsl(var(--official-gold));
+  }
+
+  .frame-silver {
+    border: 2px solid #C0C0C0;
+  }
+
+  .frame-bronze {
+    border: 2px solid #CD7F32;
+  }
+
+  /* ===== Official Badge Style ===== */
+  .official-badge {
+    background: hsl(var(--official-navy));
+    color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 }

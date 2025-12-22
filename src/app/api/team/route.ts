@@ -1,83 +1,134 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { successResponse, errorResponse, requireAuth, generateSlug, parseQueryParams } from '@/lib/api-utils';
+import { successResponse, errorResponse, requireAuthWithRegion, generateSlug, parseQueryParams } from '@/lib/api-utils';
 
-// GET /api/team - Public
+// GET /api/team - Public (returns national team members by category/gender/type)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type'); // Recurve | Compound
-    const gender = searchParams.get('gender'); // M | F
-    const category = searchParams.get('category'); // Adults, Youth, etc.
+    const type = searchParams.get('type') || 'Recurve'; // Recurve | Compound
+    const gender = searchParams.get('gender') || 'M'; // M | F
+    const category = searchParams.get('category') || 'Adults'; // Adults, Youth, etc.
     const isActive = searchParams.get('isActive');
+    const allAthletes = searchParams.get('all'); // If 'true', return all athletes (for admin)
     const { limit, page, skip } = parseQueryParams(searchParams);
 
-    const where = {
-      ...(type && { type }),
-      ...(gender && { gender }),
-      ...(category && { category }),
-      ...(isActive !== null && { isActive: isActive !== 'false' }),
-    };
+    // For admin - return all athletes (with region filter for RegionalRepresentative)
+    if (allAthletes === 'true') {
+      const auth = await requireAuthWithRegion(['Admin', 'Editor', 'RegionalRepresentative']);
+      if (!auth.authorized) return auth.error;
 
-    const [members, total] = await Promise.all([
-      prisma.teamMember.findMany({
-        where,
-        orderBy: { sortOrder: 'asc' },
-        take: limit,
-        skip,
-        include: {
-          rankings: {
-            orderBy: { season: 'desc' },
-            take: 1,
+      // Filter only by gender for admin view (type/category removed from Athlete)
+      const where: Record<string, unknown> = {
+        ...(searchParams.get('gender') && gender !== 'all' && { gender }),
+        ...(isActive !== null && { isActive: isActive !== 'false' }),
+      };
+
+      // For RegionalRepresentative, filter by their region
+      if (auth.userRegionId) {
+        where.regionId = auth.userRegionId;
+      }
+
+      const [athletes, total] = await Promise.all([
+        prisma.athlete.findMany({
+          where,
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+          skip,
+          include: {
+            nationalTeamMemberships: true,
+            rankings: true,
+            regionRef: true,
+            coaches: {
+              include: {
+                coach: true,
+              },
+            },
+          },
+        }),
+        prisma.athlete.count({ where }),
+      ]);
+
+      return successResponse(athletes, { total, page, limit });
+    }
+
+    // For public - return athletes who are in national team for this category/gender/type
+    const memberships = await prisma.nationalTeamMembership.findMany({
+      where: {
+        category,
+        gender,
+        type,
+        isActive: true,
+      },
+      include: {
+        athlete: {
+          include: {
+            rankings: {
+              where: { category, gender, type },
+              take: 1,
+            },
           },
         },
-      }),
-      prisma.teamMember.count({ where }),
-    ]);
+      },
+      orderBy: { athlete: { sortOrder: 'asc' } },
+      take: limit,
+      skip,
+    });
 
-    return successResponse(members, { total, page, limit });
+    const total = await prisma.nationalTeamMembership.count({
+      where: { category, gender, type, isActive: true },
+    });
+
+    const athletes = memberships.map(m => m.athlete);
+
+    return successResponse(athletes, { total, page, limit, category, gender, type });
   } catch (error) {
-    console.error('Team GET error:', error);
-    return errorResponse('Failed to fetch team members', 500);
+    console.error('Team API error:', error);
+    return errorResponse('Failed to fetch athletes', 500);
   }
 }
 
 // POST /api/team - Protected
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth(['Admin', 'Editor']);
+    const auth = await requireAuthWithRegion(['Admin', 'Editor', 'RegionalRepresentative']);
     if (!auth.authorized) return auth.error;
 
     const body = await request.json();
-    const {
+    let {
       name, nameKk, nameEn,
-      type, gender, category, region,
-      coachName, coachNameKk, coachNameEn,
+      iin, dob,
+      gender, region, regionId,
       birthYear, image, bio, bioKk, bioEn,
+      nationalTeamMemberships, // Array of { category, gender, type }
+      coachIds, // Array of coach IDs
       isActive, sortOrder
     } = body;
 
-    if (!name || !type || !gender || !category || !region) {
-      return errorResponse('Missing required fields: name, type, gender, category, region');
+    // For RegionalRepresentative, force their region
+    if (auth.userRegionId) {
+      regionId = auth.userRegionId;
+    }
+
+    if (!name || !gender) {
+      return errorResponse('Missing required fields: name, gender');
     }
 
     const slug = generateSlug(name);
-    const existing = await prisma.teamMember.findUnique({ where: { slug } });
+    const existing = await prisma.athlete.findUnique({ where: { slug } });
     const finalSlug = existing ? `${slug}-${Date.now()}` : slug;
 
-    const member = await prisma.teamMember.create({
+    const athlete = await prisma.athlete.create({
       data: {
         slug: finalSlug,
         name,
         nameKk,
         nameEn,
-        type,
+        iin,
+        dob,
         gender,
-        category,
         region,
-        coachName,
-        coachNameKk,
-        coachNameEn,
+        regionId,
         birthYear,
         image,
         bio,
@@ -85,12 +136,40 @@ export async function POST(request: NextRequest) {
         bioEn,
         isActive: isActive ?? true,
         sortOrder: sortOrder ?? 0,
+        // Create national team memberships if provided
+        nationalTeamMemberships: nationalTeamMemberships?.length ? {
+          createMany: {
+            data: nationalTeamMemberships.map((m: { category: string; gender: string; type: string }) => ({
+              category: m.category,
+              gender: m.gender,
+              type: m.type,
+            })),
+          },
+        } : undefined,
+        // Create coach relations if provided
+        coaches: coachIds?.length ? {
+          createMany: {
+            data: coachIds.map((coachId: number, index: number) => ({
+              coachId,
+              isPrimary: index === 0,
+            })),
+          },
+        } : undefined,
+      },
+      include: {
+        nationalTeamMemberships: true,
+        regionRef: true,
+        coaches: {
+          include: {
+            coach: true,
+          },
+        },
       },
     });
 
-    return successResponse(member);
+    return successResponse(athlete);
   } catch (error) {
-    console.error('Team POST error:', error);
-    return errorResponse('Failed to create team member', 500);
+    console.error('Create athlete error:', error);
+    return errorResponse('Failed to create athlete', 500);
   }
 }

@@ -21,7 +21,6 @@ export async function GET(
 
     return successResponse(partner);
   } catch (error) {
-    console.error('Partner GET by ID error:', error);
     return errorResponse('Failed to fetch partner', 500);
   }
 }
@@ -46,7 +45,6 @@ export async function PATCH(
 
     return successResponse(partner);
   } catch (error) {
-    console.error('Partner PATCH error:', error);
     return errorResponse('Failed to update partner', 500);
   }
 }
@@ -69,7 +67,6 @@ export async function DELETE(
 
     return successResponse({ deleted: true });
   } catch (error) {
-    console.error('Partner DELETE error:', error);
     return errorResponse('Failed to delete partner', 500);
   }
 }

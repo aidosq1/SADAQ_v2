@@ -25,8 +25,8 @@ export interface NewsItem {
   excerptEn?: string | null;
   category: string;
   image?: string | null;
-  isMain: boolean;
-  isPublished: boolean;
+  showInSlider: boolean;
+  sliderOrder: number;
   publishedAt: string;
   createdAt: string;
   updatedAt: string;
@@ -44,8 +44,8 @@ export interface CreateNewsBody {
   excerptEn?: string;
   category: string;
   image?: string;
-  isMain?: boolean;
-  isPublished?: boolean;
+  showInSlider?: boolean;
+  sliderOrder?: number;
 }
 
 // Slide
@@ -80,21 +80,27 @@ export interface CreateSlideBody {
   isActive?: boolean;
 }
 
-// Team Member
-export interface TeamMember {
+// National Team Membership
+export interface NationalTeamMembership {
   id: number;
-  slug: string;
+  athleteId: number;
+  category: 'Adults' | 'Youth' | 'Juniors' | 'Cadets' | 'Cubs';
+  gender: 'M' | 'F';
+  type: 'Recurve' | 'Compound';
+  joinedAt: string;
+  isActive: boolean;
+}
+
+// Coach
+export interface Coach {
+  id: number;
   name: string;
   nameKk?: string | null;
   nameEn?: string | null;
-  type: 'Recurve' | 'Compound';
-  gender: 'M' | 'F';
-  category: 'Adults' | 'Youth' | 'Juniors' | 'Cadets' | 'Cubs';
-  region: string;
-  coachName?: string | null;
-  coachNameKk?: string | null;
-  coachNameEn?: string | null;
-  birthYear?: number | null;
+  regionId?: number | null;
+  region?: Region;
+  phone?: string | null;
+  email?: string | null;
   image?: string | null;
   bio?: string | null;
   bioKk?: string | null;
@@ -103,25 +109,135 @@ export interface TeamMember {
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AthleteCoach {
+  id: number;
+  athleteId: number;
+  coachId: number;
+  isPrimary: boolean;
+  createdAt: string;
+  coach: Coach;
+}
+
+export interface Region {
+  id: number;
+  name: string;
+  nameKk?: string | null;
+  nameEn?: string | null;
+}
+
+// Athlete (объединяет спортсменов сборной и участников турниров)
+export interface Athlete {
+  id: number;
+  slug: string;
+  name: string;
+  nameKk?: string | null;
+  nameEn?: string | null;
+  iin?: string | null;
+  dob?: string | null;
+  type: 'Recurve' | 'Compound';
+  gender: 'M' | 'F';
+  category: 'Adults' | 'Youth' | 'Juniors' | 'Cadets' | 'Cubs';
+  region?: string | null;
+  regionId?: number | null;
+  regionRef?: Region | null;
+  birthYear?: number | null;
+  image?: string | null;
+  bio?: string | null;
+  bioKk?: string | null;
+  bioEn?: string | null;
+  nationalTeamMemberships?: NationalTeamMembership[];
+  coaches?: AthleteCoach[];
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
   rankings?: RankingEntry[];
 }
 
-export interface CreateTeamMemberBody {
+// Backwards compatibility alias
+export type TeamMember = Athlete;
+
+export interface CreateAthleteBody {
   name: string;
   nameKk?: string;
   nameEn?: string;
+  iin?: string;
+  dob?: string;
   type: string;
   gender: string;
   category: string;
-  region: string;
-  coachName?: string;
-  coachNameKk?: string;
-  coachNameEn?: string;
+  region?: string;
+  regionId?: number;
   birthYear?: number;
   image?: string;
   bio?: string;
   bioKk?: string;
   bioEn?: string;
+  nationalTeamMemberships?: { category: string; gender: string; type: string }[];
+  coachIds?: number[];
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
+export interface CreateCoachBody {
+  name: string;
+  nameKk?: string;
+  nameEn?: string;
+  regionId?: number;
+  phone?: string;
+  email?: string;
+  image?: string;
+  bio?: string;
+  bioKk?: string;
+  bioEn?: string;
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
+// Backwards compatibility alias
+export type CreateTeamMemberBody = CreateAthleteBody;
+
+// Judge
+export interface Judge {
+  id: number;
+  name: string;
+  nameKk?: string | null;
+  nameEn?: string | null;
+  category: string;
+  categoryKk?: string | null;
+  categoryEn?: string | null;
+  regionId?: number | null;
+  region?: Region;
+  phone?: string | null;
+  email?: string | null;
+  image?: string | null;
+  bio?: string | null;
+  bioKk?: string | null;
+  bioEn?: string | null;
+  certifications?: string | null;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateJudgeBody {
+  name: string;
+  nameKk?: string;
+  nameEn?: string;
+  category: string;
+  categoryKk?: string;
+  categoryEn?: string;
+  regionId?: number;
+  phone?: string;
+  email?: string;
+  image?: string;
+  bio?: string;
+  bioKk?: string;
+  bioEn?: string;
+  certifications?: string;
   isActive?: boolean;
   sortOrder?: number;
 }
@@ -225,23 +341,25 @@ export interface CreateDocumentBody {
 // Ranking Entry
 export interface RankingEntry {
   id: number;
-  teamMemberId: number;
-  teamMember?: TeamMember;
+  athleteId: number;
+  athlete?: Athlete;
+  category: 'Adults' | 'Youth' | 'Juniors' | 'Cadets' | 'Cubs';
+  gender: 'M' | 'F';
+  type: 'Recurve' | 'Compound';
   points: number;
   rank: number;
-  previousRank?: number | null;
   classification?: string | null;
-  season: string;
-  recordedAt: string;
+  updatedAt: string;
 }
 
 export interface CreateRankingBody {
-  teamMemberId: number;
+  athleteId: number;
+  category: string;
+  gender: string;
+  type: string;
   points: number;
   rank: number;
-  previousRank?: number;
   classification?: string;
-  season: string;
 }
 
 // Gallery Item

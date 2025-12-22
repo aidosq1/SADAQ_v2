@@ -19,14 +19,32 @@ const ALLOWED_TYPES = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ];
 
+// Whitelist допустимых папок для загрузки (защита от path traversal)
+const ALLOWED_FOLDERS = [
+  "images",
+  "documents",
+  "gallery",
+  "news",
+  "slides",
+  "partners",
+  "team",
+  "staff",
+  "avatars",
+  "coaches",
+  "judges",
+  "protocols",
+];
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-// Generate unique filename
+// Generate unique filename with sanitization
 function generateFilename(originalName: string): string {
-  const ext = path.extname(originalName);
+  const ext = path.extname(originalName).toLowerCase();
+  // Санитизация расширения - только буквы и цифры
+  const safeExt = ext.replace(/[^a-z0-9.]/g, '');
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
-  return `${timestamp}-${random}${ext}`;
+  return `${timestamp}-${random}${safeExt}`;
 }
 
 // Determine folder based on file type
@@ -50,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     // Check role
     const role = session.user?.role;
-    if (role !== "Admin" && role !== "Editor") {
+    if (role !== "Admin" && role !== "Editor" && role !== "RegionalRepresentative") {
       return NextResponse.json(
         { success: false, error: "Forbidden" },
         { status: 403 }
@@ -59,11 +77,19 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const folder = formData.get("folder") as string | null; // optional custom folder
+    const folder = formData.get("folder") as string | null;
 
     if (!file) {
       return NextResponse.json(
         { success: false, error: "No file provided" },
+        { status: 400 }
+      );
+    }
+
+    // Validate folder (защита от path traversal)
+    if (folder && !ALLOWED_FOLDERS.includes(folder)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid upload folder" },
         { status: 400 }
       );
     }
@@ -115,7 +141,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Upload error:", error);
     return NextResponse.json(
       { success: false, error: "Upload failed" },
       { status: 500 }

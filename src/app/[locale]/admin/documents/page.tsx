@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslationForm } from "@/hooks/useTranslationForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +31,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Pencil, Trash2, FileText, Eye, EyeOff, Download } from "lucide-react";
 import { toast } from "sonner";
+import { FileUpload } from "@/components/admin/FileUpload";
 
 interface Document {
   id: number;
@@ -47,11 +49,15 @@ const defaultFormData = {
   title: "",
   titleKk: "",
   titleEn: "",
-  section: "regulations",
+  section: "statute",
   fileUrl: "",
   fileType: "pdf",
   fileSize: "",
   isPublished: true,
+};
+
+const TRANSLATION_FIELDS = {
+  title: { kk: "titleKk", en: "titleEn" },
 };
 
 export default function AdminDocumentsPage() {
@@ -61,7 +67,10 @@ export default function AdminDocumentsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState(defaultFormData);
+  const { formData, setFormData, handleTranslationBlur } = useTranslationForm(
+    defaultFormData,
+    TRANSLATION_FIELDS
+  );
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -75,8 +84,8 @@ export default function AdminDocumentsPage() {
       if (data.success) {
         setDocuments(data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch documents:", error);
+    } catch {
+      // silently fail
     } finally {
       setLoading(false);
     }
@@ -161,17 +170,17 @@ export default function AdminDocumentsPage() {
         body: JSON.stringify({ isPublished: !item.isPublished }),
       });
       fetchDocuments();
-    } catch (error) {
-      console.error("Toggle error:", error);
+    } catch {
+      // silently fail
     }
   }
 
   const sectionLabels: Record<string, string> = {
-    regulations: "Регламенты",
-    rules: "Правила",
-    protocols: "Протоколы",
-    forms: "Формы",
-    other: "Другое",
+    statute: "Уставные документы",
+    rules: "Правила и Регламенты",
+    antidoping: "Антидопинг",
+    calendar: "Календарный план",
+    ratings: "Рейтинги и Протоколы",
   };
 
   return (
@@ -265,7 +274,11 @@ export default function AdminDocumentsPage() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label>Название (рус) *</Label>
-              <Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+              <Input
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onBlur={() => handleTranslationBlur("title")}
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -286,41 +299,28 @@ export default function AdminDocumentsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="regulations">Регламенты</SelectItem>
-                  <SelectItem value="rules">Правила</SelectItem>
-                  <SelectItem value="protocols">Протоколы</SelectItem>
-                  <SelectItem value="forms">Формы</SelectItem>
-                  <SelectItem value="other">Другое</SelectItem>
+                  <SelectItem value="statute">Уставные документы</SelectItem>
+                  <SelectItem value="rules">Правила и Регламенты</SelectItem>
+                  <SelectItem value="antidoping">Антидопинг</SelectItem>
+                  <SelectItem value="calendar">Календарный план</SelectItem>
+                  <SelectItem value="ratings">Рейтинги и Протоколы</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="grid gap-2">
-              <Label>URL файла *</Label>
-              <Input value={formData.fileUrl} onChange={(e) => setFormData({ ...formData, fileUrl: e.target.value })} placeholder="/documents/file.pdf" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>Тип файла</Label>
-                <Select value={formData.fileType} onValueChange={(v) => setFormData({ ...formData, fileType: v })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pdf">PDF</SelectItem>
-                    <SelectItem value="doc">DOC</SelectItem>
-                    <SelectItem value="docx">DOCX</SelectItem>
-                    <SelectItem value="xls">XLS</SelectItem>
-                    <SelectItem value="xlsx">XLSX</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label>Размер файла</Label>
-                <Input value={formData.fileSize} onChange={(e) => setFormData({ ...formData, fileSize: e.target.value })} placeholder="1.5 MB" />
-              </div>
-            </div>
+            <FileUpload
+              value={formData.fileUrl}
+              onChange={(url) => setFormData({ ...formData, fileUrl: url })}
+              onFileInfo={(info) => setFormData((prev) => ({
+                ...prev,
+                fileType: info.type,
+                fileSize: info.size > 1024 * 1024
+                  ? `${(info.size / (1024 * 1024)).toFixed(1)} MB`
+                  : `${(info.size / 1024).toFixed(1)} KB`,
+              }))}
+              label="Файл *"
+              folder="documents"
+            />
 
             <div className="flex items-center gap-2">
               <Checkbox id="isPublished" checked={formData.isPublished} onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked as boolean })} />

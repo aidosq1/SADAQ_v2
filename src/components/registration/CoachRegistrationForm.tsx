@@ -1,6 +1,6 @@
 "use client";
 
-import { KAZAKHSTAN_REGIONS } from "@/lib/constants";
+import { KAZAKHSTAN_REGIONS, CATEGORIES, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +34,11 @@ interface JudgeInfo {
 
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function CoachRegistrationForm() {
     const t_regions = useTranslations("Regions");
+    const locale = useLocale();
     const { data: session } = useSession();
 
     // --- State ---
@@ -272,8 +273,9 @@ export function CoachRegistrationForm() {
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="Recurve">Классический</SelectItem>
-                                                    <SelectItem value="Compound">Блочный</SelectItem>
+                                                    {BOW_TYPES.map((t) => (
+                                                        <SelectItem key={t.id} value={t.id}>{getLocalizedLabel(t, locale)}</SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                         </TableCell>
@@ -284,11 +286,9 @@ export function CoachRegistrationForm() {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="Adults">Взрослые</SelectItem>
-                                                        <SelectItem value="Youth">Молодёжь</SelectItem>
-                                                        <SelectItem value="Juniors">Юниоры</SelectItem>
-                                                        <SelectItem value="Cadets">Юноши</SelectItem>
-                                                        <SelectItem value="Cubs">Младшие юноши</SelectItem>
+                                                        {CATEGORIES.map((cat) => (
+                                                            <SelectItem key={cat.id} value={cat.id}>{getLocalizedLabel(cat, locale)}</SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
                                                 {isError && (
@@ -349,8 +349,9 @@ export function CoachRegistrationForm() {
                                         <SelectValue placeholder="Дисциплина" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Recurve">Классический</SelectItem>
-                                        <SelectItem value="Compound">Блочный</SelectItem>
+                                        {BOW_TYPES.map((t) => (
+                                            <SelectItem key={t.id} value={t.id}>{getLocalizedLabel(t, locale)}</SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
 
@@ -359,11 +360,9 @@ export function CoachRegistrationForm() {
                                         <SelectValue placeholder="Категория" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Adults">Взрослые</SelectItem>
-                                        <SelectItem value="Youth">Молодёжь</SelectItem>
-                                        <SelectItem value="Juniors">Юниоры</SelectItem>
-                                        <SelectItem value="Cadets">Юноши</SelectItem>
-                                        <SelectItem value="Cubs">Младшие юноши</SelectItem>
+                                        {CATEGORIES.map((cat) => (
+                                            <SelectItem key={cat.id} value={cat.id}>{getLocalizedLabel(cat, locale)}</SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>

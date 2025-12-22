@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslationForm } from "@/hooks/useTranslationForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLocale } from "next-intl";
 import { ImageUpload } from "@/components/admin/ImageUpload";
@@ -44,10 +45,12 @@ interface News {
   contentKk: string | null;
   contentEn: string | null;
   excerpt: string | null;
+  excerptKk: string | null;
+  excerptEn: string | null;
   category: string;
   image: string | null;
-  isMain: boolean;
-  isPublished: boolean;
+  showInSlider: boolean;
+  sliderOrder: number;
   publishedAt: string;
 }
 
@@ -59,10 +62,18 @@ const defaultFormData = {
   contentKk: "",
   contentEn: "",
   excerpt: "",
+  excerptKk: "",
+  excerptEn: "",
   category: "Сборная",
   image: "",
-  isMain: false,
-  isPublished: true,
+  showInSlider: false,
+  sliderOrder: 0,
+};
+
+const TRANSLATION_FIELDS = {
+  title: { kk: "titleKk", en: "titleEn" },
+  content: { kk: "contentKk", en: "contentEn" },
+  excerpt: { kk: "excerptKk", en: "excerptEn" },
 };
 
 export default function AdminNewsPage() {
@@ -73,7 +84,10 @@ export default function AdminNewsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState(defaultFormData);
+  const { formData, setFormData, handleTranslationBlur } = useTranslationForm(
+    defaultFormData,
+    TRANSLATION_FIELDS
+  );
   const [saving, setSaving] = useState(false);
 
   const labels = {
@@ -94,10 +108,11 @@ export default function AdminNewsPage() {
     excerpt: locale === "kk" ? "Қысқаша сипаттама" : locale === "en" ? "Excerpt" : "Краткое описание",
     category: locale === "kk" ? "Санат" : locale === "en" ? "Category" : "Категория",
     image: locale === "kk" ? "Сурет URL" : locale === "en" ? "Image URL" : "URL изображения",
-    isMain: locale === "kk" ? "Негізгі жаңалық" : locale === "en" ? "Main News" : "Главная новость",
-    isPublished: locale === "kk" ? "Жарияланған" : locale === "en" ? "Published" : "Опубликовано",
+    showInSlider: locale === "kk" ? "Слайдерде көрсету" : locale === "en" ? "Show in Slider" : "Показать в слайдере",
+    sliderOrder: locale === "kk" ? "Слайдер реті" : locale === "en" ? "Slider Order" : "Порядок в слайдере",
+    excerptKk: locale === "kk" ? "Қысқаша (қазақша)" : locale === "en" ? "Excerpt (Kazakh)" : "Краткое (каз)",
+    excerptEn: locale === "kk" ? "Қысқаша (ағылшынша)" : locale === "en" ? "Excerpt (English)" : "Краткое (англ)",
     actions: locale === "kk" ? "Әрекеттер" : locale === "en" ? "Actions" : "Действия",
-    status: locale === "kk" ? "Статус" : locale === "en" ? "Status" : "Статус",
   };
 
   useEffect(() => {
@@ -108,12 +123,10 @@ export default function AdminNewsPage() {
     try {
       const res = await fetch("/api/news?limit=100");
       const data = await res.json();
-      console.log("Fetched news:", data); // Debug logging
       if (data.success) {
         setNews(data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch news:", error);
+    } catch {
       toast.error("Ошибка загрузки новостей");
     } finally {
       setLoading(false);
@@ -136,10 +149,12 @@ export default function AdminNewsPage() {
       contentKk: item.contentKk || "",
       contentEn: item.contentEn || "",
       excerpt: item.excerpt || "",
+      excerptKk: item.excerptKk || "",
+      excerptEn: item.excerptEn || "",
       category: item.category,
       image: item.image || "",
-      isMain: item.isMain,
-      isPublished: item.isPublished,
+      showInSlider: item.showInSlider,
+      sliderOrder: item.sliderOrder,
     });
     setDialogOpen(true);
   }
@@ -151,7 +166,6 @@ export default function AdminNewsPage() {
 
   async function handleSave(e?: React.MouseEvent) {
     if (e) e.preventDefault();
-    console.log("Saving news...", formData);
 
     if (!formData.title.trim()) {
       toast.error("Заголовок обязателен");
@@ -170,7 +184,6 @@ export default function AdminNewsPage() {
       });
 
       const data = await res.json();
-      console.log("Save response:", data);
 
       if (data.success) {
         toast.success(editingId ? "Новость обновлена" : "Новость создана");
@@ -179,8 +192,7 @@ export default function AdminNewsPage() {
       } else {
         toast.error(data.error || "Ошибка сохранения");
       }
-    } catch (error) {
-      console.error("Save error:", error);
+    } catch {
       toast.error("Ошибка сохранения");
     } finally {
       setSaving(false);
@@ -202,27 +214,8 @@ export default function AdminNewsPage() {
       } else {
         toast.error(data.error || "Ошибка удаления");
       }
-    } catch (error) {
-      console.error("Delete error:", error);
+    } catch {
       toast.error("Ошибка удаления");
-    }
-  }
-
-  async function togglePublished(item: News) {
-    try {
-      const res = await fetch(`/api/news/${item.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPublished: !item.isPublished }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        toast.success(item.isPublished ? "Новость скрыта" : "Новость опубликована");
-        fetchNews();
-      }
-    } catch (error) {
-      console.error("Toggle error:", error);
     }
   }
 
@@ -243,20 +236,19 @@ export default function AdminNewsPage() {
               <TableHead className="w-[50px]">ID</TableHead>
               <TableHead>{labels.titleRu}</TableHead>
               <TableHead>{labels.category}</TableHead>
-              <TableHead>{labels.status}</TableHead>
               <TableHead className="w-[150px]">{labels.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={4} className="h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : news.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={4} className="h-24 text-center">
                   Нет данных
                 </TableCell>
               </TableRow>
@@ -267,26 +259,12 @@ export default function AdminNewsPage() {
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="font-medium">{item.title}</span>
-                      {item.isMain && (
-                        <span className="text-xs text-primary">Главная</span>
+                      {item.showInSlider && (
+                        <span className="text-xs text-amber-600">В слайдере</span>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>{item.category}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => togglePublished(item)}
-                      className={item.isPublished ? "text-green-600" : "text-gray-400"}
-                    >
-                      {item.isPublished ? (
-                        <Eye className="h-4 w-4" />
-                      ) : (
-                        <EyeOff className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button
@@ -328,6 +306,7 @@ export default function AdminNewsPage() {
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onBlur={() => handleTranslationBlur("title")}
               />
             </div>
 
@@ -354,6 +333,7 @@ export default function AdminNewsPage() {
                 rows={4}
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onBlur={() => handleTranslationBlur("content")}
               />
             </div>
 
@@ -382,6 +362,7 @@ export default function AdminNewsPage() {
                 rows={2}
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                onBlur={() => handleTranslationBlur("excerpt")}
               />
             </div>
 
@@ -412,28 +393,55 @@ export default function AdminNewsPage() {
               />
             </div>
 
-            <div className="flex gap-6">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="isMain"
-                  checked={formData.isMain}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, isMain: checked as boolean })
-                  }
-                />
-                <Label htmlFor="isMain">{labels.isMain}</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="isPublished"
-                  checked={formData.isPublished}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, isPublished: checked as boolean })
-                  }
-                />
-                <Label htmlFor="isPublished">{labels.isPublished}</Label>
-              </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="showInSlider"
+                checked={formData.showInSlider}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, showInSlider: checked as boolean })
+                }
+              />
+              <Label htmlFor="showInSlider">{labels.showInSlider}</Label>
             </div>
+
+            {formData.showInSlider && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label>{labels.sliderOrder}</Label>
+                  <Input
+                    type="number"
+                    value={formData.sliderOrder}
+                    onChange={(e) => setFormData({ ...formData, sliderOrder: parseInt(e.target.value) || 0 })}
+                  />
+                </div>
+              </div>
+            )}
+
+            {formData.showInSlider && (
+              <div className="grid gap-4 p-4 border rounded-lg bg-muted/50">
+                <p className="text-sm text-muted-foreground">
+                  {locale === "kk" ? "Слайдерде көрсетілетін мәтін (қысқаша сипаттама қолданылады)" :
+                   locale === "en" ? "Text shown in slider (excerpt will be used)" :
+                   "Текст в слайдере (используется краткое описание)"}
+                </p>
+                <div className="grid gap-2">
+                  <Label>{labels.excerptKk}</Label>
+                  <Textarea
+                    rows={2}
+                    value={formData.excerptKk}
+                    onChange={(e) => setFormData({ ...formData, excerptKk: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>{labels.excerptEn}</Label>
+                  <Textarea
+                    rows={2}
+                    value={formData.excerptEn}
+                    onChange={(e) => setFormData({ ...formData, excerptEn: e.target.value })}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <DialogFooter>

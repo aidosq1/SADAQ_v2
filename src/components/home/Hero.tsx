@@ -1,122 +1,163 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { Users, MapPin, Trophy, Calendar } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+import { HeroNewsSlider } from "./HeroNewsSlider";
 import { Link } from "@/navigation";
-import { ArrowRight, Calendar, MapPin } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { HeroNewsSlider } from "@/components/home/HeroNewsSlider";
-import { useTranslations } from "next-intl";
+
+interface Stats {
+    athletes: number;
+    regions: number;
+    medals: number;
+}
+
+interface UpcomingEvent {
+    id: number;
+    title: string;
+    titleKk: string | null;
+    titleEn: string | null;
+    startDate: string;
+}
 
 export function Hero() {
     const t = useTranslations("Hero");
+    const locale = useLocale();
+    const [stats, setStats] = useState<Stats>({ athletes: 0, regions: 0, medals: 0 });
+    const [upcomingEvent, setUpcomingEvent] = useState<UpcomingEvent | null>(null);
 
-    // This data would ideally come from a CMS or API
-    // This data would ideally come from a CMS or API
-    const NEXT_EVENT = {
-        badge: t("event_badge"),
-        title: {
-            prefix: t("event_title_prefix"),
-            highlight: t("event_title_highlight")
-        },
-        description: t("event_desc"),
-        date: t("event_date"),
-        location: t("event_location"),
-        disciplines: "Recurve & Compound",
-        link: "/calendar/register",
-        regulationsLink: "/calendar"
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const res = await fetch("/api/stats?isActive=true");
+                const data = await res.json();
+                if (data.data && data.data.length > 0) {
+                    const athletesStat = data.data.find((s: { key: string }) => s.key === "athletes_count");
+                    const regionsStat = data.data.find((s: { key: string }) => s.key === "regions_count");
+                    const medalsStat = data.data.find((s: { key: string }) => s.key === "medals_count");
+                    setStats({
+                        athletes: athletesStat?.value ? parseInt(athletesStat.value) : 150,
+                        regions: regionsStat?.value ? parseInt(regionsStat.value) : 17,
+                        medals: medalsStat?.value ? parseInt(medalsStat.value) : 50
+                    });
+                }
+            } catch {
+                setStats({ athletes: 150, regions: 17, medals: 50 });
+            }
+        }
+
+        async function fetchUpcomingEvent() {
+            try {
+                const res = await fetch("/api/tournaments/featured");
+                const data = await res.json();
+                if (data.success && data.data) {
+                    setUpcomingEvent(data.data);
+                }
+            } catch {
+                // silently fail
+            }
+        }
+
+        fetchStats();
+        fetchUpcomingEvent();
+    }, []);
+
+    const getLocalizedTitle = (event: UpcomingEvent) => {
+        if (locale === "kk" && event.titleKk) return event.titleKk;
+        if (locale === "en" && event.titleEn) return event.titleEn;
+        return event.title;
+    };
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString(locale === 'kk' ? 'kk-KZ' : locale === 'en' ? 'en-US' : 'ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
     };
 
     return (
-        <section className="relative w-full overflow-hidden bg-[#F9F7F2] min-h-[600px] flex items-center">
-            {/* Background Pattern Effects - Gold/Bronze */}
-            <div className="absolute inset-0 pointer-events-none">
-                {/* Top Left Pattern */}
-                <svg className="absolute top-0 left-0 w-[400px] h-[400px] text-[#C5A572]/20" viewBox="0 0 400 400" fill="none">
-                    <path d="M0 0L200 0L100 100L0 200Z" fill="currentColor" />
-                    <path d="M0 0L0 200L100 100L200 0Z" stroke="currentColor" strokeWidth="2" />
-                    <path d="M50 50L150 50L100 100L50 150Z" stroke="currentColor" strokeWidth="1" />
-                    <circle cx="20" cy="20" r="4" fill="#B54B35" />
-                </svg>
-
-                {/* Bottom Right Pattern */}
-                <svg className="absolute bottom-0 right-0 w-[500px] h-[500px] text-[#C5A572]/30" viewBox="0 0 500 500" fill="none">
-                    <path d="M500 500L300 500L400 400L500 300Z" fill="currentColor" />
-                    <path d="M400 400L300 300M450 450L350 350" stroke="currentColor" strokeWidth="2" />
-                </svg>
-            </div>
-
-            <div className="relative z-10 max-w-7xl mx-auto px-4 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-16">
-
-                {/* Left Content */}
-                <div className="space-y-8 text-left">
-                    {/* Badge */}
-                    <Link href="/calendar" className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#B54B35]/30 bg-[#B54B35]/5 text-[#B54B35] text-xs font-bold tracking-widest uppercase hover:bg-[#B54B35]/10 transition-colors">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#B54B35]" />
-                        {NEXT_EVENT.badge}
-                    </Link>
-
-                    {/* Main Heading */}
-                    <div className="space-y-0">
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-gray-900 leading-[0.9] tracking-tight">
-                            {NEXT_EVENT.title.prefix}
-                        </h1>
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-[#B54B35] leading-[0.9] tracking-tight italic">
-                            {NEXT_EVENT.title.highlight}
-                        </h1>
-                    </div>
-
-                    {/* Description */}
-                    <div className="space-y-6">
-                        <div className="h-px w-24 bg-[#B54B35]/30" />
-                        <p className="text-lg md:text-xl text-gray-600 max-w-lg leading-relaxed font-light">
-                            {NEXT_EVENT.description}
-                        </p>
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex flex-wrap gap-6 text-gray-700">
-                        <div className="flex items-center gap-3 bg-white/50 px-4 py-2 rounded-lg border border-[#C5A572]/20">
-                            <Calendar className="w-5 h-5 text-[#B54B35]" />
-                            <span className="font-medium">{NEXT_EVENT.date}</span>
-                        </div>
-                        <div className="flex items-center gap-3 bg-white/50 px-4 py-2 rounded-lg border border-[#C5A572]/20">
-                            <MapPin className="w-5 h-5 text-[#B54B35]" />
-                            <span className="font-medium">{NEXT_EVENT.location}</span>
+        <section className="bg-[hsl(var(--light-gray))]">
+            <div className="max-w-7xl mx-auto px-4 py-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* News Slider - Left Side */}
+                    <div className="lg:col-span-7">
+                        <div className="relative h-[400px] lg:h-[480px] rounded-lg overflow-hidden shadow-sm">
+                            <HeroNewsSlider />
                         </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-                        <Button
-                            size="lg"
-                            className="bg-[#EADBC8] hover:bg-[#EADBC8]/80 text-[#5A3A2A] text-base px-8 h-12 rounded-lg font-bold shadow-md transition-all border border-[#C5A572]/30"
-                            asChild
-                        >
-                            <Link href={NEXT_EVENT.link} className="flex items-center gap-2">
-                                {t("apply")} <ArrowRight className="w-4 h-4 ml-1" />
-                            </Link>
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="bg-transparent border border-[#5A3A2A]/20 text-[#5A3A2A] hover:bg-[#5A3A2A]/5 text-base px-8 h-12 rounded-lg font-medium"
-                            asChild
-                        >
-                            <Link href={NEXT_EVENT.regulationsLink}>{t("regulations")}</Link>
-                        </Button>
+                    {/* Stats & Info - Right Side */}
+                    <div className="lg:col-span-5 flex flex-col gap-4">
+                        {/* Stats Card */}
+                        <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] p-6 shadow-sm">
+                            <h2 className="text-lg font-heading font-semibold text-[hsl(var(--official-navy))] mb-4 gold-accent">
+                                {t("federation_stats")}
+                            </h2>
+                            <div className="grid grid-cols-3 gap-4 mt-6">
+                                <div className="text-center">
+                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                                        <Users className="w-5 h-5 text-[hsl(var(--official-navy))]" />
+                                    </div>
+                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-navy))]">
+                                        {stats.athletes}+
+                                    </div>
+                                    <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+                                        {t("athletes")}
+                                    </div>
+                                </div>
+                                <div className="text-center border-x border-[hsl(var(--border-light))]">
+                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                                        <MapPin className="w-5 h-5 text-[hsl(var(--official-navy))]" />
+                                    </div>
+                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-navy))]">
+                                        {stats.regions}
+                                    </div>
+                                    <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+                                        {t("regions")}
+                                    </div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-gray))] flex items-center justify-center">
+                                        <Trophy className="w-5 h-5 text-[hsl(var(--official-navy))]" />
+                                    </div>
+                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-navy))]">
+                                        {stats.medals}+
+                                    </div>
+                                    <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+                                        {t("medals")}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Upcoming Event Card */}
+                        {upcomingEvent && (
+                            <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] p-6 shadow-sm">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Calendar className="w-4 h-4 text-[hsl(var(--official-gold))]" />
+                                    <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wide">
+                                        {t("upcoming_event")}
+                                    </span>
+                                </div>
+                                <h3 className="font-heading font-semibold text-[hsl(var(--official-navy))] mb-2 line-clamp-2">
+                                    {getLocalizedTitle(upcomingEvent)}
+                                </h3>
+                                <p className="text-sm text-[hsl(var(--muted-foreground))]">
+                                    {formatDate(upcomingEvent.startDate)}
+                                </p>
+                                <Link
+                                    href="/calendar"
+                                    className="inline-block mt-4 text-sm font-medium text-[hsl(var(--official-blue))] hover:underline"
+                                >
+                                    {t("view_calendar")} →
+                                </Link>
+                            </div>
+                        )}
+
                     </div>
                 </div>
-
-                {/* Right Visual - Frosted Card */}
-                <div className="hidden lg:flex justify-end relative h-[500px]">
-                    {/* The large frosted card container */}
-                    <div className="absolute right-0 top-0 bottom-0 w-[400px] md:w-[500px] lg:w-[600px] h-full rounded-[30px] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col justify-end border border-white/60">
-                        {/* News Slider Component */}
-                        <HeroNewsSlider />
-                    </div>
-                </div>
-
             </div>
         </section>
     );

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslationForm } from "@/hooks/useTranslationForm";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,27 +32,45 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { useLocale } from "next-intl";
-import { KAZAKHSTAN_REGIONS } from "@/lib/constants";
+import { CATEGORIES, GENDERS, BOW_TYPES, DEFAULT_FILTERS, getLocalizedLabel } from "@/lib/constants";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 
-interface TeamMember {
+interface NationalTeamMembership {
+  id?: number;
+  category: string;
+  gender: string;
+  type: string;
+}
+
+interface Region {
+  id: number;
+  name: string;
+  nameKk: string | null;
+  nameEn: string | null;
+}
+
+interface Athlete {
   id: number;
   slug: string;
   name: string;
   nameKk: string | null;
   nameEn: string | null;
+  iin: string | null;
+  dob: string | null;
   type: string;
   gender: string;
   category: string;
-  region: string;
-  coachName: string | null;
+  region: string | null;
+  regionId: number | null;
+  regionRef: Region | null;
   image: string | null;
   bio: string | null;
   bioKk: string | null;
   bioEn: string | null;
+  nationalTeamMemberships: NationalTeamMembership[];
   isActive: boolean;
   sortOrder: number;
 }
@@ -59,46 +79,87 @@ const defaultFormData = {
   name: "",
   nameKk: "",
   nameEn: "",
-  type: "Recurve",
-  gender: "M",
-  category: "Adults",
-  region: "almaty",
-  coachName: "",
+  iin: "",
+  dob: "",
+  gender: DEFAULT_FILTERS.gender,
+  regionId: null as number | null,
   image: "",
   bio: "",
   bioKk: "",
   bioEn: "",
+  nationalTeamMemberships: [] as NationalTeamMembership[],
+  coachIds: [] as number[],
   isActive: true,
   sortOrder: 0,
 };
 
+const TRANSLATION_FIELDS = {
+  name: { kk: "nameKk", en: "nameEn" },
+  bio: { kk: "bioKk", en: "bioEn" },
+};
+
 export default function AdminTeamPage() {
   const locale = useLocale();
-  const [members, setMembers] = useState<TeamMember[]>([]);
+  const { data: session } = useSession();
+  const userRole = (session?.user as { role?: string })?.role;
+  const userRegion = (session?.user as { region?: string })?.region;
+  const isAdmin = userRole === 'Admin' || userRole === 'Editor';
+
+  const [members, setMembers] = useState<Athlete[]>([]);
+  const [regions, setRegions] = useState<Region[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState(defaultFormData);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+
+  const sortedMembers = sortOrder
+    ? [...members].sort((a, b) => {
+        const comparison = a.name.localeCompare(b.name, 'ru');
+        return sortOrder === 'asc' ? comparison : -comparison;
+      })
+    : members;
+
+  const toggleSort = () => {
+    setSortOrder(prev => prev === null ? 'asc' : prev === 'asc' ? 'desc' : null);
+  };
+
+  const { formData, setFormData, handleTranslationBlur } = useTranslationForm(
+    defaultFormData,
+    TRANSLATION_FIELDS
+  );
   const [saving, setSaving] = useState(false);
+
 
   useEffect(() => {
     fetchMembers();
+    fetchRegions();
   }, []);
 
   async function fetchMembers() {
     try {
-      const res = await fetch("/api/team?limit=100");
+      const res = await fetch("/api/team?all=true&limit=100");
       const data = await res.json();
       if (data.success) {
         setMembers(data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch team:", error);
+    } catch {
       toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchRegions() {
+    try {
+      const res = await fetch("/api/regions?limit=100");
+      const data = await res.json();
+      if (data.success) {
+        setRegions(data.data);
+      }
+    } catch {
+      // silently fail
     }
   }
 
@@ -108,21 +169,22 @@ export default function AdminTeamPage() {
     setDialogOpen(true);
   }
 
-  function openEditDialog(item: TeamMember) {
+  function openEditDialog(item: Athlete) {
     setEditingId(item.id);
     setFormData({
       name: item.name,
       nameKk: item.nameKk || "",
       nameEn: item.nameEn || "",
-      type: item.type,
-      gender: item.gender,
-      category: item.category,
-      region: item.region,
-      coachName: item.coachName || "",
+      iin: item.iin || "",
+      dob: item.dob || "",
+      gender: item.gender as typeof DEFAULT_FILTERS.gender,
+      regionId: item.regionId,
       image: item.image || "",
       bio: item.bio || "",
       bioKk: item.bioKk || "",
       bioEn: item.bioEn || "",
+      nationalTeamMemberships: item.nationalTeamMemberships || [],
+      coachIds: [],
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
@@ -160,8 +222,7 @@ export default function AdminTeamPage() {
       } else {
         toast.error(data.error || "Ошибка сохранения");
       }
-    } catch (error) {
-      console.error("Save error:", error);
+    } catch {
       toast.error("Ошибка сохранения");
     } finally {
       setSaving(false);
@@ -183,13 +244,12 @@ export default function AdminTeamPage() {
       } else {
         toast.error(data.error || "Ошибка удаления");
       }
-    } catch (error) {
-      console.error("Delete error:", error);
+    } catch {
       toast.error("Ошибка удаления");
     }
   }
 
-  async function toggleActive(item: TeamMember) {
+  async function toggleActive(item: Athlete) {
     try {
       const res = await fetch(`/api/team/${item.id}`, {
         method: "PATCH",
@@ -201,17 +261,22 @@ export default function AdminTeamPage() {
       if (data.success) {
         fetchMembers();
       }
-    } catch (error) {
-      console.error("Toggle error:", error);
+    } catch {
+      // silently fail
     }
   }
 
-  const title = locale === "kk" ? "Команда" : locale === "en" ? "Team" : "Команда";
+  const title = locale === "kk" ? "Спортсмендер" : locale === "en" ? "Athletes" : "Спортсмены";
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">{title}</h1>
+        <div>
+          <h1 className="text-3xl font-bold">{title}</h1>
+          {!isAdmin && userRegion && (
+            <p className="text-muted-foreground">{userRegion}</p>
+          )}
+        </div>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить
@@ -223,10 +288,21 @@ export default function AdminTeamPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[60px]">Фото</TableHead>
-              <TableHead>Имя</TableHead>
-              <TableHead>Лук</TableHead>
-              <TableHead>Категория</TableHead>
-              <TableHead>Регион</TableHead>
+              <TableHead>
+                <button
+                  onClick={toggleSort}
+                  className="flex items-center gap-1 hover:text-foreground"
+                >
+                  Имя
+                  {sortOrder === 'asc' ? (
+                    <ArrowUp className="h-4 w-4" />
+                  ) : sortOrder === 'desc' ? (
+                    <ArrowDown className="h-4 w-4" />
+                  ) : (
+                    <ArrowUpDown className="h-4 w-4 opacity-50" />
+                  )}
+                </button>
+              </TableHead>
               <TableHead>Статус</TableHead>
               <TableHead className="w-[150px]">Действия</TableHead>
             </TableRow>
@@ -234,18 +310,18 @@ export default function AdminTeamPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={4} className="h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
-            ) : members.length === 0 ? (
+            ) : sortedMembers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={4} className="h-24 text-center">
                   Нет данных
                 </TableCell>
               </TableRow>
             ) : (
-              members.map((item) => (
+              sortedMembers.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <Avatar className="h-10 w-10">
@@ -260,11 +336,6 @@ export default function AdminTeamPage() {
                         {item.gender === "M" ? "Муж" : "Жен"}
                       </span>
                     </div>
-                  </TableCell>
-                  <TableCell>{item.type}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>
-                    {KAZAKHSTAN_REGIONS.find((r) => r.id === item.region)?.name || item.region}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -311,6 +382,7 @@ export default function AdminTeamPage() {
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onBlur={() => handleTranslationBlur("name")}
               />
             </div>
 
@@ -331,72 +403,63 @@ export default function AdminTeamPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>Тип лука</Label>
-                <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Recurve">Классический</SelectItem>
-                    <SelectItem value="Compound">Блочный</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>ИИН</Label>
+                <Input
+                  value={formData.iin}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, "").slice(0, 12);
+                    setFormData({ ...formData, iin: cleaned });
+                  }}
+                  placeholder="123456789012"
+                  maxLength={12}
+                />
               </div>
               <div className="grid gap-2">
-                <Label>Пол</Label>
-                <Select value={formData.gender} onValueChange={(v) => setFormData({ ...formData, gender: v })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="M">Мужской</SelectItem>
-                    <SelectItem value="F">Женский</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label>Категория</Label>
-                <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Adults">Взрослые</SelectItem>
-                    <SelectItem value="Youth">Молодёжь</SelectItem>
-                    <SelectItem value="Juniors">Юниоры</SelectItem>
-                    <SelectItem value="Cadets">Кадеты</SelectItem>
-                    <SelectItem value="Cubs">Юноши</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Дата рождения</Label>
+                <Input
+                  type="date"
+                  value={formData.dob}
+                  onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label>Пол</Label>
+              <Select value={formData.gender} onValueChange={(v) => setFormData({ ...formData, gender: v as typeof DEFAULT_FILTERS.gender })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GENDERS.map((g) => (
+                    <SelectItem key={g.id} value={g.id}>{getLocalizedLabel(g, locale)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {isAdmin && (
               <div className="grid gap-2">
                 <Label>Регион</Label>
-                <Select value={formData.region} onValueChange={(v) => setFormData({ ...formData, region: v })}>
+                <Select
+                  value={formData.regionId?.toString() || ""}
+                  onValueChange={(v) => setFormData({ ...formData, regionId: v ? parseInt(v) : null })}
+                >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Выберите регион" />
                   </SelectTrigger>
                   <SelectContent>
-                    {KAZAKHSTAN_REGIONS.map((r) => (
-                      <SelectItem key={r.id} value={r.id}>
-                        {r.name}
+                    {regions.map((r) => (
+                      <SelectItem key={r.id} value={r.id.toString()}>
+                        {locale === 'kk' && r.nameKk ? r.nameKk : locale === 'en' && r.nameEn ? r.nameEn : r.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid gap-2">
-                <Label>Тренер</Label>
-                <Input
-                  value={formData.coachName}
-                  onChange={(e) => setFormData({ ...formData, coachName: e.target.value })}
-                />
-              </div>
-            </div>
+            )}
 
             <ImageUpload
               label="Фото спортсмена"
@@ -420,8 +483,58 @@ export default function AdminTeamPage() {
                 rows={2}
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                onBlur={() => handleTranslationBlur("bio")}
               />
             </div>
+
+            {isAdmin && (
+              <div className="grid gap-2">
+                <Label>Членство в сборных</Label>
+                <div className="flex flex-wrap gap-2">
+                  {CATEGORIES.map((cat) =>
+                    GENDERS.map((g) =>
+                      BOW_TYPES.map((t) => {
+                        const key = `${cat.id}-${g.id}-${t.id}`;
+                        const isInTeam = formData.nationalTeamMemberships.some(
+                          (m) => m.category === cat.id && m.gender === g.id && m.type === t.id
+                        );
+                        const catLabel = cat.ru.slice(0, 3);
+                        const gLabel = g.id === "M" ? "М" : "Ж";
+                        const tLabel = t.id === "Recurve" ? "Кл" : "Бл";
+                        const label = `${catLabel} ${gLabel} ${tLabel}`;
+                        return (
+                          <div key={key} className="flex items-center gap-1">
+                            <Checkbox
+                              id={key}
+                              checked={isInTeam}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setFormData({
+                                    ...formData,
+                                    nationalTeamMemberships: [
+                                      ...formData.nationalTeamMemberships,
+                                      { category: cat.id, gender: g.id, type: t.id },
+                                    ],
+                                  });
+                                } else {
+                                  setFormData({
+                                    ...formData,
+                                    nationalTeamMemberships: formData.nationalTeamMemberships.filter(
+                                      (m) => !(m.category === cat.id && m.gender === g.id && m.type === t.id)
+                                    ),
+                                  });
+                                }
+                              }}
+                            />
+                            <Label htmlFor={key} className="text-xs cursor-pointer">{label}</Label>
+                          </div>
+                        );
+                      })
+                    )
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <Checkbox

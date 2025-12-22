@@ -58,8 +58,7 @@ export function ImageUpload({
       } else {
         toast.error(data.error || "Ошибка загрузки");
       }
-    } catch (error) {
-      console.error("Upload error:", error);
+    } catch {
       toast.error("Ошибка загрузки");
     } finally {
       setUploading(false);

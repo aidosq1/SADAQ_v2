@@ -2,38 +2,160 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trophy, Target, Calendar, Medal, TrendingUp } from "lucide-react";
+import { Trophy, Target } from "lucide-react";
+import { notFound } from "next/navigation";
 
-export default function AthleteProfile({ params }: { params: { id: string } }) {
-    // Mock data - in real app fetch by params.id
-    const athlete = {
-        name: "Ильфат Абдуллин",
-        photo: "https://images.unsplash.com/photo-1542359649-31e03cd4d909?w=300&h=300&fit=crop",
-        region: "Алматинская обл.",
-        dob: "09.01.1998",
-        height: "178 см",
-        bowType: "Классический (Recurve)",
-        equipment: "Hoyt Formula Xi / Easton X10",
-        classification: "МСМК (International)",
-        rank: 1,
-        totalPoints: 850,
-        coach: "Константин Ким",
-        pb: {
-            m70: 680,
-            m18: 592
-        },
-        medals: {
-            gold: 12,
-            silver: 5,
-            bronze: 3
-        },
-        history: [
-            { date: "16.12.2024", event: "Зимний Чемпионат РК", discipline: "Recurve", place: "1 место", points: 100, score: "675" },
-            { date: "15.11.2024", event: "Кубок Федерации", discipline: "Recurve", place: "2 место", points: 80, score: "670" },
-            { date: "10.08.2024", event: "Кубок Азии 2024", discipline: "Recurve", place: "1 место", points: 150, score: "678" },
-            { date: "05.05.2024", event: "Гран-при Шымкент", discipline: "Recurve", place: "3 место", points: 60, score: "665" },
-            { date: "12.12.2023", event: "Чемпионат Мира 2023", discipline: "Recurve", place: "9 место", points: 40, score: "668" }
-        ]
+interface NationalTeamMembership {
+    id: number;
+    category: string;
+    gender: string;
+    type: string;
+    isActive: boolean;
+}
+
+interface Ranking {
+    id: number;
+    category: string;
+    gender: string;
+    type: string;
+    points: number;
+    rank: number;
+    classification?: string;
+}
+
+interface Region {
+    id: number;
+    name: string;
+    nameKk?: string;
+    nameEn?: string;
+}
+
+interface Coach {
+    id: number;
+    name: string;
+    nameKk?: string;
+    nameEn?: string;
+    region?: Region;
+}
+
+interface AthleteCoach {
+    id: number;
+    coachId: number;
+    isPrimary: boolean;
+    coach: Coach;
+}
+
+interface Athlete {
+    id: number;
+    slug: string;
+    name: string;
+    nameKk?: string;
+    nameEn?: string;
+    type: string;
+    gender: string;
+    category: string;
+    region: string;
+    regionRef?: Region;
+    birthYear?: number;
+    image?: string;
+    bio?: string;
+    bioKk?: string;
+    bioEn?: string;
+    nationalTeamMemberships?: NationalTeamMembership[];
+    coaches?: AthleteCoach[];
+    isActive: boolean;
+    rankings: Ranking[];
+}
+
+async function getAthlete(id: string): Promise<Athlete | null> {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/team/${id}`, {
+            cache: 'no-store',
+        });
+
+        if (!res.ok) {
+            return null;
+        }
+
+        const data = await res.json();
+        return data.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+const regionNames: Record<string, string> = {
+    'almaty_reg': 'Алматинская обл.',
+    'astana': 'г. Астана',
+    'almaty': 'г. Алматы',
+    'shymkent': 'г. Шымкент',
+    'west_kaz': 'Западно-Казахстанская обл.',
+    'east_kaz': 'Восточно-Казахстанская обл.',
+    'north_kaz': 'Северо-Казахстанская обл.',
+    'karaganda': 'Карагандинская обл.',
+    'kostanay': 'Костанайская обл.',
+    'pavlodar': 'Павлодарская обл.',
+    'akmola': 'Акмолинская обл.',
+    'aktobe': 'Актюбинская обл.',
+    'atyrau': 'Атырауская обл.',
+    'mangystau': 'Мангистауская обл.',
+    'kyzylorda': 'Кызылординская обл.',
+    'turkistan': 'Туркестанская обл.',
+    'zhambyl': 'Жамбылская обл.',
+    'zhetisu': 'Жетісу обл.',
+    'abai': 'Абайская обл.',
+    'ulytau': 'Ұлытау обл.',
+};
+
+const classificationNames: Record<string, string> = {
+    'International': 'МСМК (International)',
+    'National': 'МС (National)',
+    'Candidate': 'КМС (Candidate)',
+    '1st Class': '1 разряд',
+};
+
+export default async function AthleteProfile({ params }: { params: Promise<{ id: string; locale: string }> }) {
+    const { id, locale } = await params;
+    const athlete = await getAthlete(id);
+
+    if (!athlete) {
+        notFound();
+    }
+
+    const currentRanking = athlete.rankings?.[0];
+
+    // Get region display with localization
+    const getRegionDisplay = () => {
+        if (athlete.regionRef) {
+            if (locale === 'kk' && athlete.regionRef.nameKk) return athlete.regionRef.nameKk;
+            if (locale === 'en' && athlete.regionRef.nameEn) return athlete.regionRef.nameEn;
+            return athlete.regionRef.name;
+        }
+        return regionNames[athlete.region] || athlete.region || 'Не указан';
+    };
+    const regionDisplay = getRegionDisplay();
+    const classificationDisplay = currentRanking?.classification
+        ? classificationNames[currentRanking.classification] || currentRanking.classification
+        : 'Не определено';
+
+    const getName = () => {
+        if (locale === 'kk' && athlete.nameKk) return athlete.nameKk;
+        if (locale === 'en' && athlete.nameEn) return athlete.nameEn;
+        return athlete.name;
+    };
+
+    const getCoachName = (coach: Coach) => {
+        if (locale === 'kk' && coach.nameKk) return coach.nameKk;
+        if (locale === 'en' && coach.nameEn) return coach.nameEn;
+        return coach.name;
+    };
+
+    const getCoachesDisplay = () => {
+        if (!athlete.coaches || athlete.coaches.length === 0) {
+            return locale === 'kk' ? 'Көрсетілмеген' : locale === 'en' ? 'Not specified' : 'Не указан';
+        }
+        return athlete.coaches.map(ac => getCoachName(ac.coach)).join(', ');
     };
 
     return (
@@ -45,139 +167,128 @@ export default function AthleteProfile({ params }: { params: { id: string } }) {
                     <Card>
                         <CardContent className="pt-6 flex flex-col items-center">
                             <Avatar className="w-48 h-48 mb-4 border-4 border-muted">
-                                <AvatarImage src={athlete.photo} alt={athlete.name} />
-                                <AvatarFallback>{athlete.name.charAt(0)}</AvatarFallback>
+                                <AvatarImage src={athlete.image || undefined} alt={getName()} />
+                                <AvatarFallback className="text-4xl">{getName().charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <h1 className="text-2xl font-bold text-center mb-1">{athlete.name}</h1>
-                            <div className="flex gap-2 mb-4">
-                                <Badge variant="secondary">{athlete.region}</Badge>
-                                <Badge className="bg-amber-500 hover:bg-amber-600">{athlete.classification}</Badge>
+                            <h1 className="text-2xl font-bold text-center mb-1">{getName()}</h1>
+                            <div className="flex gap-2 mb-4 flex-wrap justify-center">
+                                <Badge variant="secondary">{regionDisplay}</Badge>
+                                <Badge className="bg-amber-500 hover:bg-amber-600">{classificationDisplay}</Badge>
                             </div>
 
                             <div className="w-full space-y-3 text-sm">
-                                <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">Дата рождения</span>
-                                    <span className="font-medium">{athlete.dob}</span>
-                                </div>
-                                <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">Рост</span>
-                                    <span className="font-medium">{athlete.height}</span>
-                                </div>
+                                {athlete.birthYear && (
+                                    <div className="flex justify-between border-b pb-2">
+                                        <span className="text-muted-foreground">Год рождения</span>
+                                        <span className="font-medium">{athlete.birthYear}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between border-b pb-2">
                                     <span className="text-muted-foreground">Тип лука</span>
-                                    <span className="font-medium">{athlete.bowType}</span>
+                                    <span className="font-medium">{athlete.type === 'Recurve' ? 'Классический (Recurve)' : 'Блочный (Compound)'}</span>
                                 </div>
                                 <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">Тренер</span>
-                                    <span className="font-medium text-primary underline cursor-pointer">{athlete.coach}</span>
+                                    <span className="text-muted-foreground">Категория</span>
+                                    <span className="font-medium">{athlete.category}</span>
+                                </div>
+                                <div className="flex justify-between border-b pb-2">
+                                    <span className="text-muted-foreground">
+                                        {locale === 'kk' ? 'Жаттықтырушы' : locale === 'en' ? 'Coach' : 'Тренер'}
+                                        {athlete.coaches && athlete.coaches.length > 1 && (locale === 'kk' ? 'лар' : locale === 'en' ? 'es' : 'ы')}
+                                    </span>
+                                    <span className="font-medium text-primary text-right">{getCoachesDisplay()}</span>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg flex items-center gap-2"><Target className="h-5 w-5" /> Экипировка</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="font-medium">{athlete.equipment}</p>
-                        </CardContent>
-                    </Card>
+                    {athlete.bio && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2"><Target className="h-5 w-5" /> О спортсмене</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground">
+                                    {locale === 'kk' && athlete.bioKk ? athlete.bioKk :
+                                     locale === 'en' && athlete.bioEn ? athlete.bioEn :
+                                     athlete.bio}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
 
                 {/* Right Column: Stats & History */}
                 <div className="md:col-span-2 space-y-6">
                     {/* Rank & Points Dashboard */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <Card className="bg-primary/5 border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
                             <CardContent className="pt-6 text-center">
                                 <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Нац. Рейтинг</div>
-                                <div className="text-4xl font-extrabold text-primary">#{athlete.rank}</div>
+                                <div className="text-4xl font-extrabold text-primary">
+                                    #{currentRanking?.rank || '-'}
+                                </div>
                             </CardContent>
                         </Card>
                         <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
                             <CardContent className="pt-6 text-center">
                                 <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Очки</div>
-                                <div className="text-3xl font-bold flex items-center justify-center gap-2">
-                                    {athlete.totalPoints} <TrendingUp className="h-4 w-4 text-green-500" />
+                                <div className="text-3xl font-bold">
+                                    {currentRanking?.points || 0}
                                 </div>
                             </CardContent>
                         </Card>
                         <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
                             <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">PB (70m)</div>
-                                <div className="text-3xl font-bold">{athlete.pb.m70}</div>
-                            </CardContent>
-                        </Card>
-                        <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
-                            <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Карьера</div>
-                                <div className="flex justify-center gap-1">
-                                    <div className="flex flex-col items-center">
-                                        <Medal className="h-5 w-5 text-yellow-500" />
-                                        <span className="text-sm font-bold">{athlete.medals.gold}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <Medal className="h-5 w-5 text-gray-400" />
-                                        <span className="text-sm font-bold">{athlete.medals.silver}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <Medal className="h-5 w-5 text-amber-700" />
-                                        <span className="text-sm font-bold">{athlete.medals.bronze}</span>
-                                    </div>
-                                </div>
+                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Категория</div>
+                                <div className="text-xl font-bold">{currentRanking?.category || '-'}</div>
                             </CardContent>
                         </Card>
                     </div>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Trophy className="h-5 w-5" /> История выступлений (Activity Log)</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Дата</TableHead>
-                                        <TableHead>Турнир</TableHead>
-                                        <TableHead>Дисциплина</TableHead>
-                                        <TableHead>Место</TableHead>
-                                        <TableHead className="text-right">Очки</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {athlete.history.map((item, i) => (
-                                        <TableRow key={i}>
-                                            <TableCell className="text-muted-foreground font-mono text-xs">{item.date}</TableCell>
-                                            <TableCell className="font-medium">{item.event}</TableCell>
-                                            <TableCell>{item.discipline}</TableCell>
-                                            <TableCell>
-                                                <Badge variant={i === 0 ? "default" : "secondary"}>{item.place}</Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right font-bold text-primary">+{item.points}</TableCell>
+                    {/* Rankings by Category */}
+                    {athlete.rankings && athlete.rankings.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><Trophy className="h-5 w-5" /> Рейтинги по категориям</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Категория</TableHead>
+                                            <TableHead>Пол</TableHead>
+                                            <TableHead>Дисциплина</TableHead>
+                                            <TableHead>Место</TableHead>
+                                            <TableHead>Очки</TableHead>
+                                            <TableHead>Классификация</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                    </Card>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {athlete.rankings.map((ranking) => (
+                                            <TableRow key={ranking.id}>
+                                                <TableCell className="font-medium">{ranking.category}</TableCell>
+                                                <TableCell>{ranking.gender === 'M' ? 'Муж' : 'Жен'}</TableCell>
+                                                <TableCell>{ranking.type === 'Recurve' ? 'Классический' : 'Блочный'}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant={ranking.rank <= 3 ? "default" : "secondary"}>
+                                                        #{ranking.rank}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="font-bold text-primary">{ranking.points}</TableCell>
+                                                <TableCell>
+                                                    {ranking.classification
+                                                        ? classificationNames[ranking.classification] || ranking.classification
+                                                        : '-'}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    )}
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Calendar className="h-5 w-5" /> Медиа</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-3 gap-2">
-                                {[1, 2, 3].map(i => (
-                                    <div key={i} className="aspect-square bg-muted rounded-md relative overflow-hidden group cursor-pointer">
-                                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs bg-black/5 group-hover:bg-black/20 transition-colors">
-                                            Media {i}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
                 </div>
             </div>
         </div>

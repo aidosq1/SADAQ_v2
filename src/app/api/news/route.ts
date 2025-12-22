@@ -7,13 +7,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const isMain = searchParams.get('isMain');
     const { limit, page, skip } = parseQueryParams(searchParams);
 
     const where = {
-      isPublished: true,
       ...(category && { category }),
-      ...(isMain !== null && { isMain: isMain === 'true' }),
     };
 
     const [news, total] = await Promise.all([
@@ -28,7 +25,6 @@ export async function GET(request: NextRequest) {
 
     return successResponse(news, { total, page, limit });
   } catch (error) {
-    console.error('News GET error:', error);
     return errorResponse('Failed to fetch news', 500);
   }
 }
@@ -44,11 +40,11 @@ export async function POST(request: NextRequest) {
       title, titleKk, titleEn,
       content, contentKk, contentEn,
       excerpt, excerptKk, excerptEn,
-      category, image, isMain, isPublished
+      category, image, showInSlider, sliderOrder
     } = body;
 
-    if (!title || !content || !category) {
-      return errorResponse('Missing required fields: title, content, category');
+    if (!title || !category) {
+      return errorResponse('Missing required fields: title, category');
     }
 
     const slug = generateSlug(title);
@@ -71,14 +67,13 @@ export async function POST(request: NextRequest) {
         excerptEn,
         category,
         image,
-        isMain: isMain ?? false,
-        isPublished: isPublished ?? true,
+        showInSlider: showInSlider ?? false,
+        sliderOrder: sliderOrder ?? 0,
       },
     });
 
     return successResponse(news);
   } catch (error) {
-    console.error('News POST error:', error);
     return errorResponse('Failed to create news', 500);
   }
 }

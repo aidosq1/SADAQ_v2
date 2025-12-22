@@ -7,11 +7,15 @@ declare module "next-auth" {
     user: {
       id?: string;
       role?: string;
+      regionId?: number | null;
+      region?: string | null;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     role?: string;
+    regionId?: number | null;
+    region?: string | null;
   }
 }
 
@@ -19,5 +23,7 @@ declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     id?: string;
     role?: string;
+    regionId?: number | null;
+    region?: string | null;
   }
 }
