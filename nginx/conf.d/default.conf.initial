@@ -1,0 +1,40 @@
+# =============================================
+# Initial Nginx config (before SSL certificate)
+# =============================================
+# Use this config for first deployment to get SSL certificate
+# After getting certificate, replace with default.conf
+#
+# Steps:
+# 1. Rename this file to default.conf
+# 2. Start nginx: docker compose -f docker-compose.production.yml up -d nginx
+# 3. Get certificate: certbot certonly --webroot -w /opt/sadaq/certbot/www -d kazarchery.kz
+# 4. Restore original default.conf (with SSL)
+# 5. Restart nginx
+
+upstream nextjs_upstream {
+    server app:3000;
+    keepalive 64;
+}
+
+server {
+    listen 80;
+    server_name kazarchery.kz www.kazarchery.kz;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        proxy_pass http://nextjs_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    client_max_body_size 50M;
+}

@@ -1,0 +1,50 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+tests
+*.test.ts
+*.spec.ts
+coverage
+__tests__
+
+# Documentation
+*.md
+!README.md
+
+# Misc
+*.log
+
+# Development files
+prisma/seeds
+
+# Docker
+Dockerfile*
+docker-compose*
+!docker-compose.production.yml
