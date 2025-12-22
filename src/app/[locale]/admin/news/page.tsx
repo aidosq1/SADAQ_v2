@@ -68,6 +68,7 @@ const defaultFormData = {
   image: "",
   showInSlider: false,
   sliderOrder: 0,
+  publishedAt: "",
 };
 
 const TRANSLATION_FIELDS = {
@@ -113,6 +114,7 @@ export default function AdminNewsPage() {
     excerptKk: locale === "kk" ? "Қысқаша (қазақша)" : locale === "en" ? "Excerpt (Kazakh)" : "Краткое (каз)",
     excerptEn: locale === "kk" ? "Қысқаша (ағылшынша)" : locale === "en" ? "Excerpt (English)" : "Краткое (англ)",
     actions: locale === "kk" ? "Әрекеттер" : locale === "en" ? "Actions" : "Действия",
+    date: locale === "kk" ? "Жарияланған күні" : locale === "en" ? "Publication Date" : "Дата публикации",
   };
 
   useEffect(() => {
@@ -155,6 +157,7 @@ export default function AdminNewsPage() {
       image: item.image || "",
       showInSlider: item.showInSlider,
       sliderOrder: item.sliderOrder,
+      publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split('T')[0] : "",
     });
     setDialogOpen(true);
   }
@@ -421,8 +424,8 @@ export default function AdminNewsPage() {
               <div className="grid gap-4 p-4 border rounded-lg bg-muted/50">
                 <p className="text-sm text-muted-foreground">
                   {locale === "kk" ? "Слайдерде көрсетілетін мәтін (қысқаша сипаттама қолданылады)" :
-                   locale === "en" ? "Text shown in slider (excerpt will be used)" :
-                   "Текст в слайдере (используется краткое описание)"}
+                    locale === "en" ? "Text shown in slider (excerpt will be used)" :
+                      "Текст в слайдере (используется краткое описание)"}
                 </p>
                 <div className="grid gap-2">
                   <Label>{labels.excerptKk}</Label>
@@ -442,6 +445,16 @@ export default function AdminNewsPage() {
                 </div>
               </div>
             )}
+
+            <div className="grid gap-2">
+              <Label>{labels.date || "Дата публикации"}</Label>
+              <Input
+                type="date"
+                value={formData.publishedAt || ""}
+                onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">Если оставить пустым, будет использовано текущее время.</p>
+            </div>
           </div>
 
           <DialogFooter>

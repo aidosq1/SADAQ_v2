@@ -140,27 +140,37 @@ model Document {
   @@index([section])
 }
 
-model GalleryItem {
-  id            Int       @id @default(autoincrement())
+model Gallery {
+  id            Int            @id @default(autoincrement())
+  slug          String         @unique // To be generated from title
   title         String
   titleKk       String?
   titleEn       String?
   description   String?
   descriptionKk String?
   descriptionEn String?
-  type          String
-  url           String
-  thumbnailUrl  String?
-  albumName     String?
   eventDate     DateTime?
-  sortOrder     Int       @default(0)
-  isPublished   Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
+  coverImage    String?
+  totalImages   Int            @default(0)
+  isPublished   Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  images        GalleryImage[]
 
   @@index([eventDate])
   @@index([isPublished])
-  @@index([type])
+}
+
+model GalleryImage {
+  id        Int      @id @default(autoincrement())
+  galleryId Int
+  gallery   Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  url       String
+  title     String? 
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([galleryId])
 }
 
 model HistoryEvent {

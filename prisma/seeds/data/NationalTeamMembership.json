@@ -1,0 +1,3071 @@
+[
+  {
+    "id": 1,
+    "athleteId": 1,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.407Z",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "athleteId": 2,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.413Z",
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "athleteId": 3,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.415Z",
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "athleteId": 4,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.418Z",
+    "isActive": true
+  },
+  {
+    "id": 5,
+    "athleteId": 5,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.421Z",
+    "isActive": true
+  },
+  {
+    "id": 6,
+    "athleteId": 6,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.424Z",
+    "isActive": true
+  },
+  {
+    "id": 7,
+    "athleteId": 7,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.427Z",
+    "isActive": true
+  },
+  {
+    "id": 8,
+    "athleteId": 8,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.431Z",
+    "isActive": true
+  },
+  {
+    "id": 9,
+    "athleteId": 9,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.433Z",
+    "isActive": true
+  },
+  {
+    "id": 10,
+    "athleteId": 10,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.435Z",
+    "isActive": true
+  },
+  {
+    "id": 11,
+    "athleteId": 11,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.438Z",
+    "isActive": true
+  },
+  {
+    "id": 12,
+    "athleteId": 12,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.440Z",
+    "isActive": true
+  },
+  {
+    "id": 13,
+    "athleteId": 13,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.442Z",
+    "isActive": true
+  },
+  {
+    "id": 14,
+    "athleteId": 14,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.445Z",
+    "isActive": true
+  },
+  {
+    "id": 15,
+    "athleteId": 15,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.448Z",
+    "isActive": true
+  },
+  {
+    "id": 16,
+    "athleteId": 16,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.450Z",
+    "isActive": true
+  },
+  {
+    "id": 17,
+    "athleteId": 17,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.452Z",
+    "isActive": true
+  },
+  {
+    "id": 18,
+    "athleteId": 18,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.455Z",
+    "isActive": true
+  },
+  {
+    "id": 19,
+    "athleteId": 19,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.457Z",
+    "isActive": true
+  },
+  {
+    "id": 20,
+    "athleteId": 20,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.460Z",
+    "isActive": true
+  },
+  {
+    "id": 21,
+    "athleteId": 46,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.481Z",
+    "isActive": true
+  },
+  {
+    "id": 22,
+    "athleteId": 47,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.484Z",
+    "isActive": true
+  },
+  {
+    "id": 23,
+    "athleteId": 48,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.486Z",
+    "isActive": true
+  },
+  {
+    "id": 24,
+    "athleteId": 49,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.488Z",
+    "isActive": true
+  },
+  {
+    "id": 25,
+    "athleteId": 50,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.491Z",
+    "isActive": true
+  },
+  {
+    "id": 26,
+    "athleteId": 51,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.493Z",
+    "isActive": true
+  },
+  {
+    "id": 27,
+    "athleteId": 52,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.495Z",
+    "isActive": true
+  },
+  {
+    "id": 28,
+    "athleteId": 53,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.497Z",
+    "isActive": true
+  },
+  {
+    "id": 29,
+    "athleteId": 54,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.500Z",
+    "isActive": true
+  },
+  {
+    "id": 30,
+    "athleteId": 55,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.502Z",
+    "isActive": true
+  },
+  {
+    "id": 31,
+    "athleteId": 57,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.507Z",
+    "isActive": true
+  },
+  {
+    "id": 32,
+    "athleteId": 58,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.511Z",
+    "isActive": true
+  },
+  {
+    "id": 33,
+    "athleteId": 59,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.518Z",
+    "isActive": true
+  },
+  {
+    "id": 34,
+    "athleteId": 60,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.520Z",
+    "isActive": true
+  },
+  {
+    "id": 35,
+    "athleteId": 61,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.523Z",
+    "isActive": true
+  },
+  {
+    "id": 36,
+    "athleteId": 62,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.525Z",
+    "isActive": true
+  },
+  {
+    "id": 37,
+    "athleteId": 63,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.527Z",
+    "isActive": true
+  },
+  {
+    "id": 38,
+    "athleteId": 64,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.530Z",
+    "isActive": true
+  },
+  {
+    "id": 39,
+    "athleteId": 65,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.532Z",
+    "isActive": true
+  },
+  {
+    "id": 40,
+    "athleteId": 79,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.544Z",
+    "isActive": true
+  },
+  {
+    "id": 41,
+    "athleteId": 80,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.547Z",
+    "isActive": true
+  },
+  {
+    "id": 42,
+    "athleteId": 81,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.549Z",
+    "isActive": true
+  },
+  {
+    "id": 43,
+    "athleteId": 82,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.551Z",
+    "isActive": true
+  },
+  {
+    "id": 44,
+    "athleteId": 83,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.553Z",
+    "isActive": true
+  },
+  {
+    "id": 45,
+    "athleteId": 84,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.555Z",
+    "isActive": true
+  },
+  {
+    "id": 46,
+    "athleteId": 85,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.557Z",
+    "isActive": true
+  },
+  {
+    "id": 47,
+    "athleteId": 86,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.559Z",
+    "isActive": true
+  },
+  {
+    "id": 48,
+    "athleteId": 87,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.562Z",
+    "isActive": true
+  },
+  {
+    "id": 49,
+    "athleteId": 88,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.564Z",
+    "isActive": true
+  },
+  {
+    "id": 50,
+    "athleteId": 89,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.566Z",
+    "isActive": true
+  },
+  {
+    "id": 51,
+    "athleteId": 90,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.568Z",
+    "isActive": true
+  },
+  {
+    "id": 52,
+    "athleteId": 91,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.570Z",
+    "isActive": true
+  },
+  {
+    "id": 53,
+    "athleteId": 92,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.572Z",
+    "isActive": true
+  },
+  {
+    "id": 54,
+    "athleteId": 93,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.574Z",
+    "isActive": true
+  },
+  {
+    "id": 55,
+    "athleteId": 94,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.576Z",
+    "isActive": true
+  },
+  {
+    "id": 56,
+    "athleteId": 95,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.579Z",
+    "isActive": true
+  },
+  {
+    "id": 57,
+    "athleteId": 96,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.581Z",
+    "isActive": true
+  },
+  {
+    "id": 58,
+    "athleteId": 97,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.583Z",
+    "isActive": true
+  },
+  {
+    "id": 59,
+    "athleteId": 98,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.585Z",
+    "isActive": true
+  },
+  {
+    "id": 60,
+    "athleteId": 134,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.612Z",
+    "isActive": true
+  },
+  {
+    "id": 61,
+    "athleteId": 135,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.614Z",
+    "isActive": true
+  },
+  {
+    "id": 62,
+    "athleteId": 136,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.616Z",
+    "isActive": true
+  },
+  {
+    "id": 63,
+    "athleteId": 137,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.618Z",
+    "isActive": true
+  },
+  {
+    "id": 64,
+    "athleteId": 138,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.620Z",
+    "isActive": true
+  },
+  {
+    "id": 65,
+    "athleteId": 139,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.622Z",
+    "isActive": true
+  },
+  {
+    "id": 66,
+    "athleteId": 140,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.624Z",
+    "isActive": true
+  },
+  {
+    "id": 67,
+    "athleteId": 141,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.627Z",
+    "isActive": true
+  },
+  {
+    "id": 68,
+    "athleteId": 142,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.629Z",
+    "isActive": true
+  },
+  {
+    "id": 69,
+    "athleteId": 143,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.631Z",
+    "isActive": true
+  },
+  {
+    "id": 70,
+    "athleteId": 144,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.633Z",
+    "isActive": true
+  },
+  {
+    "id": 71,
+    "athleteId": 145,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.635Z",
+    "isActive": true
+  },
+  {
+    "id": 72,
+    "athleteId": 146,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.637Z",
+    "isActive": true
+  },
+  {
+    "id": 73,
+    "athleteId": 147,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.639Z",
+    "isActive": true
+  },
+  {
+    "id": 74,
+    "athleteId": 148,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.641Z",
+    "isActive": true
+  },
+  {
+    "id": 75,
+    "athleteId": 149,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.643Z",
+    "isActive": true
+  },
+  {
+    "id": 76,
+    "athleteId": 150,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.646Z",
+    "isActive": true
+  },
+  {
+    "id": 77,
+    "athleteId": 151,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.648Z",
+    "isActive": true
+  },
+  {
+    "id": 78,
+    "athleteId": 152,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.650Z",
+    "isActive": true
+  },
+  {
+    "id": 79,
+    "athleteId": 153,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.652Z",
+    "isActive": true
+  },
+  {
+    "id": 80,
+    "athleteId": 192,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.682Z",
+    "isActive": true
+  },
+  {
+    "id": 81,
+    "athleteId": 193,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.684Z",
+    "isActive": true
+  },
+  {
+    "id": 82,
+    "athleteId": 194,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.686Z",
+    "isActive": true
+  },
+  {
+    "id": 83,
+    "athleteId": 195,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.688Z",
+    "isActive": true
+  },
+  {
+    "id": 84,
+    "athleteId": 196,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.690Z",
+    "isActive": true
+  },
+  {
+    "id": 85,
+    "athleteId": 197,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.692Z",
+    "isActive": true
+  },
+  {
+    "id": 86,
+    "athleteId": 198,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.694Z",
+    "isActive": true
+  },
+  {
+    "id": 87,
+    "athleteId": 199,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.697Z",
+    "isActive": true
+  },
+  {
+    "id": 88,
+    "athleteId": 200,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.699Z",
+    "isActive": true
+  },
+  {
+    "id": 89,
+    "athleteId": 201,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.701Z",
+    "isActive": true
+  },
+  {
+    "id": 90,
+    "athleteId": 202,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.703Z",
+    "isActive": true
+  },
+  {
+    "id": 91,
+    "athleteId": 203,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.705Z",
+    "isActive": true
+  },
+  {
+    "id": 92,
+    "athleteId": 204,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.707Z",
+    "isActive": true
+  },
+  {
+    "id": 93,
+    "athleteId": 205,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.710Z",
+    "isActive": true
+  },
+  {
+    "id": 94,
+    "athleteId": 206,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.712Z",
+    "isActive": true
+  },
+  {
+    "id": 95,
+    "athleteId": 207,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.714Z",
+    "isActive": true
+  },
+  {
+    "id": 96,
+    "athleteId": 208,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.716Z",
+    "isActive": true
+  },
+  {
+    "id": 97,
+    "athleteId": 209,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.718Z",
+    "isActive": true
+  },
+  {
+    "id": 98,
+    "athleteId": 210,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.720Z",
+    "isActive": true
+  },
+  {
+    "id": 99,
+    "athleteId": 211,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.723Z",
+    "isActive": true
+  },
+  {
+    "id": 100,
+    "athleteId": 213,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.726Z",
+    "isActive": true
+  },
+  {
+    "id": 101,
+    "athleteId": 214,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.728Z",
+    "isActive": true
+  },
+  {
+    "id": 102,
+    "athleteId": 215,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.730Z",
+    "isActive": true
+  },
+  {
+    "id": 103,
+    "athleteId": 216,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.732Z",
+    "isActive": true
+  },
+  {
+    "id": 104,
+    "athleteId": 217,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.734Z",
+    "isActive": true
+  },
+  {
+    "id": 105,
+    "athleteId": 218,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.736Z",
+    "isActive": true
+  },
+  {
+    "id": 106,
+    "athleteId": 219,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.738Z",
+    "isActive": true
+  },
+  {
+    "id": 107,
+    "athleteId": 220,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.741Z",
+    "isActive": true
+  },
+  {
+    "id": 108,
+    "athleteId": 221,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.743Z",
+    "isActive": true
+  },
+  {
+    "id": 109,
+    "athleteId": 222,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.745Z",
+    "isActive": true
+  },
+  {
+    "id": 110,
+    "athleteId": 223,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.747Z",
+    "isActive": true
+  },
+  {
+    "id": 111,
+    "athleteId": 224,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.749Z",
+    "isActive": true
+  },
+  {
+    "id": 112,
+    "athleteId": 225,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.751Z",
+    "isActive": true
+  },
+  {
+    "id": 113,
+    "athleteId": 226,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.754Z",
+    "isActive": true
+  },
+  {
+    "id": 114,
+    "athleteId": 227,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.756Z",
+    "isActive": true
+  },
+  {
+    "id": 115,
+    "athleteId": 228,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.758Z",
+    "isActive": true
+  },
+  {
+    "id": 116,
+    "athleteId": 229,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.760Z",
+    "isActive": true
+  },
+  {
+    "id": 117,
+    "athleteId": 230,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.762Z",
+    "isActive": true
+  },
+  {
+    "id": 118,
+    "athleteId": 231,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.764Z",
+    "isActive": true
+  },
+  {
+    "id": 119,
+    "athleteId": 232,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.766Z",
+    "isActive": true
+  },
+  {
+    "id": 120,
+    "athleteId": 233,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.768Z",
+    "isActive": true
+  },
+  {
+    "id": 121,
+    "athleteId": 234,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.771Z",
+    "isActive": true
+  },
+  {
+    "id": 122,
+    "athleteId": 235,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.773Z",
+    "isActive": true
+  },
+  {
+    "id": 123,
+    "athleteId": 236,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.775Z",
+    "isActive": true
+  },
+  {
+    "id": 124,
+    "athleteId": 237,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.777Z",
+    "isActive": true
+  },
+  {
+    "id": 125,
+    "athleteId": 238,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.779Z",
+    "isActive": true
+  },
+  {
+    "id": 126,
+    "athleteId": 239,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.781Z",
+    "isActive": true
+  },
+  {
+    "id": 127,
+    "athleteId": 240,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.783Z",
+    "isActive": true
+  },
+  {
+    "id": 128,
+    "athleteId": 241,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.785Z",
+    "isActive": true
+  },
+  {
+    "id": 129,
+    "athleteId": 242,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.787Z",
+    "isActive": true
+  },
+  {
+    "id": 130,
+    "athleteId": 243,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.790Z",
+    "isActive": true
+  },
+  {
+    "id": 131,
+    "athleteId": 244,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.792Z",
+    "isActive": true
+  },
+  {
+    "id": 132,
+    "athleteId": 245,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.794Z",
+    "isActive": true
+  },
+  {
+    "id": 133,
+    "athleteId": 246,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.796Z",
+    "isActive": true
+  },
+  {
+    "id": 134,
+    "athleteId": 247,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.798Z",
+    "isActive": true
+  },
+  {
+    "id": 135,
+    "athleteId": 248,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.800Z",
+    "isActive": true
+  },
+  {
+    "id": 136,
+    "athleteId": 249,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.802Z",
+    "isActive": true
+  },
+  {
+    "id": 137,
+    "athleteId": 250,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.804Z",
+    "isActive": true
+  },
+  {
+    "id": 138,
+    "athleteId": 251,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.806Z",
+    "isActive": true
+  },
+  {
+    "id": 139,
+    "athleteId": 252,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.809Z",
+    "isActive": true
+  },
+  {
+    "id": 140,
+    "athleteId": 253,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.811Z",
+    "isActive": true
+  },
+  {
+    "id": 141,
+    "athleteId": 254,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.813Z",
+    "isActive": true
+  },
+  {
+    "id": 142,
+    "athleteId": 255,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.815Z",
+    "isActive": true
+  },
+  {
+    "id": 143,
+    "athleteId": 256,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.817Z",
+    "isActive": true
+  },
+  {
+    "id": 144,
+    "athleteId": 257,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.819Z",
+    "isActive": true
+  },
+  {
+    "id": 145,
+    "athleteId": 258,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.821Z",
+    "isActive": true
+  },
+  {
+    "id": 146,
+    "athleteId": 259,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.823Z",
+    "isActive": true
+  },
+  {
+    "id": 147,
+    "athleteId": 260,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.825Z",
+    "isActive": true
+  },
+  {
+    "id": 148,
+    "athleteId": 261,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.827Z",
+    "isActive": true
+  },
+  {
+    "id": 149,
+    "athleteId": 262,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.829Z",
+    "isActive": true
+  },
+  {
+    "id": 150,
+    "athleteId": 263,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.832Z",
+    "isActive": true
+  },
+  {
+    "id": 151,
+    "athleteId": 264,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.834Z",
+    "isActive": true
+  },
+  {
+    "id": 152,
+    "athleteId": 265,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.836Z",
+    "isActive": true
+  },
+  {
+    "id": 153,
+    "athleteId": 266,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.838Z",
+    "isActive": true
+  },
+  {
+    "id": 154,
+    "athleteId": 267,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.840Z",
+    "isActive": true
+  },
+  {
+    "id": 155,
+    "athleteId": 275,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.848Z",
+    "isActive": true
+  },
+  {
+    "id": 156,
+    "athleteId": 276,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.850Z",
+    "isActive": true
+  },
+  {
+    "id": 157,
+    "athleteId": 277,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.852Z",
+    "isActive": true
+  },
+  {
+    "id": 158,
+    "athleteId": 278,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.854Z",
+    "isActive": true
+  },
+  {
+    "id": 159,
+    "athleteId": 279,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.856Z",
+    "isActive": true
+  },
+  {
+    "id": 160,
+    "athleteId": 280,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.858Z",
+    "isActive": true
+  },
+  {
+    "id": 161,
+    "athleteId": 281,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.861Z",
+    "isActive": true
+  },
+  {
+    "id": 162,
+    "athleteId": 282,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.863Z",
+    "isActive": true
+  },
+  {
+    "id": 163,
+    "athleteId": 283,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.867Z",
+    "isActive": true
+  },
+  {
+    "id": 164,
+    "athleteId": 284,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.869Z",
+    "isActive": true
+  },
+  {
+    "id": 165,
+    "athleteId": 285,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.872Z",
+    "isActive": true
+  },
+  {
+    "id": 166,
+    "athleteId": 286,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.874Z",
+    "isActive": true
+  },
+  {
+    "id": 167,
+    "athleteId": 287,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.877Z",
+    "isActive": true
+  },
+  {
+    "id": 168,
+    "athleteId": 288,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.880Z",
+    "isActive": true
+  },
+  {
+    "id": 169,
+    "athleteId": 289,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.882Z",
+    "isActive": true
+  },
+  {
+    "id": 170,
+    "athleteId": 290,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.885Z",
+    "isActive": true
+  },
+  {
+    "id": 171,
+    "athleteId": 291,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.887Z",
+    "isActive": true
+  },
+  {
+    "id": 172,
+    "athleteId": 292,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.889Z",
+    "isActive": true
+  },
+  {
+    "id": 173,
+    "athleteId": 293,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.892Z",
+    "isActive": true
+  },
+  {
+    "id": 174,
+    "athleteId": 294,
+    "category": "Cubs",
+    "gender": "M",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.894Z",
+    "isActive": true
+  },
+  {
+    "id": 175,
+    "athleteId": 296,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.897Z",
+    "isActive": true
+  },
+  {
+    "id": 176,
+    "athleteId": 297,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.899Z",
+    "isActive": true
+  },
+  {
+    "id": 177,
+    "athleteId": 298,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.901Z",
+    "isActive": true
+  },
+  {
+    "id": 178,
+    "athleteId": 299,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.903Z",
+    "isActive": true
+  },
+  {
+    "id": 179,
+    "athleteId": 300,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.905Z",
+    "isActive": true
+  },
+  {
+    "id": 180,
+    "athleteId": 301,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.908Z",
+    "isActive": true
+  },
+  {
+    "id": 181,
+    "athleteId": 302,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.910Z",
+    "isActive": true
+  },
+  {
+    "id": 182,
+    "athleteId": 303,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.912Z",
+    "isActive": true
+  },
+  {
+    "id": 183,
+    "athleteId": 304,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.914Z",
+    "isActive": true
+  },
+  {
+    "id": 184,
+    "athleteId": 305,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.917Z",
+    "isActive": true
+  },
+  {
+    "id": 185,
+    "athleteId": 306,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.919Z",
+    "isActive": true
+  },
+  {
+    "id": 186,
+    "athleteId": 307,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.921Z",
+    "isActive": true
+  },
+  {
+    "id": 187,
+    "athleteId": 308,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.924Z",
+    "isActive": true
+  },
+  {
+    "id": 188,
+    "athleteId": 309,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.927Z",
+    "isActive": true
+  },
+  {
+    "id": 189,
+    "athleteId": 310,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.930Z",
+    "isActive": true
+  },
+  {
+    "id": 190,
+    "athleteId": 311,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.932Z",
+    "isActive": true
+  },
+  {
+    "id": 191,
+    "athleteId": 312,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.934Z",
+    "isActive": true
+  },
+  {
+    "id": 192,
+    "athleteId": 313,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.937Z",
+    "isActive": true
+  },
+  {
+    "id": 193,
+    "athleteId": 314,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.940Z",
+    "isActive": true
+  },
+  {
+    "id": 194,
+    "athleteId": 315,
+    "category": "Cubs",
+    "gender": "F",
+    "type": "Recurve",
+    "joinedAt": "2025-12-22T11:56:30.943Z",
+    "isActive": true
+  },
+  {
+    "id": 195,
+    "athleteId": 323,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.952Z",
+    "isActive": true
+  },
+  {
+    "id": 196,
+    "athleteId": 324,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.955Z",
+    "isActive": true
+  },
+  {
+    "id": 197,
+    "athleteId": 325,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.957Z",
+    "isActive": true
+  },
+  {
+    "id": 198,
+    "athleteId": 326,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.960Z",
+    "isActive": true
+  },
+  {
+    "id": 199,
+    "athleteId": 327,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.963Z",
+    "isActive": true
+  },
+  {
+    "id": 200,
+    "athleteId": 328,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.965Z",
+    "isActive": true
+  },
+  {
+    "id": 201,
+    "athleteId": 329,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.968Z",
+    "isActive": true
+  },
+  {
+    "id": 202,
+    "athleteId": 330,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.970Z",
+    "isActive": true
+  },
+  {
+    "id": 203,
+    "athleteId": 331,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.972Z",
+    "isActive": true
+  },
+  {
+    "id": 204,
+    "athleteId": 332,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.975Z",
+    "isActive": true
+  },
+  {
+    "id": 205,
+    "athleteId": 333,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.977Z",
+    "isActive": true
+  },
+  {
+    "id": 206,
+    "athleteId": 334,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.980Z",
+    "isActive": true
+  },
+  {
+    "id": 207,
+    "athleteId": 335,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.987Z",
+    "isActive": true
+  },
+  {
+    "id": 208,
+    "athleteId": 336,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.993Z",
+    "isActive": true
+  },
+  {
+    "id": 209,
+    "athleteId": 337,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:30.997Z",
+    "isActive": true
+  },
+  {
+    "id": 210,
+    "athleteId": 338,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.000Z",
+    "isActive": true
+  },
+  {
+    "id": 211,
+    "athleteId": 339,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.002Z",
+    "isActive": true
+  },
+  {
+    "id": 212,
+    "athleteId": 340,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.004Z",
+    "isActive": true
+  },
+  {
+    "id": 213,
+    "athleteId": 341,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.007Z",
+    "isActive": true
+  },
+  {
+    "id": 214,
+    "athleteId": 342,
+    "category": "Adults",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.009Z",
+    "isActive": true
+  },
+  {
+    "id": 215,
+    "athleteId": 360,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.026Z",
+    "isActive": true
+  },
+  {
+    "id": 216,
+    "athleteId": 361,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.029Z",
+    "isActive": true
+  },
+  {
+    "id": 217,
+    "athleteId": 362,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.031Z",
+    "isActive": true
+  },
+  {
+    "id": 218,
+    "athleteId": 363,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.034Z",
+    "isActive": true
+  },
+  {
+    "id": 219,
+    "athleteId": 364,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.036Z",
+    "isActive": true
+  },
+  {
+    "id": 220,
+    "athleteId": 365,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.039Z",
+    "isActive": true
+  },
+  {
+    "id": 221,
+    "athleteId": 366,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.042Z",
+    "isActive": true
+  },
+  {
+    "id": 222,
+    "athleteId": 367,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.044Z",
+    "isActive": true
+  },
+  {
+    "id": 223,
+    "athleteId": 368,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.047Z",
+    "isActive": true
+  },
+  {
+    "id": 224,
+    "athleteId": 369,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.051Z",
+    "isActive": true
+  },
+  {
+    "id": 225,
+    "athleteId": 370,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.055Z",
+    "isActive": true
+  },
+  {
+    "id": 226,
+    "athleteId": 371,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.059Z",
+    "isActive": true
+  },
+  {
+    "id": 227,
+    "athleteId": 372,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.061Z",
+    "isActive": true
+  },
+  {
+    "id": 228,
+    "athleteId": 373,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.064Z",
+    "isActive": true
+  },
+  {
+    "id": 229,
+    "athleteId": 374,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.067Z",
+    "isActive": true
+  },
+  {
+    "id": 230,
+    "athleteId": 375,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.071Z",
+    "isActive": true
+  },
+  {
+    "id": 231,
+    "athleteId": 376,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.074Z",
+    "isActive": true
+  },
+  {
+    "id": 232,
+    "athleteId": 377,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.077Z",
+    "isActive": true
+  },
+  {
+    "id": 233,
+    "athleteId": 378,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.080Z",
+    "isActive": true
+  },
+  {
+    "id": 234,
+    "athleteId": 379,
+    "category": "Adults",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.083Z",
+    "isActive": true
+  },
+  {
+    "id": 235,
+    "athleteId": 390,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.101Z",
+    "isActive": true
+  },
+  {
+    "id": 236,
+    "athleteId": 391,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.106Z",
+    "isActive": true
+  },
+  {
+    "id": 237,
+    "athleteId": 392,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.110Z",
+    "isActive": true
+  },
+  {
+    "id": 238,
+    "athleteId": 393,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.114Z",
+    "isActive": true
+  },
+  {
+    "id": 239,
+    "athleteId": 394,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.117Z",
+    "isActive": true
+  },
+  {
+    "id": 240,
+    "athleteId": 395,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.120Z",
+    "isActive": true
+  },
+  {
+    "id": 241,
+    "athleteId": 396,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.125Z",
+    "isActive": true
+  },
+  {
+    "id": 242,
+    "athleteId": 397,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.132Z",
+    "isActive": true
+  },
+  {
+    "id": 243,
+    "athleteId": 398,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.135Z",
+    "isActive": true
+  },
+  {
+    "id": 244,
+    "athleteId": 399,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.139Z",
+    "isActive": true
+  },
+  {
+    "id": 245,
+    "athleteId": 400,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.143Z",
+    "isActive": true
+  },
+  {
+    "id": 246,
+    "athleteId": 401,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.146Z",
+    "isActive": true
+  },
+  {
+    "id": 247,
+    "athleteId": 402,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.149Z",
+    "isActive": true
+  },
+  {
+    "id": 248,
+    "athleteId": 403,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.152Z",
+    "isActive": true
+  },
+  {
+    "id": 249,
+    "athleteId": 404,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.155Z",
+    "isActive": true
+  },
+  {
+    "id": 250,
+    "athleteId": 405,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.158Z",
+    "isActive": true
+  },
+  {
+    "id": 251,
+    "athleteId": 406,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.161Z",
+    "isActive": true
+  },
+  {
+    "id": 252,
+    "athleteId": 407,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.164Z",
+    "isActive": true
+  },
+  {
+    "id": 253,
+    "athleteId": 408,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.167Z",
+    "isActive": true
+  },
+  {
+    "id": 254,
+    "athleteId": 409,
+    "category": "Youth",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.170Z",
+    "isActive": true
+  },
+  {
+    "id": 255,
+    "athleteId": 431,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.191Z",
+    "isActive": true
+  },
+  {
+    "id": 256,
+    "athleteId": 432,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.193Z",
+    "isActive": true
+  },
+  {
+    "id": 257,
+    "athleteId": 433,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.196Z",
+    "isActive": true
+  },
+  {
+    "id": 258,
+    "athleteId": 434,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.199Z",
+    "isActive": true
+  },
+  {
+    "id": 259,
+    "athleteId": 435,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.207Z",
+    "isActive": true
+  },
+  {
+    "id": 260,
+    "athleteId": 436,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.214Z",
+    "isActive": true
+  },
+  {
+    "id": 261,
+    "athleteId": 437,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.219Z",
+    "isActive": true
+  },
+  {
+    "id": 262,
+    "athleteId": 438,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.225Z",
+    "isActive": true
+  },
+  {
+    "id": 263,
+    "athleteId": 439,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.227Z",
+    "isActive": true
+  },
+  {
+    "id": 264,
+    "athleteId": 440,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.230Z",
+    "isActive": true
+  },
+  {
+    "id": 265,
+    "athleteId": 441,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.232Z",
+    "isActive": true
+  },
+  {
+    "id": 266,
+    "athleteId": 442,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.234Z",
+    "isActive": true
+  },
+  {
+    "id": 267,
+    "athleteId": 443,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.236Z",
+    "isActive": true
+  },
+  {
+    "id": 268,
+    "athleteId": 444,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.238Z",
+    "isActive": true
+  },
+  {
+    "id": 269,
+    "athleteId": 445,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.241Z",
+    "isActive": true
+  },
+  {
+    "id": 270,
+    "athleteId": 446,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.243Z",
+    "isActive": true
+  },
+  {
+    "id": 271,
+    "athleteId": 447,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.245Z",
+    "isActive": true
+  },
+  {
+    "id": 272,
+    "athleteId": 448,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.247Z",
+    "isActive": true
+  },
+  {
+    "id": 273,
+    "athleteId": 449,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.250Z",
+    "isActive": true
+  },
+  {
+    "id": 274,
+    "athleteId": 450,
+    "category": "Youth",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.252Z",
+    "isActive": true
+  },
+  {
+    "id": 275,
+    "athleteId": 475,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.275Z",
+    "isActive": true
+  },
+  {
+    "id": 276,
+    "athleteId": 476,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.279Z",
+    "isActive": true
+  },
+  {
+    "id": 277,
+    "athleteId": 477,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.281Z",
+    "isActive": true
+  },
+  {
+    "id": 278,
+    "athleteId": 478,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.284Z",
+    "isActive": true
+  },
+  {
+    "id": 279,
+    "athleteId": 479,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.286Z",
+    "isActive": true
+  },
+  {
+    "id": 280,
+    "athleteId": 480,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.288Z",
+    "isActive": true
+  },
+  {
+    "id": 281,
+    "athleteId": 481,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.291Z",
+    "isActive": true
+  },
+  {
+    "id": 282,
+    "athleteId": 482,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.293Z",
+    "isActive": true
+  },
+  {
+    "id": 283,
+    "athleteId": 483,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.295Z",
+    "isActive": true
+  },
+  {
+    "id": 284,
+    "athleteId": 484,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.297Z",
+    "isActive": true
+  },
+  {
+    "id": 285,
+    "athleteId": 485,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.300Z",
+    "isActive": true
+  },
+  {
+    "id": 286,
+    "athleteId": 486,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.302Z",
+    "isActive": true
+  },
+  {
+    "id": 287,
+    "athleteId": 487,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.304Z",
+    "isActive": true
+  },
+  {
+    "id": 288,
+    "athleteId": 488,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.307Z",
+    "isActive": true
+  },
+  {
+    "id": 289,
+    "athleteId": 489,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.309Z",
+    "isActive": true
+  },
+  {
+    "id": 290,
+    "athleteId": 490,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.311Z",
+    "isActive": true
+  },
+  {
+    "id": 291,
+    "athleteId": 491,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.313Z",
+    "isActive": true
+  },
+  {
+    "id": 292,
+    "athleteId": 492,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.316Z",
+    "isActive": true
+  },
+  {
+    "id": 293,
+    "athleteId": 493,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.318Z",
+    "isActive": true
+  },
+  {
+    "id": 294,
+    "athleteId": 494,
+    "category": "Juniors",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.320Z",
+    "isActive": true
+  },
+  {
+    "id": 295,
+    "athleteId": 496,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.323Z",
+    "isActive": true
+  },
+  {
+    "id": 296,
+    "athleteId": 497,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.326Z",
+    "isActive": true
+  },
+  {
+    "id": 297,
+    "athleteId": 498,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.328Z",
+    "isActive": true
+  },
+  {
+    "id": 298,
+    "athleteId": 499,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.330Z",
+    "isActive": true
+  },
+  {
+    "id": 299,
+    "athleteId": 500,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.332Z",
+    "isActive": true
+  },
+  {
+    "id": 300,
+    "athleteId": 501,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.334Z",
+    "isActive": true
+  },
+  {
+    "id": 301,
+    "athleteId": 502,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.337Z",
+    "isActive": true
+  },
+  {
+    "id": 302,
+    "athleteId": 503,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.338Z",
+    "isActive": true
+  },
+  {
+    "id": 303,
+    "athleteId": 504,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.340Z",
+    "isActive": true
+  },
+  {
+    "id": 304,
+    "athleteId": 505,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.343Z",
+    "isActive": true
+  },
+  {
+    "id": 305,
+    "athleteId": 506,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.344Z",
+    "isActive": true
+  },
+  {
+    "id": 306,
+    "athleteId": 507,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.346Z",
+    "isActive": true
+  },
+  {
+    "id": 307,
+    "athleteId": 508,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.349Z",
+    "isActive": true
+  },
+  {
+    "id": 308,
+    "athleteId": 509,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.351Z",
+    "isActive": true
+  },
+  {
+    "id": 309,
+    "athleteId": 510,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.353Z",
+    "isActive": true
+  },
+  {
+    "id": 310,
+    "athleteId": 511,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.355Z",
+    "isActive": true
+  },
+  {
+    "id": 311,
+    "athleteId": 512,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.357Z",
+    "isActive": true
+  },
+  {
+    "id": 312,
+    "athleteId": 513,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.359Z",
+    "isActive": true
+  },
+  {
+    "id": 313,
+    "athleteId": 514,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.361Z",
+    "isActive": true
+  },
+  {
+    "id": 314,
+    "athleteId": 515,
+    "category": "Juniors",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.363Z",
+    "isActive": true
+  },
+  {
+    "id": 315,
+    "athleteId": 521,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.368Z",
+    "isActive": true
+  },
+  {
+    "id": 316,
+    "athleteId": 522,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.370Z",
+    "isActive": true
+  },
+  {
+    "id": 317,
+    "athleteId": 523,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.372Z",
+    "isActive": true
+  },
+  {
+    "id": 318,
+    "athleteId": 524,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.374Z",
+    "isActive": true
+  },
+  {
+    "id": 319,
+    "athleteId": 525,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.376Z",
+    "isActive": true
+  },
+  {
+    "id": 320,
+    "athleteId": 526,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.378Z",
+    "isActive": true
+  },
+  {
+    "id": 321,
+    "athleteId": 527,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.380Z",
+    "isActive": true
+  },
+  {
+    "id": 322,
+    "athleteId": 528,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.382Z",
+    "isActive": true
+  },
+  {
+    "id": 323,
+    "athleteId": 529,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.384Z",
+    "isActive": true
+  },
+  {
+    "id": 324,
+    "athleteId": 530,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.386Z",
+    "isActive": true
+  },
+  {
+    "id": 325,
+    "athleteId": 531,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.388Z",
+    "isActive": true
+  },
+  {
+    "id": 326,
+    "athleteId": 532,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.390Z",
+    "isActive": true
+  },
+  {
+    "id": 327,
+    "athleteId": 533,
+    "category": "Cadets",
+    "gender": "M",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.392Z",
+    "isActive": true
+  },
+  {
+    "id": 328,
+    "athleteId": 534,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.395Z",
+    "isActive": true
+  },
+  {
+    "id": 329,
+    "athleteId": 535,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.396Z",
+    "isActive": true
+  },
+  {
+    "id": 330,
+    "athleteId": 536,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.398Z",
+    "isActive": true
+  },
+  {
+    "id": 331,
+    "athleteId": 537,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.401Z",
+    "isActive": true
+  },
+  {
+    "id": 332,
+    "athleteId": 538,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.403Z",
+    "isActive": true
+  },
+  {
+    "id": 333,
+    "athleteId": 539,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.405Z",
+    "isActive": true
+  },
+  {
+    "id": 334,
+    "athleteId": 540,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.407Z",
+    "isActive": true
+  },
+  {
+    "id": 335,
+    "athleteId": 541,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.409Z",
+    "isActive": true
+  },
+  {
+    "id": 336,
+    "athleteId": 542,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.411Z",
+    "isActive": true
+  },
+  {
+    "id": 337,
+    "athleteId": 543,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.413Z",
+    "isActive": true
+  },
+  {
+    "id": 338,
+    "athleteId": 544,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.415Z",
+    "isActive": true
+  },
+  {
+    "id": 339,
+    "athleteId": 545,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.417Z",
+    "isActive": true
+  },
+  {
+    "id": 340,
+    "athleteId": 546,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.419Z",
+    "isActive": true
+  },
+  {
+    "id": 341,
+    "athleteId": 547,
+    "category": "Cadets",
+    "gender": "F",
+    "type": "Compound",
+    "joinedAt": "2025-12-22T11:56:31.421Z",
+    "isActive": true
+  }
+]

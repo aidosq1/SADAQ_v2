@@ -1,10 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTranslationForm } from "@/hooks/useTranslationForm";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -21,16 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Pencil, Trash2, Image, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Image, Folder } from "lucide-react";
 import { toast } from "sonner";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { BulkUploadDialog } from "@/components/admin/BulkUploadDialog";
+import { AlbumEditDialog } from "@/components/admin/AlbumEditDialog";
+import { deleteGalleryGroup } from "@/lib/actions/gallery";
 
 interface GalleryItem {
   id: number;
   title: string;
-  titleKk: string | null;
-  titleEn: string | null;
   type: string;
   url: string;
   thumbnailUrl: string | null;
@@ -39,42 +35,30 @@ interface GalleryItem {
   isPublished: boolean;
 }
 
-const defaultFormData = {
-  title: "",
-  titleKk: "",
-  titleEn: "",
-  type: "photo",
-  url: "",
-  thumbnailUrl: "",
-  albumName: "",
-  eventDate: "",
-  isPublished: true,
-};
-
-const TRANSLATION_FIELDS = {
-  title: { kk: "titleKk", en: "titleEn" },
-};
+interface AlbumGroup {
+  name: string;
+  items: GalleryItem[];
+  eventDate: string | null;
+  isPublished: boolean;
+  coverUrl: string;
+}
 
 export default function AdminGalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const { formData, setFormData, handleTranslationBlur } = useTranslationForm(
-    defaultFormData,
-    TRANSLATION_FIELDS
-  );
-  const [saving, setSaving] = useState(false);
+  const [editingAlbum, setEditingAlbum] = useState<AlbumGroup | null>(null);
+  const [deleteAlbumName, setDeleteAlbumName] = useState<string | null>(null);
 
   useEffect(() => {
     fetchItems();
   }, []);
 
   async function fetchItems() {
+    setLoading(true);
     try {
-      const res = await fetch("/api/gallery?limit=100");
+      // Fetch more items to ensure we get a good view of groupings. 
+      // Ideally API should return grouped data, but for now client-side grouping.
+      const res = await fetch("/api/gallery?limit=500");
       const data = await res.json();
       if (data.success) {
         setItems(data.data);
@@ -86,91 +70,46 @@ export default function AdminGalleryPage() {
     }
   }
 
-  function openCreateDialog() {
-    setEditingId(null);
-    setFormData(defaultFormData);
-    setDialogOpen(true);
-  }
+  // Group items by albumName
+  const albums = useMemo(() => {
+    const groups: Record<string, AlbumGroup> = {};
+    const noAlbumKey = "Без альбома"; // Key for items without album
 
-  function openEditDialog(item: GalleryItem) {
-    setEditingId(item.id);
-    setFormData({
-      title: item.title,
-      titleKk: item.titleKk || "",
-      titleEn: item.titleEn || "",
-      type: item.type,
-      url: item.url,
-      thumbnailUrl: item.thumbnailUrl || "",
-      albumName: item.albumName || "",
-      eventDate: item.eventDate ? item.eventDate.split("T")[0] : "",
-      isPublished: item.isPublished,
+    items.forEach(item => {
+      const key = item.albumName || noAlbumKey;
+      if (!groups[key]) {
+        groups[key] = {
+          name: key,
+          items: [],
+          eventDate: item.eventDate, // Take first available date
+          isPublished: item.isPublished, // Take status of first item
+          coverUrl: item.thumbnailUrl || item.url,
+        };
+      }
+      groups[key].items.push(item);
     });
-    setDialogOpen(true);
-  }
 
-  async function handleSave() {
-    if (!formData.title.trim() || !formData.url.trim()) {
-      toast.error("Название и URL обязательны");
-      return;
-    }
+    return Object.values(groups).sort((a, b) => {
+      // Sort by date desc
+      if (a.eventDate && b.eventDate) return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime();
+      return 0;
+    });
+  }, [items]);
 
-    setSaving(true);
+  async function handleDeleteAlbum() {
+    if (!deleteAlbumName) return;
+
     try {
-      const url = editingId ? `/api/gallery/${editingId}` : "/api/gallery";
-      const method = editingId ? "PATCH" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          eventDate: formData.eventDate ? new Date(formData.eventDate).toISOString() : null,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success(editingId ? "Элемент обновлён" : "Элемент добавлен");
-        setDialogOpen(false);
+      const result = await deleteGalleryGroup(deleteAlbumName);
+      if (result.success) {
+        toast.success(result.message);
+        setDeleteAlbumName(null);
         fetchItems();
       } else {
-        toast.error(data.error || "Ошибка сохранения");
-      }
-    } catch (error) {
-      toast.error("Ошибка сохранения");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function handleDelete() {
-    if (!deletingId) return;
-
-    try {
-      const res = await fetch(`/api/gallery/${deletingId}`, { method: "DELETE" });
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success("Элемент удалён");
-        setDeleteDialogOpen(false);
-        fetchItems();
+        toast.error(result.error);
       }
     } catch (error) {
       toast.error("Ошибка удаления");
-    }
-  }
-
-  async function togglePublished(item: GalleryItem) {
-    try {
-      await fetch(`/api/gallery/${item.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPublished: !item.isPublished }),
-      });
-      fetchItems();
-    } catch {
-      // silently fail
     }
   }
 
@@ -178,67 +117,65 @@ export default function AdminGalleryPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Галерея</h1>
-        <Button onClick={openCreateDialog}>
-          <Plus className="h-4 w-4 mr-2" />
-          Добавить
-        </Button>
+        <div className="flex gap-2">
+          <BulkUploadDialog onSuccess={fetchItems} />
+          {/* Legacy Add Single Item button removed/hidden to encourage Bulk/Album workflow, 
+               or we could keep it but force album name? Let's just rely on Bulk for now as it's better UX. */}
+        </div>
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">Превью</TableHead>
-              <TableHead>Название</TableHead>
-              <TableHead>Тип</TableHead>
+              <TableHead className="w-[80px]">Обложка</TableHead>
               <TableHead>Альбом</TableHead>
-              <TableHead>Статус</TableHead>
+              <TableHead>Кол-во</TableHead>
+              <TableHead>Дата</TableHead>
               <TableHead className="w-[150px]">Действия</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">Loading...</TableCell>
+                <TableCell colSpan={5} className="h-24 text-center">Loading...</TableCell>
               </TableRow>
-            ) : items.length === 0 ? (
+            ) : albums.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">Нет данных</TableCell>
+                <TableCell colSpan={5} className="h-24 text-center">Нет альбомов</TableCell>
               </TableRow>
             ) : (
-              items.map((item) => (
-                <TableRow key={item.id}>
+              albums.map((album) => (
+                <TableRow key={album.name}>
                   <TableCell>
                     <div
-                      className="w-16 h-12 bg-cover bg-center rounded"
-                      style={{ backgroundImage: `url(${item.thumbnailUrl || item.url})` }}
+                      className="w-16 h-12 bg-cover bg-center rounded border"
+                      style={{ backgroundImage: `url(${album.coverUrl})` }}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{item.title}</TableCell>
-                  <TableCell>
-                    <span className="flex items-center gap-1"><Image className="h-4 w-4" /> Фото</span>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <Folder className="h-4 w-4 text-muted-foreground" />
+                      {album.name}
+                    </div>
                   </TableCell>
-                  <TableCell>{item.albumName || "-"}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => togglePublished(item)}
-                      className={item.isPublished ? "text-green-600" : "text-gray-400"}
-                    >
-                      {item.isPublished ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
+                    <span className="flex items-center gap-1">
+                      <Image className="h-4 w-4 text-muted-foreground" />
+                      {album.items.length}
+                    </span>
                   </TableCell>
+                  <TableCell>{album.eventDate ? new Date(album.eventDate).toLocaleDateString() : "-"}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => openEditDialog(item)}>
+                      <Button variant="ghost" size="icon" onClick={() => setEditingAlbum(album)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         className="text-destructive"
-                        onClick={() => { setDeletingId(item.id); setDeleteDialogOpen(true); }}
+                        onClick={() => setDeleteAlbumName(album.name)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -251,80 +188,24 @@ export default function AdminGalleryPage() {
         </Table>
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editingId ? "Редактировать" : "Добавить в галерею"}</DialogTitle>
-          </DialogHeader>
+      <AlbumEditDialog
+        isOpen={!!editingAlbum}
+        onClose={() => setEditingAlbum(null)}
+        album={editingAlbum}
+        onSuccess={fetchItems}
+      />
 
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label>Название (рус) *</Label>
-              <Input
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                onBlur={() => handleTranslationBlur("title")}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>Название (каз)</Label>
-                <Input value={formData.titleKk} onChange={(e) => setFormData({ ...formData, titleKk: e.target.value })} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Название (англ)</Label>
-                <Input value={formData.titleEn} onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })} />
-              </div>
-            </div>
-
-            <ImageUpload
-              label="Файл *"
-              value={formData.url}
-              onChange={(url) => setFormData({ ...formData, url })}
-              folder="gallery"
-            />
-
-            <ImageUpload
-              label="Превью (опционально)"
-              value={formData.thumbnailUrl}
-              onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
-              folder="gallery"
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>Альбом</Label>
-                <Input value={formData.albumName} onChange={(e) => setFormData({ ...formData, albumName: e.target.value })} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Дата события</Label>
-                <Input type="date" value={formData.eventDate} onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })} />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Checkbox id="isPublished" checked={formData.isPublished} onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked as boolean })} />
-              <Label htmlFor="isPublished">Опубликован</Label>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Отмена</Button>
-            <Button onClick={handleSave} disabled={saving}>{saving ? "..." : "Сохранить"}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <Dialog open={!!deleteAlbumName} onOpenChange={(open) => !open && setDeleteAlbumName(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Подтвердить удаление</DialogTitle>
-            <DialogDescription>Вы уверены?</DialogDescription>
+            <DialogTitle>Удалить альбом?</DialogTitle>
+            <DialogDescription>
+              Вы собираетесь удалить альбом "{deleteAlbumName}" и все фотографии ({albums.find(a => a.name === deleteAlbumName)?.items.length} шт.) в нём. Это действие необратимо.
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Отмена</Button>
-            <Button variant="destructive" onClick={handleDelete}>Удалить</Button>
+            <Button variant="outline" onClick={() => setDeleteAlbumName(null)}>Отмена</Button>
+            <Button variant="destructive" onClick={handleDeleteAlbum}>Удалить все</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
