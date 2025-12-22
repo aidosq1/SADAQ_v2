@@ -78,16 +78,19 @@ jobs:
       - name: Deploy to VPS
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image_tag || 'latest' }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_LC: ${{ github.repository }}
         run: |
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'ENDSSH'
+          # Convert to lowercase for Docker
+          REPO_LC=$(echo "$GITHUB_REPOSITORY_LC" | tr '[:upper:]' '[:lower:]')
+
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << ENDSSH
             set -e
             cd ~/sadaq
 
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             export IMAGE_TAG="${{ env.IMAGE_TAG }}"
-            export GITHUB_REPOSITORY="${{ env.GITHUB_REPOSITORY }}"
+            export GITHUB_REPOSITORY="${REPO_LC}"
 
             docker compose pull app
 
