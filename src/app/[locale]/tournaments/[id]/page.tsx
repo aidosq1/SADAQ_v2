@@ -143,9 +143,15 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
     };
 
     const getShortCategoryLabel = (cat: TournamentCategory) => {
+        const categoryItem = CATEGORIES.find((c) => c.id === cat.category);
         const genderItem = GENDERS.find((g) => g.id === cat.gender);
         const typeItem = BOW_TYPES.find((t) => t.id === cat.type);
-        return `${cat.category} ${genderItem?.id || cat.gender} ${typeItem?.id || cat.type}`;
+
+        const catLabel = categoryItem ? getLocalizedLabel(categoryItem, locale) : cat.category;
+        const genLabel = genderItem ? getLocalizedLabel(genderItem, locale) : cat.gender;
+        const typeLabel = typeItem ? getLocalizedLabel(typeItem, locale) : cat.type;
+
+        return `${catLabel} ${genLabel[0]} ${typeLabel}`;
     };
 
     if (loading) {
