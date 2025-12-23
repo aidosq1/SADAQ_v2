@@ -83,7 +83,7 @@ export function Hero() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {/* News Slider - Left Side */}
                     <div className="lg:col-span-7">
-                        <div className="relative h-[400px] lg:h-[480px] rounded-lg overflow-hidden shadow-sm">
+                        <div className="relative h-[450px] lg:h-[550px] rounded-lg overflow-hidden shadow-sm">
                             <HeroNewsSlider />
                         </div>
                     </div>
