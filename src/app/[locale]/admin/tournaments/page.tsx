@@ -229,10 +229,18 @@ export default function AdminTournamentsPage() {
       const url = editingId ? `/api/tournaments/${editingId}` : "/api/tournaments";
       const method = editingId ? "PATCH" : "POST";
 
+      // Convert datetime-local strings to ISO with timezone
+      const dataToSend = {
+        ...formData,
+        startDate: formData.startDate ? new Date(formData.startDate).toISOString() : "",
+        endDate: formData.endDate ? new Date(formData.endDate).toISOString() : "",
+        registrationDeadline: formData.registrationDeadline ? new Date(formData.registrationDeadline).toISOString() : "",
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       const data = await res.json();

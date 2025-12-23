@@ -51,9 +51,10 @@ export function BulkUploadDialog({ onSuccess }: BulkUploadDialogProps) {
                 sortOrder: index,
             }));
 
+            // Use local noon to avoid timezone day shift
             const result = await createBulkGalleryItems(items, {
                 ...metadata,
-                eventDate: metadata.eventDate ? new Date(metadata.eventDate) : null,
+                eventDate: metadata.eventDate ? new Date(metadata.eventDate + "T12:00:00") : null,
             });
 
             if (result.success) {

@@ -216,12 +216,14 @@ export default function AdminJudgesPage() {
       const url = editingId ? `/api/judges/${editingId}` : "/api/judges";
       const method = editingId ? "PATCH" : "POST";
 
+      // Convert date string to ISO with local noon to avoid timezone day shift
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           regionId: formData.regionId || null,
+          dob: formData.dob ? new Date(formData.dob + "T12:00:00").toISOString() : "",
         }),
       });
 

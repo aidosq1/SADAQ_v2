@@ -207,10 +207,16 @@ export default function AdminTeamPage() {
       const url = editingId ? `/api/team/${editingId}` : "/api/team";
       const method = editingId ? "PATCH" : "POST";
 
+      // Convert date string to ISO with local noon to avoid timezone day shift
+      const dataToSend = {
+        ...formData,
+        dob: formData.dob ? new Date(formData.dob + "T12:00:00").toISOString() : "",
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       const data = await res.json();

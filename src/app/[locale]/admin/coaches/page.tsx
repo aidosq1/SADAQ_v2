@@ -187,12 +187,14 @@ export default function AdminCoachesPage() {
       const url = editingId ? `/api/coaches/${editingId}` : "/api/coaches";
       const method = editingId ? "PATCH" : "POST";
 
+      // Convert date string to ISO with local noon to avoid timezone day shift
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           regionId: formData.regionId || null,
+          dob: formData.dob ? new Date(formData.dob + "T12:00:00").toISOString() : "",
         }),
       });
 

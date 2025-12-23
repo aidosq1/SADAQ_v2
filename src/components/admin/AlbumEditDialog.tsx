@@ -63,10 +63,11 @@ export function AlbumEditDialog({ isOpen, onClose, album, onSuccess }: AlbumEdit
         if (!album) return;
         setLoading(true);
         try {
+            // Use local noon to avoid timezone day shift
             const result = await updateGalleryGroup(album.name, {
                 albumName: formData.albumName,
                 title: formData.title,
-                eventDate: formData.eventDate ? new Date(formData.eventDate) : null,
+                eventDate: formData.eventDate ? new Date(formData.eventDate + "T12:00:00") : null,
                 isPublished: formData.isPublished,
             });
 
