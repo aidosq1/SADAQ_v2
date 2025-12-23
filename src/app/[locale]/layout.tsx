@@ -24,8 +24,12 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: "Qazaqstan Archery Federation",
-  description: "Official website of the National Archery Federation of the Republic of Kazakhstan",
+  title: "SADAQ | Садақ ату федерациясы",
+  description: "Қазақстан Республикасының Садақ Ату Федерациясының ресми сайты",
+  icons: {
+    icon: "/logo_federation_circular.png",
+    apple: "/logo_federation_circular.png",
+  },
 };
 
 export default async function RootLayout({
