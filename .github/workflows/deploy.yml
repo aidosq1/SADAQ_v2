@@ -87,12 +87,16 @@ jobs:
             set -e
             cd ~/sadaq
 
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            # Use separate Docker config for SADAQ (doesn't affect other projects)
+            export DOCKER_CONFIG=~/sadaq/.docker
+            mkdir -p \$DOCKER_CONFIG
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker --config \$DOCKER_CONFIG login ghcr.io -u ${{ github.actor }} --password-stdin
 
             export IMAGE_TAG="${{ env.IMAGE_TAG }}"
             export GITHUB_REPOSITORY="${REPO_LC}"
 
-            docker compose pull app
+            docker --config \$DOCKER_CONFIG compose pull app
 
             docker compose run --rm app ./node_modules/.bin/prisma migrate deploy
 
