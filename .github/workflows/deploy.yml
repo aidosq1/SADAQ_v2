@@ -108,12 +108,19 @@ jobs:
             echo "=== Running migrations ==="
             docker --config \$DOCKER_CONFIG compose run --rm -T app ./node_modules/.bin/prisma migrate deploy || echo "Migration warning (may be ok)"
 
-            echo "=== Recreating container ==="
-            docker --config \$DOCKER_CONFIG compose up -d --force-recreate app
+            echo "=== Stopping old container ==="
+            docker --config \$DOCKER_CONFIG compose stop app || true
+
+            echo "=== Removing old container ==="
+            docker --config \$DOCKER_CONFIG compose rm -f app || true
+
+            echo "=== Starting new container ==="
+            docker --config \$DOCKER_CONFIG compose up -d app
 
             echo "=== Container status ==="
-            docker compose ps app
+            docker --config \$DOCKER_CONFIG compose ps app
 
+            echo "=== Cleaning old images ==="
             docker image prune -af --filter "until=168h"
 
             echo "Deployment completed successfully!"
