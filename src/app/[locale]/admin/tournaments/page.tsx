@@ -159,6 +159,12 @@ export default function AdminTournamentsPage() {
 
   function openEditDialog(item: Tournament) {
     setEditingId(item.id);
+
+    // If deadline has passed, registration should be closed
+    const deadlinePassed = item.registrationDeadline
+      ? new Date() > new Date(item.registrationDeadline)
+      : false;
+
     setFormData({
       title: item.title,
       titleKk: item.titleKk || "",
@@ -172,7 +178,7 @@ export default function AdminTournamentsPage() {
       locationKk: item.locationKk || "",
       locationEn: item.locationEn || "",
       regulationUrl: item.regulationUrl || "",
-      isRegistrationOpen: item.isRegistrationOpen,
+      isRegistrationOpen: deadlinePassed ? false : item.isRegistrationOpen,
       registrationDeadline: item.registrationDeadline ? formatDateForInput(item.registrationDeadline) : "",
       isFeatured: item.isFeatured,
       categories: item.categories || [],
@@ -687,8 +693,14 @@ export default function AdminTournamentsPage() {
                   id="isRegistrationOpen"
                   checked={formData.isRegistrationOpen}
                   onCheckedChange={(checked) => setFormData({ ...formData, isRegistrationOpen: checked as boolean })}
+                  disabled={formData.registrationDeadline ? new Date() > new Date(formData.registrationDeadline) : false}
                 />
-                <Label htmlFor="isRegistrationOpen">Регистрация открыта</Label>
+                <Label htmlFor="isRegistrationOpen" className={formData.registrationDeadline && new Date() > new Date(formData.registrationDeadline) ? "text-muted-foreground" : ""}>
+                  Регистрация открыта
+                  {formData.registrationDeadline && new Date() > new Date(formData.registrationDeadline) && (
+                    <span className="text-xs ml-2 text-destructive">(дедлайн прошёл)</span>
+                  )}
+                </Label>
               </div>
               <div className="flex items-center gap-2">
                 <Checkbox
