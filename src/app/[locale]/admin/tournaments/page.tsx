@@ -514,7 +514,7 @@ export default function AdminTournamentsPage() {
             {/* Dates */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>Дата начала *</Label>
+                <Label>Дата начала * <span className="text-muted-foreground font-normal">(время Астаны)</span></Label>
                 <Input
                   type="datetime-local"
                   value={formData.startDate}
@@ -522,7 +522,7 @@ export default function AdminTournamentsPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Дата окончания *</Label>
+                <Label>Дата окончания * <span className="text-muted-foreground font-normal">(время Астаны)</span></Label>
                 <Input
                   type="datetime-local"
                   value={formData.endDate}
@@ -669,7 +669,7 @@ export default function AdminTournamentsPage() {
 
             {/* Registration Deadline */}
             <div className="grid gap-2">
-              <Label>Дедлайн регистрации (опционально)</Label>
+              <Label>Дедлайн регистрации <span className="text-muted-foreground font-normal">(время Астаны, опционально)</span></Label>
               <Input
                 type="datetime-local"
                 value={formData.registrationDeadline}
