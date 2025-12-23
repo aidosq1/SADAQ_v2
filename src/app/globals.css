@@ -30,6 +30,9 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  --color-primary-bright: hsl(var(--primary-bright));
+  --color-chart-dark: hsl(var(--chart-dark));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -70,6 +73,8 @@
   --light-cream: 35 50% 94%;          /* #F5E6C8 - Sections */
   --text-dark: 0 0% 13%;              /* #222222 - Text */
   --border-light: 0 0% 85%;           /* #DADADA - Borders */
+  --primary-bright: 355 60% 41%;      /* #A62A33 - CTA buttons */
+  --chart-dark: 220 45% 18%;          /* #1A2744 - Charts/stats */
 
   /* ===== Theme Variables ===== */
   --background: 0 0% 100%;            /* Pure White */
