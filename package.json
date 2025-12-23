@@ -9,6 +9,7 @@
     "lint": "eslint",
     "db:migrate": "npx prisma migrate dev",
     "db:seed": "npx prisma db seed",
+    "db:seed:rankings": "npx tsx prisma/seedRankings.ts",
     "db:reset": "npx prisma migrate reset",
     "db:studio": "npx prisma studio",
     "test:api": "npx ts-node tests/tournaments-api.test.ts"
