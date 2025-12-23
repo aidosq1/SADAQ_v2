@@ -20,7 +20,6 @@ interface Ranking {
     type: string;
     points: number;
     rank: number;
-    classification?: string;
 }
 
 interface Region {
@@ -108,12 +107,6 @@ const regionNames: Record<string, string> = {
     'ulytau': 'Ұлытау обл.',
 };
 
-const classificationNames: Record<string, string> = {
-    'International': 'МСМК (International)',
-    'National': 'МС (National)',
-    'Candidate': 'КМС (Candidate)',
-    '1st Class': '1 разряд',
-};
 
 export default async function AthleteProfile({ params }: { params: Promise<{ id: string; locale: string }> }) {
     const { id, locale } = await params;
@@ -135,9 +128,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         return regionNames[athlete.region] || athlete.region || 'Не указан';
     };
     const regionDisplay = getRegionDisplay();
-    const classificationDisplay = currentRanking?.classification
-        ? classificationNames[currentRanking.classification] || currentRanking.classification
-        : 'Не определено';
 
     const getName = () => {
         if (locale === 'kk' && athlete.nameKk) return athlete.nameKk;
@@ -173,7 +163,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                             <h1 className="text-2xl font-bold text-center mb-1">{getName()}</h1>
                             <div className="flex gap-2 mb-4 flex-wrap justify-center">
                                 <Badge variant="secondary">{regionDisplay}</Badge>
-                                <Badge className="bg-amber-500 hover:bg-amber-600">{classificationDisplay}</Badge>
                             </div>
 
                             <div className="w-full space-y-3 text-sm">
@@ -261,7 +250,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                             <TableHead>Дисциплина</TableHead>
                                             <TableHead>Место</TableHead>
                                             <TableHead>Очки</TableHead>
-                                            <TableHead>Классификация</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -276,11 +264,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="font-bold text-primary">{ranking.points}</TableCell>
-                                                <TableCell>
-                                                    {ranking.classification
-                                                        ? classificationNames[ranking.classification] || ranking.classification
-                                                        : '-'}
-                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
