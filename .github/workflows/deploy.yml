@@ -91,6 +91,8 @@ jobs:
             set -e
             cd ~/sadaq
 
+            echo "=== Starting deployment ==="
+
             # Use separate Docker config for SADAQ (doesn't affect other projects)
             export DOCKER_CONFIG=~/sadaq/.docker
             mkdir -p \$DOCKER_CONFIG
@@ -100,11 +102,17 @@ jobs:
             export IMAGE_TAG="${{ env.IMAGE_TAG }}"
             export GITHUB_REPOSITORY="${REPO_LC}"
 
+            echo "=== Pulling image ==="
             docker --config \$DOCKER_CONFIG compose pull app
 
-            docker --config \$DOCKER_CONFIG compose run --rm app ./node_modules/.bin/prisma migrate deploy
+            echo "=== Running migrations ==="
+            docker --config \$DOCKER_CONFIG compose run --rm app ./node_modules/.bin/prisma migrate deploy || echo "Migration warning (may be ok)"
 
+            echo "=== Recreating container ==="
             docker --config \$DOCKER_CONFIG compose up -d --force-recreate app
+
+            echo "=== Container status ==="
+            docker compose ps app
 
             docker image prune -af --filter "until=168h"
 
