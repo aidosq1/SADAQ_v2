@@ -132,7 +132,7 @@ export function Footer() {
                         </h3>
                         <div className="flex gap-3">
                             <a
-                                href="https://www.instagram.com/kazarchery_official"
+                                href="https://www.instagram.com/kazarchery_official/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-9 h-9 rounded bg-white/10 hover:bg-[hsl(var(--official-gold))] flex items-center justify-center transition-colors"
@@ -142,7 +142,7 @@ export function Footer() {
                                 </svg>
                             </a>
                             <a
-                                href="https://www.youtube.com/@kazarchery"
+                                href="https://www.youtube.com/watch?v=6xgw-YxIbmw"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-9 h-9 rounded bg-white/10 hover:bg-[hsl(var(--official-gold))] flex items-center justify-center transition-colors"
