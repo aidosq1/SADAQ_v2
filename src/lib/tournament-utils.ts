@@ -36,28 +36,23 @@ export function getTournamentStatus(tournament: TournamentForStatus): Tournament
   const startDate = new Date(tournament.startDate);
   const endDate = new Date(tournament.endDate);
 
-  // Normalize dates to start/end of day for comparison
-  now.setHours(0, 0, 0, 0);
-  startDate.setHours(0, 0, 0, 0);
-  endDate.setHours(23, 59, 59, 999);
-
   // Support both new (isRegistrationOpen) and legacy (isActive) field names
   const isRegistrationOpen = tournament.isRegistrationOpen ?? tournament.isActive ?? true;
 
   // Check if registration deadline has passed
   const deadlinePassed = tournament.registrationDeadline
-    ? new Date() > new Date(tournament.registrationDeadline)
+    ? now > new Date(tournament.registrationDeadline)
     : false;
 
   // Registration is closed if manually disabled OR deadline passed
   const registrationClosed = !isRegistrationOpen || deadlinePassed;
 
-  // Tournament completed (after end date)
+  // Tournament completed (after end date/time)
   if (now > endDate) {
     return 'COMPLETED';
   }
 
-  // Tournament in progress (between start and end dates)
+  // Tournament in progress (between start and end dates/times)
   if (now >= startDate && now <= endDate) {
     return 'IN_PROGRESS';
   }
