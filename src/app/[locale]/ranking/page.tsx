@@ -35,7 +35,6 @@ interface RankingEntry {
   id: number;
   rank: number;
   points: number;
-  classification?: string | null;
   season: string;
   athlete: Athlete;
 }
@@ -181,11 +180,6 @@ export default function RankingPage() {
                       <p className="text-sm text-muted-foreground truncate">
                         {(ranking.athlete as any).regionRef?.name || ranking.athlete.region || '—'}
                       </p>
-                      {ranking.classification && (
-                        <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                          {t(`classification_${ranking.classification}` as never)}
-                        </span>
-                      )}
                     </div>
                     <div className="text-right">
                       <p className="font-mono font-bold text-lg text-primary">{ranking.points}</p>
@@ -239,11 +233,6 @@ export default function RankingPage() {
                         <span className="font-semibold group-hover:text-primary transition-colors">
                           {getLocalizedName(ranking.athlete, locale)}
                         </span>
-                        {ranking.classification && (
-                          <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded w-fit">
-                            {t(`classification_${ranking.classification}` as never)}
-                          </span>
-                        )}
                       </div>
                     </div>
                   </TableCell>

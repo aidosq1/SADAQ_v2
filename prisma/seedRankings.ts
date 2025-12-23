@@ -19,15 +19,6 @@ const REGIONS_MAP: Record<string, { name: string; nameKk: string; nameEn: string
   'turkistan': { name: 'Туркестанская область', nameKk: 'Түркістан облысы', nameEn: 'Turkistan Region' },
 };
 
-// Determine classification based on total points
-function getClassification(points: number): string {
-  if (points >= 500) return 'МС';
-  if (points >= 300) return 'КМС';
-  if (points >= 200) return '1 разряд';
-  if (points >= 100) return '2 разряд';
-  if (points >= 50) return '3 разряд';
-  return 'Без разряда';
-}
 
 async function main() {
   console.log('=== Starting comprehensive seed ===\n');
@@ -132,7 +123,6 @@ async function main() {
         update: {
           points: ranking.points,
           rank: ranking.rank,
-          classification: getClassification(ranking.points),
         },
         create: {
           athleteId,
@@ -141,7 +131,6 @@ async function main() {
           type: memberData.type,
           points: ranking.points,
           rank: ranking.rank,
-          classification: getClassification(ranking.points),
         }
       });
       rankingsCreated++;
