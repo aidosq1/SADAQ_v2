@@ -89,8 +89,8 @@ export function RankingWidget() {
         </div>
 
         {/* Rankings Table */}
-        <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] overflow-hidden mt-8">
-          <table className="w-full">
+        <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] overflow-hidden mt-8 overflow-x-auto">
+          <table className="w-full min-w-[400px]">
             <thead>
               <tr className="border-b border-[hsl(var(--border-light))] bg-[hsl(var(--light-cream))]">
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">

@@ -66,9 +66,9 @@ export default async function TeamPage({ searchParams }: Props) {
   const subTitle = `${getLocalizedCategory(category, locale)} • ${genderLabel} • ${getLocalizedType(type, locale)}`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      <h1 className="text-4xl font-bold mb-2">{pageTitle}</h1>
-      <p className="text-muted-foreground mb-6">{subTitle}</p>
+    <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{pageTitle}</h1>
+      <p className="text-sm sm:text-base text-muted-foreground mb-4 lg:mb-6">{subTitle}</p>
 
       <TeamFilters
         currentCategory={category}
@@ -82,17 +82,17 @@ export default async function TeamPage({ searchParams }: Props) {
           {locale === 'kk' ? 'Спортшылар табылмады' : locale === 'en' ? 'No athletes found' : 'Спортсмены не найдены'}
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-6 lg:mt-8">
           {athletes.map((athlete) => (
             <Link key={athlete.id} href={`/team/${athlete.slug}`}>
               <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
-                <CardContent className="pt-6 flex flex-col items-center">
-                  <Avatar className="h-32 w-32 mb-4">
+                <CardContent className="pt-4 sm:pt-6 flex flex-col items-center">
+                  <Avatar className="h-20 w-20 sm:h-28 sm:w-28 md:h-32 md:w-32 mb-3 sm:mb-4">
                     <AvatarImage src={athlete.image || undefined} alt={getLocalizedField(athlete, 'name', locale)} />
                     <AvatarFallback>{athlete.name[0]}</AvatarFallback>
                   </Avatar>
-                  <h3 className="font-bold text-lg text-center">{getLocalizedField(athlete, 'name', locale)}</h3>
-                  <p className="text-sm text-muted-foreground">{getLocalizedType(athlete.type, locale)}</p>
+                  <h3 className="font-bold text-sm sm:text-base md:text-lg text-center line-clamp-2">{getLocalizedField(athlete, 'name', locale)}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{getLocalizedType(athlete.type, locale)}</p>
                 </CardContent>
               </Card>
             </Link>

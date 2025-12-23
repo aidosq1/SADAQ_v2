@@ -8,9 +8,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
-
-RUN npx prisma generate
+# Use cache mount for faster rebuilds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci && npx prisma generate
 
 # ============================================
 # Stage 2: Builder
@@ -29,7 +29,7 @@ ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXTAUTH_SECRET=build-time-secret-not-used
 ENV DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 
-RUN npx prisma generate && npm run build
+RUN npm run build
 
 # ============================================
 # Stage 3: Runner (Production)
@@ -51,9 +51,10 @@ COPY --from=builder /app/messages ./messages
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Install prisma CLI and ts-node for migrations and seeding (v2)
+# Install only prisma for migrations (seed no longer needed)
 COPY --from=builder /app/package.json /app/package-lock.json ./
-RUN npm install prisma @prisma/client ts-node typescript @types/node && npm cache clean --force
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --no-save prisma
 
 RUN mkdir -p ./public/uploads && chown -R nextjs:nodejs ./public/uploads
 

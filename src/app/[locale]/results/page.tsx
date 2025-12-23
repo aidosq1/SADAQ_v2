@@ -80,8 +80,8 @@ export default function ResultsPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-10">
-            <h1 className="text-3xl font-bold mb-8">{t("title") || "Архив Протоколов"}</h1>
+        <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-6 lg:mb-8">{t("title") || "Архив Протоколов"}</h1>
 
             {years.length > 0 ? (
                 <Accordion type="single" collapsible className="w-full" defaultValue={years[0]}>

@@ -456,7 +456,7 @@ export default function AdminTournamentsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Название (каз)</Label>
                 <Input
@@ -484,7 +484,7 @@ export default function AdminTournamentsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Описание (каз)</Label>
                 <Textarea
@@ -504,7 +504,7 @@ export default function AdminTournamentsPage() {
             </div>
 
             {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Дата начала *</Label>
                 <Input
@@ -534,7 +534,7 @@ export default function AdminTournamentsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Место проведения (каз)</Label>
                 <Input

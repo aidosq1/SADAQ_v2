@@ -109,5 +109,12 @@ jobs:
 
       - name: Health check
         run: |
-          sleep 15
-          curl -f https://${{ secrets.DOMAIN }}/api/health || echo "Health check warning - please verify manually"
+          for i in 1 2 3 4 5; do
+            sleep 3
+            if curl -sf https://${{ secrets.DOMAIN }}/api/health; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+          done
+          echo "Health check warning - please verify manually"

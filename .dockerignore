@@ -48,3 +48,14 @@ __tests__
 Dockerfile*
 docker-compose*
 !docker-compose.production.yml
+
+# Media files
+*.mov
+*.xlsx
+*.mp4
+
+# Public uploads (runtime volume)
+public/uploads/
+
+# Prisma seeds (no longer needed in production)
+prisma/seeds

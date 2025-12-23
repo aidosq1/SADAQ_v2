@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -20,9 +21,17 @@ import {
   Medal,
   Scale,
   MapPin,
+  Menu,
   LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useLocale } from "next-intl";
 
 type UserRole = "Admin" | "Editor" | "RegionalRepresentative";
@@ -73,19 +82,27 @@ interface AdminSidebarProps {
   userRegion?: string | null;
 }
 
-export function AdminSidebar({ userRole = "RegionalRepresentative", userRegion }: AdminSidebarProps) {
+// Shared navigation component
+function SidebarNav({
+  userRole,
+  userRegion,
+  onItemClick,
+}: {
+  userRole: string;
+  userRegion?: string | null;
+  onItemClick?: () => void;
+}) {
   const pathname = usePathname();
   const locale = useLocale();
 
-  // Filter menu items based on user role
   const visibleMenuItems = menuItems.filter((item) =>
     item.allowedRoles.includes(userRole as UserRole)
   );
 
   return (
-    <aside className="w-64 bg-card border-r min-h-screen p-4 flex flex-col">
+    <>
       <div className="mb-8">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" onClick={onItemClick}>
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-lg">S</span>
           </div>
@@ -106,6 +123,7 @@ export function AdminSidebar({ userRole = "RegionalRepresentative", userRegion }
             <Link
               key={item.href}
               href={`/${locale}${item.href}`}
+              onClick={onItemClick}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                 isActive
@@ -130,6 +148,47 @@ export function AdminSidebar({ userRole = "RegionalRepresentative", userRegion }
           {locale === "kk" ? "Шығу" : locale === "en" ? "Sign Out" : "Выйти"}
         </Button>
       </div>
+    </>
+  );
+}
+
+// Mobile Menu Trigger with Sheet
+export function AdminMobileMenuTrigger({
+  userRole = "RegionalRepresentative",
+  userRegion,
+}: AdminSidebarProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="lg:hidden">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-64 p-4 flex flex-col">
+        <SheetHeader>
+          <SheetTitle className="sr-only">Admin Menu</SheetTitle>
+        </SheetHeader>
+        <SidebarNav
+          userRole={userRole}
+          userRegion={userRegion}
+          onItemClick={() => setOpen(false)}
+        />
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+// Desktop Sidebar
+export function AdminSidebar({
+  userRole = "RegionalRepresentative",
+  userRegion,
+}: AdminSidebarProps) {
+  return (
+    <aside className="hidden lg:flex w-64 bg-card border-r min-h-screen p-4 flex-col">
+      <SidebarNav userRole={userRole} userRegion={userRegion} />
     </aside>
   );
 }

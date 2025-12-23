@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, MapPin, Loader2, ChevronRight, Download } from "lucide-react";
+import { FileText, MapPin, Loader2, ChevronRight, Download, Calendar } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { useTranslations, useFormatter, useLocale } from "next-intl";
 import { CATEGORIES, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
@@ -120,8 +121,8 @@ export default function CalendarPage() {
     }
 
     return (
-        <div className="container mx-auto py-8">
-            <h1 className="text-4xl font-bold mb-8">{t("title")}</h1>
+        <div className="container mx-auto px-4 py-6 lg:py-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
 
             {/* Filters */}
             <div className="flex flex-wrap gap-4 mb-8">
@@ -166,8 +167,82 @@ export default function CalendarPage() {
                 </div>
             </div>
 
-            {/* Calendar List */}
-            <div className="rounded-md border">
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+                {tournaments.length === 0 ? (
+                    <p className="text-center py-8 text-muted-foreground">
+                        {t("no_tournaments") || "Турниры не найдены"}
+                    </p>
+                ) : (
+                    tournaments.map((tournament) => {
+                        const startDate = new Date(tournament.startDate);
+                        const endDate = new Date(tournament.endDate);
+                        const status = getTournamentStatus(tournament);
+
+                        return (
+                            <Card key={tournament.id}>
+                                <CardContent className="p-4">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <Badge className={`${getStatusClasses(status)} border-0`}>
+                                            {getStatusLabel(status, locale)}
+                                        </Badge>
+                                        <span className="text-sm text-muted-foreground flex items-center gap-1">
+                                            <Calendar className="h-4 w-4" />
+                                            {format.dateTime(startDate, { month: 'short', day: 'numeric' })}
+                                            {startDate.getTime() !== endDate.getTime() &&
+                                                ` - ${format.dateTime(endDate, { month: 'short', day: 'numeric' })}`
+                                            }
+                                        </span>
+                                    </div>
+                                    <Link
+                                        href={`/tournaments/${tournament.id}`}
+                                        className="font-bold text-lg hover:text-primary transition-colors block mb-2"
+                                    >
+                                        {getLocalizedTitle(tournament)}
+                                    </Link>
+                                    <p className="text-sm text-muted-foreground flex items-center gap-1 mb-3">
+                                        <MapPin className="h-4 w-4" />
+                                        {getLocalizedLocation(tournament)}
+                                    </p>
+                                    {tournament.categories?.length > 0 && (
+                                        <div className="mb-3">
+                                            {getCategoryBadges(tournament.categories)}
+                                        </div>
+                                    )}
+                                    <div className="flex gap-2 flex-wrap">
+                                        {tournament.categories?.some(c => c.regulationUrl) && (
+                                            <Button variant="outline" size="sm" asChild>
+                                                <a
+                                                    href={tournament.categories.find(c => c.regulationUrl)?.regulationUrl || "#"}
+                                                    target="_blank"
+                                                >
+                                                    <Download className="h-4 w-4 mr-1" />
+                                                    {t("btn_regulations")}
+                                                </a>
+                                            </Button>
+                                        )}
+                                        {isRegistrationAvailable(tournament) && (
+                                            <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
+                                                <Link href={`/tournaments/${tournament.id}/register`}>{t("btn_apply")}</Link>
+                                            </Button>
+                                        )}
+                                        {status === "COMPLETED" && (
+                                            <Button variant="outline" size="sm" asChild>
+                                                <Link href={`/tournaments/${tournament.id}`}>
+                                                    <FileText className="h-4 w-4 mr-1" /> {t("btn_protocol")}
+                                                </Link>
+                                            </Button>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        );
+                    })
+                )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block rounded-md border">
                 <Table>
                     <TableHeader>
                         <TableRow>

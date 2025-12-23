@@ -107,15 +107,15 @@ export default function Page() {
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
-            <section className="relative h-[500px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
+            <section className="relative min-h-[350px] sm:min-h-[400px] md:h-[500px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
                 <div className="absolute inset-0 bg-black/20 z-10" />
 
-                <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
-                    <div className="mb-8 animate-fade-in-up">
-                        <Image src="/logo_federation_circular.png" alt="Logo" width={160} height={160} className="w-36 h-36 object-contain drop-shadow-2xl" />
+                <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center py-8 md:py-0">
+                    <div className="mb-6 md:mb-8 animate-fade-in-up">
+                        <Image src="/logo_federation_circular.png" alt="Logo" width={160} height={160} className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain drop-shadow-2xl" />
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
                         {getContent("about_hero_title_1", t("hero_title_1"))} <br />
                         <span className="text-white">{getContent("about_hero_title_2", t("hero_title_2"))}</span>
                     </h1>
@@ -123,8 +123,8 @@ export default function Page() {
             </section>
 
             {/* Navigation Grid */}
-            <div className="max-w-7xl mx-auto px-4 -mt-16 relative z-30">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="max-w-7xl mx-auto px-4 -mt-12 md:-mt-16 relative z-30">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                     {[
                         { title: tFooter("leadership"), icon: <Users className="w-6 h-6" />, href: "/about/leadership" },
                         { title: t("stat_regions"), icon: <MapPin className="w-6 h-6" />, href: "/about/regions" },
@@ -133,11 +133,11 @@ export default function Page() {
                     ].map((item, index) => (
                         <Link key={index} href={item.href} className="block group">
                             <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white text-foreground">
-                                <CardContent className="flex items-center gap-4 p-6">
-                                    <div className="bg-primary/5 text-primary p-4 rounded-full group-hover:bg-[#B54B35]/10 group-hover:text-[#B54B35] transition-colors duration-300">
+                                <CardContent className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 p-4 sm:p-6">
+                                    <div className="bg-primary/5 text-primary p-3 sm:p-4 rounded-full group-hover:bg-[#B54B35]/10 group-hover:text-[#B54B35] transition-colors duration-300">
                                         {item.icon}
                                     </div>
-                                    <div className="font-bold text-lg group-hover:text-[#B54B35] transition-colors">{item.title}</div>
+                                    <div className="font-bold text-sm sm:text-lg text-center sm:text-left group-hover:text-[#B54B35] transition-colors">{item.title}</div>
                                 </CardContent>
                             </Card>
                         </Link>
@@ -145,45 +145,45 @@ export default function Page() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 py-16 space-y-20">
+            <div className="max-w-7xl mx-auto px-4 py-10 md:py-16 space-y-12 md:space-y-20">
                 {/* Mission Section */}
-                <section className="grid md:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-6">
-                        <div className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full font-medium text-sm">
+                <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+                    <div className="space-y-4 md:space-y-6">
+                        <div className="inline-block px-3 py-1 md:px-4 md:py-1.5 bg-primary/10 text-primary rounded-full font-medium text-xs md:text-sm">
                             {getContent("mission_badge", t("mission_badge"))}
                         </div>
-                        <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
                             {getContent("mission_title", t("mission_title"))}
                         </h2>
-                        <p className="text-lg text-muted-foreground leading-relaxed">
+                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
                             {getContent("mission_desc", t("mission_desc"))}
                         </p>
                     </div>
-                    <div className="bg-muted rounded-2xl h-[400px] relative overflow-hidden group">
+                    <div className="bg-muted rounded-2xl h-[250px] md:h-[400px] relative overflow-hidden group">
                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-secondary/50">
-                            <Activity className="w-16 h-16 opacity-20" />
+                            <Activity className="w-12 h-12 md:w-16 md:h-16 opacity-20" />
                         </div>
                     </div>
                 </section>
 
                 {/* Statistics Section */}
                 <section>
-                    <h2 className="text-3xl font-bold text-center mb-12">{t("stats_title")}</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12">{t("stats_title")}</h2>
 
                     {loading ? (
                         <div className="flex justify-center py-12">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                             {stats.map((stat) => (
                                 <Card key={stat.id} className="border-none shadow-lg bg-card text-card-foreground">
-                                    <CardContent className="pt-6 text-center space-y-4">
-                                        <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 text-primary mb-2">
+                                    <CardContent className="pt-4 md:pt-6 text-center space-y-2 md:space-y-4">
+                                        <div className="inline-flex items-center justify-center p-2 md:p-3 rounded-full bg-primary/10 text-primary mb-1 md:mb-2">
                                             {iconMap[stat.iconType] || iconMap.default}
                                         </div>
-                                        <div className="text-4xl font-bold text-primary">{stat.value}</div>
-                                        <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                                        <div className="text-2xl md:text-4xl font-bold text-primary">{stat.value}</div>
+                                        <div className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-wide">
                                             {getLocalizedLabel(stat)}
                                         </div>
                                     </CardContent>
@@ -194,31 +194,31 @@ export default function Page() {
                 </section>
 
                 {/* International Recognition */}
-                <section className="bg-secondary/30 rounded-3xl p-8 md:p-12">
-                    <div className="text-center max-w-3xl mx-auto space-y-8">
-                        <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
-                        <h2 className="text-3xl font-bold">{getContent("recognition_title", t("recognition_title"))}</h2>
-                        <p className="text-lg text-muted-foreground">
+                <section className="bg-secondary/30 rounded-2xl md:rounded-3xl p-6 md:p-12">
+                    <div className="text-center max-w-3xl mx-auto space-y-6 md:space-y-8">
+                        <Globe className="w-10 h-10 md:w-12 md:h-12 text-primary mx-auto mb-2 md:mb-4" />
+                        <h2 className="text-2xl sm:text-3xl font-bold">{getContent("recognition_title", t("recognition_title"))}</h2>
+                        <p className="text-base md:text-lg text-muted-foreground">
                             {getContent("recognition_desc", t.rich("recognition_desc", richTextComponents))}
                         </p>
 
-                        <div className="flex flex-wrap justify-center gap-8 md:gap-16 pt-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+                        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 md:gap-16 pt-6 md:pt-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
                             {partners.length > 0 ? (
                                 partners.map((partner) => (
-                                    <div key={partner.id} className="font-bold text-xl flex items-center gap-2">
+                                    <div key={partner.id} className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2">
                                         {partner.logo ? (
-                                            <img src={partner.logo} alt={partner.name} className="h-8 w-auto object-contain" />
+                                            <img src={partner.logo} alt={partner.name} className="h-6 md:h-8 w-auto object-contain" />
                                         ) : (
-                                            <Globe className="w-6 h-6" />
+                                            <Globe className="w-5 h-5 md:w-6 md:h-6" />
                                         )}
-                                        {partner.name}
+                                        <span className="hidden sm:inline">{partner.name}</span>
                                     </div>
                                 ))
                             ) : (
                                 <>
-                                    <div className="font-bold text-xl flex items-center gap-2"><Globe className="w-6 h-6" /> World Archery</div>
-                                    <div className="font-bold text-xl flex items-center gap-2"><Medal className="w-6 h-6" /> Asian Archery</div>
-                                    <div className="font-bold text-xl flex items-center gap-2"><Trophy className="w-6 h-6" /> NOC KZ</div>
+                                    <div className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2"><Globe className="w-5 h-5 md:w-6 md:h-6" /> <span className="hidden sm:inline">World Archery</span></div>
+                                    <div className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2"><Medal className="w-5 h-5 md:w-6 md:h-6" /> <span className="hidden sm:inline">Asian Archery</span></div>
+                                    <div className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2"><Trophy className="w-5 h-5 md:w-6 md:h-6" /> <span className="hidden sm:inline">NOC KZ</span></div>
                                 </>
                             )}
                         </div>

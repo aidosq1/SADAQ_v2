@@ -77,7 +77,7 @@ export default async function AdminDashboardPage() {
       {isContentManager && (
         <section>
           <h2 className="text-xl font-semibold mb-4">{contentSectionTitle}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {statCards.map((card) => (
               <Link key={card.key} href={`/${locale}${card.href}`}>
                 <Card className="hover:bg-muted/50 transition-colors cursor-pointer">

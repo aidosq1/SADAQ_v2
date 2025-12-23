@@ -556,7 +556,7 @@ export default function AdminRegionsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Название (каз)</Label>
                 <Input
@@ -582,7 +582,7 @@ export default function AdminRegionsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Директор (каз)</Label>
                 <Input
@@ -608,7 +608,7 @@ export default function AdminRegionsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Адрес (каз)</Label>
                 <Input
@@ -625,7 +625,7 @@ export default function AdminRegionsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Телефон *</Label>
                 <Input
