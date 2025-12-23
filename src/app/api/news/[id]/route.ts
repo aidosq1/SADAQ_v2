@@ -49,6 +49,11 @@ export async function PATCH(
     const newsId = parseInt(id);
     const body = await request.json();
 
+    // Convert publishedAt string to Date if present
+    if (body.publishedAt && typeof body.publishedAt === 'string') {
+      body.publishedAt = new Date(body.publishedAt);
+    }
+
     const news = await prisma.news.update({
       where: { id: newsId },
       data: body,
