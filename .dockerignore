@@ -42,7 +42,7 @@ __tests__
 *.log
 
 # Development files
-prisma/seeds
+# prisma/seeds - removed to allow seeding in production
 
 # Docker
 Dockerfile*
