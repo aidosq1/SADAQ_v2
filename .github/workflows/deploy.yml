@@ -100,7 +100,7 @@ jobs:
 
             docker compose run --rm app ./node_modules/.bin/prisma migrate deploy
 
-            docker compose up -d
+            docker compose up -d --force-recreate
 
             docker image prune -af --filter "until=168h"
 
