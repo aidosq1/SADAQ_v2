@@ -54,7 +54,7 @@ export function Header() {
                     {/* Social Links */}
                     <div className="flex items-center gap-3">
                         <a
-                            href="https://instagram.com/sadaqatu_kz"
+                            href="https://www.instagram.com/kazarchery_official/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-[hsl(var(--official-gold))] transition-colors"
@@ -62,7 +62,7 @@ export function Header() {
                             <Instagram className="h-4 w-4" />
                         </a>
                         <a
-                            href="https://youtube.com/@sadaqatu_kz"
+                            href="https://www.youtube.com/watch?v=6xgw-YxIbmw"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-[hsl(var(--official-gold))] transition-colors"
