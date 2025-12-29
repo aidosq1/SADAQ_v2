@@ -101,9 +101,9 @@ export function Header() {
                         <Image
                             src="/logo_federation_circular.png"
                             alt="SADAQ Logo"
-                            width={48}
-                            height={48}
-                            className="h-11 w-auto object-contain"
+                            width={56}
+                            height={56}
+                            className="h-14 w-auto object-contain"
                         />
                         <div className="hidden lg:flex flex-col leading-tight">
                             <span className="text-[10px] font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wide">

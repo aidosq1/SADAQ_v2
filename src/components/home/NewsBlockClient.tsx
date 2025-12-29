@@ -91,9 +91,9 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
 
               {/* Content */}
               <div className="p-4">
-                <div className="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))] mb-2">
+                <div className="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))] mb-2" suppressHydrationWarning>
                   <Calendar className="w-3 h-3" />
-                  {formatDate(item.publishedAt, locale)}
+                  <span suppressHydrationWarning>{formatDate(item.publishedAt, locale)}</span>
                 </div>
                 <h3 className="font-heading font-semibold text-[hsl(var(--official-maroon))] leading-snug line-clamp-2 group-hover:text-[hsl(var(--official-red))] transition-colors">
                   {getLocalizedTitle(item, locale)}

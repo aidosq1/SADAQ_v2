@@ -107,12 +107,12 @@ export default function Page() {
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
-            <section className="relative min-h-[350px] sm:min-h-[400px] md:h-[500px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
+            <section className="relative min-h-[420px] sm:min-h-[480px] md:h-[580px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
                 <div className="absolute inset-0 bg-black/20 z-10" />
 
                 <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center py-8 md:py-0">
                     <div className="mb-6 md:mb-8 animate-fade-in-up">
-                        <Image src="/logo_federation_circular.png" alt="Logo" width={160} height={160} className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain drop-shadow-2xl" />
+                        <Image src="/logo_federation_circular.png" alt="Logo" width={280} height={280} className="w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 object-contain drop-shadow-2xl" />
                     </div>
 
                     <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
