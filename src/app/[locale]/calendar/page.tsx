@@ -204,7 +204,7 @@ export default function CalendarPage() {
                             <TableHead>{t("th_date")}</TableHead>
                             <TableHead>{t("th_title")}</TableHead>
                             <TableHead>{t("th_city")}</TableHead>
-                            <TableHead>{t("th_categories")}</TableHead>
+                            <TableHead>{locale === 'kk' ? 'Санаттар' : locale === 'en' ? 'Categories' : 'Категории'}</TableHead>
                             <TableHead className="text-right">{t("btn_regulations")}</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -261,7 +261,7 @@ export default function CalendarPage() {
                                             )}
                                         </TableCell>
                                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                                            {(tournament.regulationUrl || isRegistrationAvailable(tournament) || status === "COMPLETED") ? (
+                                            {(tournament.regulationUrl || isRegistrationAvailable(tournament)) ? (
                                                 <div className="flex gap-2 justify-end">
                                                     {tournament.regulationUrl && (
                                                         <Button variant="ghost" size="sm" asChild>
@@ -277,13 +277,6 @@ export default function CalendarPage() {
                                                     {isRegistrationAvailable(tournament) && (
                                                         <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
                                                             <Link href={`/tournaments/${tournament.id}/register`}>{t("btn_apply")}</Link>
-                                                        </Button>
-                                                    )}
-                                                    {status === "COMPLETED" && (
-                                                        <Button variant="outline" size="sm" asChild>
-                                                            <Link href={`/tournaments/${tournament.id}`}>
-                                                                <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
-                                                            </Link>
                                                         </Button>
                                                     )}
                                                 </div>
