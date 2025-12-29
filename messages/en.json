@@ -206,6 +206,7 @@
         "th_city": "City",
         "th_discipline": "Discipline",
         "th_docs": "Documents",
+        "th_categories": "Categories",
         "status_finished": "Finished",
         "status_ongoing": "Ongoing",
         "status_planned": "Planned",

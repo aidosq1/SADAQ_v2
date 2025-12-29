@@ -206,6 +206,7 @@
         "th_city": "Город",
         "th_discipline": "Дисциплина",
         "th_docs": "Документы",
+        "th_categories": "Категории",
         "status_finished": "Завершен",
         "status_ongoing": "Идет сейчас",
         "status_planned": "Планируется",

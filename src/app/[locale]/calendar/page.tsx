@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FileText, MapPin, Loader2, ChevronRight, Download, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations, useFormatter, useLocale } from "next-intl";
 import { CATEGORIES, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 import {
@@ -36,6 +37,7 @@ interface Tournament extends TournamentForStatus {
     locationEn?: string;
     isRegistrationOpen: boolean;
     registrationDeadline: string | Date | null;
+    regulationUrl?: string | null;
     isFeatured: boolean;
     categories: TournamentCategory[];
 }
@@ -44,19 +46,14 @@ export default function CalendarPage() {
     const t = useTranslations("CalendarPage");
     const format = useFormatter();
     const locale = useLocale();
-    const [filterType, setFilterType] = useState<string>("all");
-    const [filterCategory, setFilterCategory] = useState<string>("all");
+    const router = useRouter();
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchTournaments() {
             try {
-                const params = new URLSearchParams({ limit: "50" });
-                if (filterType !== "all") params.set("type", filterType);
-                if (filterCategory !== "all") params.set("category", filterCategory);
-
-                const res = await fetch(`/api/tournaments?${params}`);
+                const res = await fetch(`/api/tournaments?limit=50`);
                 const data = await res.json();
                 if (data.data) {
                     setTournaments(data.data);
@@ -68,7 +65,7 @@ export default function CalendarPage() {
             }
         }
         fetchTournaments();
-    }, [filterType, filterCategory]);
+    }, []);
 
     const getLocalizedTitle = (tournament: Tournament) => {
         if (locale === 'kk' && tournament.titleKk) return tournament.titleKk;
@@ -123,49 +120,6 @@ export default function CalendarPage() {
     return (
         <div className="container mx-auto px-4 py-6 lg:py-8">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
-
-            {/* Filters */}
-            <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex flex-wrap gap-1">
-                    <Button
-                        variant={filterType === "all" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setFilterType("all")}
-                    >
-                        {t("filter_all_disciplines")}
-                    </Button>
-                    {BOW_TYPES.map((type) => (
-                        <Button
-                            key={type.id}
-                            variant={filterType === type.id ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setFilterType(type.id)}
-                        >
-                            {getLocalizedLabel(type, locale)}
-                        </Button>
-                    ))}
-                </div>
-
-                <div className="flex flex-wrap gap-1">
-                    <Button
-                        variant={filterCategory === "all" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setFilterCategory("all")}
-                    >
-                        {t("all_ages")}
-                    </Button>
-                    {CATEGORIES.map((cat) => (
-                        <Button
-                            key={cat.id}
-                            variant={filterCategory === cat.id ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setFilterCategory(cat.id)}
-                        >
-                            {getLocalizedLabel(cat, locale)}
-                        </Button>
-                    ))}
-                </div>
-            </div>
 
             {/* Mobile Card View */}
             <div className="md:hidden space-y-4">
@@ -250,8 +204,8 @@ export default function CalendarPage() {
                             <TableHead>{t("th_date")}</TableHead>
                             <TableHead>{t("th_title")}</TableHead>
                             <TableHead>{t("th_city")}</TableHead>
-                            <TableHead>Категории</TableHead>
-                            <TableHead className="text-right">{t("th_docs")}</TableHead>
+                            <TableHead>{t("th_categories")}</TableHead>
+                            <TableHead className="text-right">{t("btn_regulations")}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -268,7 +222,11 @@ export default function CalendarPage() {
                                 const status = getTournamentStatus(tournament);
 
                                 return (
-                                    <TableRow key={tournament.id} className="group">
+                                    <TableRow
+                                        key={tournament.id}
+                                        className="group cursor-pointer hover:bg-muted/50"
+                                        onClick={() => router.push(`/tournaments/${tournament.id}`)}
+                                    >
                                         <TableCell>
                                             <Badge className={`${getStatusClasses(status)} whitespace-nowrap border-0`}>
                                                 {getStatusLabel(status, locale)}
@@ -302,32 +260,36 @@ export default function CalendarPage() {
                                                 <span className="text-muted-foreground">—</span>
                                             )}
                                         </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex gap-2 justify-end">
-                                                {tournament.categories?.some(c => c.regulationUrl) && (
-                                                    <Button variant="ghost" size="sm" asChild>
-                                                        <a
-                                                            href={tournament.categories.find(c => c.regulationUrl)?.regulationUrl || "#"}
-                                                            target="_blank"
-                                                            title={t("btn_regulations")}
-                                                        >
-                                                            <Download className="h-4 w-4" />
-                                                        </a>
-                                                    </Button>
-                                                )}
-                                                {isRegistrationAvailable(tournament) && (
-                                                    <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
-                                                        <Link href={`/tournaments/${tournament.id}/register`}>{t("btn_apply")}</Link>
-                                                    </Button>
-                                                )}
-                                                {status === "COMPLETED" && (
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <Link href={`/tournaments/${tournament.id}`}>
-                                                            <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
-                                                        </Link>
-                                                    </Button>
-                                                )}
-                                            </div>
+                                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                                            {(tournament.regulationUrl || isRegistrationAvailable(tournament) || status === "COMPLETED") ? (
+                                                <div className="flex gap-2 justify-end">
+                                                    {tournament.regulationUrl && (
+                                                        <Button variant="ghost" size="sm" asChild>
+                                                            <a
+                                                                href={tournament.regulationUrl}
+                                                                target="_blank"
+                                                                title={t("btn_regulations")}
+                                                            >
+                                                                <Download className="h-4 w-4" />
+                                                            </a>
+                                                        </Button>
+                                                    )}
+                                                    {isRegistrationAvailable(tournament) && (
+                                                        <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
+                                                            <Link href={`/tournaments/${tournament.id}/register`}>{t("btn_apply")}</Link>
+                                                        </Button>
+                                                    )}
+                                                    {status === "COMPLETED" && (
+                                                        <Button variant="outline" size="sm" asChild>
+                                                            <Link href={`/tournaments/${tournament.id}`}>
+                                                                <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
+                                                            </Link>
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="text-muted-foreground">—</span>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 );
