@@ -165,11 +165,11 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
     if (error || !tournament) {
         return (
             <div className="container mx-auto py-8 text-center">
-                <h1 className="text-2xl font-bold mb-4">Турнир не найден</h1>
+                <h1 className="text-2xl font-bold mb-4">{t("not_found")}</h1>
                 <Button asChild>
                     <Link href="/calendar">
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Вернуться к календарю
+                        {t("back_to_calendar")}
                     </Link>
                 </Button>
             </div>
@@ -181,9 +181,9 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
     const status = getTournamentStatus(startDate, endDate);
 
     const statusConfig = {
-        finished: { label: "Завершён", color: "bg-gray-500" },
-        ongoing: { label: "Идёт", color: "bg-green-500" },
-        planned: { label: "Запланирован", color: "bg-blue-500" },
+        finished: { label: t("status_finished"), color: "bg-gray-500" },
+        ongoing: { label: t("status_ongoing"), color: "bg-green-500" },
+        planned: { label: t("status_planned"), color: "bg-blue-500" },
     };
 
     const activeTab = tournament.categories.find(c => String(c.id) === activeCategory);
@@ -194,7 +194,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
             <Button variant="ghost" size="sm" asChild>
                 <Link href="/calendar">
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Календарь
+                    {t("back_to_calendar")}
                 </Link>
             </Button>
 
@@ -211,7 +211,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                     {(status === "planned" || status === "ongoing") && tournament.isActive && (
                         <Button size="lg" className="bg-green-600 hover:bg-green-700" asChild>
                             <Link href={`/tournaments/${tournament.id}/register`}>
-                                Регистрация
+                                {t("registration")}
                             </Link>
                         </Button>
                     )}
@@ -233,7 +233,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                     </div>
                     <div className="flex items-center gap-2">
                         <Users className="h-5 w-5" />
-                        <span>{tournament.categories?.length || 0} категорий</span>
+                        <span>{tournament.categories?.length || 0} {t("categories_count")}</span>
                     </div>
                 </div>
 
@@ -247,7 +247,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                     <Button variant="outline" asChild>
                         <a href={tournament.regulationUrl} target="_blank" rel="noopener noreferrer">
                             <Download className="h-4 w-4 mr-2" />
-                            Регламент (положение)
+                            {t("regulation")}
                         </a>
                     </Button>
                 )}
@@ -258,7 +258,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                 <div className="space-y-6">
                     <h2 className="text-2xl font-bold flex items-center gap-2">
                         <Trophy className="h-6 w-6" />
-                        Категории и результаты
+                        {t("categories_title")}
                     </h2>
 
                     <Tabs value={activeCategory} onValueChange={setActiveCategory}>
@@ -285,12 +285,12 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                                             <Table>
                                                 <TableHeader>
                                                     <TableRow>
-                                                        <TableHead className="w-[60px]">Место</TableHead>
-                                                        <TableHead>Спортсмен</TableHead>
-                                                        <TableHead>Регион</TableHead>
-                                                        <TableHead className="text-right">Очки</TableHead>
+                                                        <TableHead className="w-[60px]">{t("place")}</TableHead>
+                                                        <TableHead>{t("athlete")}</TableHead>
+                                                        <TableHead>{t("region")}</TableHead>
+                                                        <TableHead className="text-right">{t("points")}</TableHead>
                                                         {cat.results.some(r => r.score) && (
-                                                            <TableHead className="text-right">Счёт</TableHead>
+                                                            <TableHead className="text-right">{t("score")}</TableHead>
                                                         )}
                                                     </TableRow>
                                                 </TableHeader>
@@ -337,14 +337,14 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                                             </Table>
                                         ) : (
                                             <p className="text-muted-foreground text-center py-8">
-                                                Результаты ещё не опубликованы
+                                                {t("results_not_published")}
                                             </p>
                                         )}
 
                                         {/* Protocols */}
                                         {cat.protocols?.length > 0 && (
                                             <div className="mt-6 pt-6 border-t">
-                                                <h4 className="font-medium mb-3">Протоколы</h4>
+                                                <h4 className="font-medium mb-3">{t("protocols")}</h4>
                                                 <div className="flex flex-wrap gap-2">
                                                     {cat.protocols.map((protocol) => (
                                                         <Button
@@ -372,7 +372,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
             ) : (
                 <Card>
                     <CardContent className="py-8 text-center text-muted-foreground">
-                        Категории турнира ещё не добавлены
+                        {t("no_categories")}
                     </CardContent>
                 </Card>
             )}
