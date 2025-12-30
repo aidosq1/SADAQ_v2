@@ -60,8 +60,7 @@ export async function POST(request: NextRequest) {
       iin, dob,
       category, categoryKk, categoryEn,
       regionId,
-      image, bio, bioKk, bioEn,
-      certifications,
+      image,
       isActive, sortOrder
     } = body;
 
@@ -86,10 +85,6 @@ export async function POST(request: NextRequest) {
         categoryEn: categoryEn || null,
         regionId: regionId ? (typeof regionId === 'string' ? parseInt(regionId) : regionId) : null,
         image: image || null,
-        bio: bio || null,
-        bioKk: bioKk || null,
-        bioEn: bioEn || null,
-        certifications: certifications || null,
         isActive: isActive ?? true,
         sortOrder: sortOrder ?? 0,
       },

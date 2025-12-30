@@ -56,13 +56,17 @@ export async function GET(req: Request) {
                         region: true
                     }
                 },
-                judge: {
-                    select: {
-                        id: true,
-                        name: true,
-                        category: true,
-                        region: {
-                            select: { name: true }
+                registrationJudges: {
+                    include: {
+                        judge: {
+                            select: {
+                                id: true,
+                                name: true,
+                                category: true,
+                                region: {
+                                    select: { name: true }
+                                }
+                            }
                         }
                     }
                 },
@@ -92,7 +96,7 @@ export async function GET(req: Request) {
                                 iin: true,
                                 dob: true,
                                 gender: true,
-                                region: true
+                                regionRef: true
                             }
                         },
                         coach: {

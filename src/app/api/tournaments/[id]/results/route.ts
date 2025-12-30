@@ -43,7 +43,7 @@ export async function GET(
                                         name: true,
                                         nameKk: true,
                                         nameEn: true,
-                                        region: true,
+                                        regionRef: true,
                                         gender: true
                                     }
                                 }
@@ -65,10 +65,7 @@ export async function GET(
                                                 name: true,
                                                 nameKk: true,
                                                 nameEn: true,
-                                                region: true,
-                                                regionRef: {
-                                                    select: { name: true }
-                                                }
+                                                regionRef: true
                                             }
                                         }
                                     }
@@ -168,7 +165,7 @@ export async function POST(
                             select: {
                                 id: true,
                                 name: true,
-                                region: true
+                                regionRef: true
                             }
                         }
                     }

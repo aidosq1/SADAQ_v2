@@ -77,6 +77,11 @@ interface AthleteRegistration {
     coach?: Coach;
 }
 
+interface RegistrationJudge {
+    id: number;
+    judge: Judge;
+}
+
 interface TournamentCategory {
     id: number;
     category: string;
@@ -96,8 +101,7 @@ interface TournamentCategory {
 interface Registration {
     id: number;
     registrationNumber: string;
-    judgeId?: number;
-    judge?: Judge;
+    registrationJudges: RegistrationJudge[];
     regionName: string;
     status: "PENDING" | "APPROVED" | "REJECTED" | "WITHDRAWN";
     rejectionReason?: string;
@@ -380,7 +384,11 @@ export default function AdminRegistrationsPage() {
                                                 <span className="text-muted-foreground">—</span>
                                             )}
                                         </TableCell>
-                                        <TableCell>{reg.judge?.name || "—"}</TableCell>
+                                        <TableCell>
+                                            {reg.registrationJudges?.length > 0
+                                                ? reg.registrationJudges.map(rj => rj.judge.name).join(", ")
+                                                : "—"}
+                                        </TableCell>
                                         <TableCell>
                                             <Badge variant="secondary">
                                                 {reg.athleteRegistrations.length} чел.
@@ -483,18 +491,22 @@ export default function AdminRegistrationsPage() {
                             {/* Judge info */}
                             <Card>
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-sm">Судья</CardTitle>
+                                    <CardTitle className="text-sm">Судьи</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    {selectedRegistration.judge ? (
-                                        <>
-                                            <p className="font-medium">{selectedRegistration.judge.name}</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                {selectedRegistration.judge.category} — {selectedRegistration.judge.region?.name || selectedRegistration.regionName}
-                                            </p>
-                                        </>
+                                    {selectedRegistration.registrationJudges?.length > 0 ? (
+                                        <div className="space-y-2">
+                                            {selectedRegistration.registrationJudges.map((rj) => (
+                                                <div key={rj.id}>
+                                                    <p className="font-medium">{rj.judge.name}</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {rj.judge.category} — {rj.judge.region?.name || selectedRegistration.regionName}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
                                     ) : (
-                                        <p className="text-muted-foreground">Судья не назначен</p>
+                                        <p className="text-muted-foreground">Судьи не назначены</p>
                                     )}
                                 </CardContent>
                             </Card>

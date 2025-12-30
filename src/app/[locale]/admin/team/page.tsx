@@ -63,13 +63,9 @@ interface Athlete {
   type: string;
   gender: string;
   category: string;
-  region: string | null;
   regionId: number | null;
   regionRef: Region | null;
   image: string | null;
-  bio: string | null;
-  bioKk: string | null;
-  bioEn: string | null;
   nationalTeamMemberships: NationalTeamMembership[];
   isActive: boolean;
   sortOrder: number;
@@ -84,18 +80,13 @@ const defaultFormData = {
   gender: DEFAULT_FILTERS.gender,
   regionId: null as number | null,
   image: "",
-  bio: "",
-  bioKk: "",
-  bioEn: "",
   nationalTeamMemberships: [] as NationalTeamMembership[],
-  coachIds: [] as number[],
   isActive: true,
   sortOrder: 0,
 };
 
 const TRANSLATION_FIELDS = {
   name: { kk: "nameKk", en: "nameEn" },
-  bio: { kk: "bioKk", en: "bioEn" },
 };
 
 export default function AdminTeamPage() {
@@ -180,11 +171,7 @@ export default function AdminTeamPage() {
       gender: item.gender as typeof DEFAULT_FILTERS.gender,
       regionId: item.regionId,
       image: item.image || "",
-      bio: item.bio || "",
-      bioKk: item.bioKk || "",
-      bioEn: item.bioEn || "",
       nationalTeamMemberships: item.nationalTeamMemberships || [],
-      coachIds: [],
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
@@ -480,16 +467,6 @@ export default function AdminTeamPage() {
                 type="number"
                 value={formData.sortOrder}
                 onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Биография (рус)</Label>
-              <Textarea
-                rows={2}
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                onBlur={() => handleTranslationBlur("bio")}
               />
             </div>
 

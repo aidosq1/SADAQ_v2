@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trophy, Target } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { notFound } from "next/navigation";
 
 interface NationalTeamMembership {
@@ -29,21 +29,6 @@ interface Region {
     nameEn?: string;
 }
 
-interface Coach {
-    id: number;
-    name: string;
-    nameKk?: string;
-    nameEn?: string;
-    region?: Region;
-}
-
-interface AthleteCoach {
-    id: number;
-    coachId: number;
-    isPrimary: boolean;
-    coach: Coach;
-}
-
 interface Athlete {
     id: number;
     slug: string;
@@ -53,15 +38,10 @@ interface Athlete {
     type: string;
     gender: string;
     category: string;
-    region: string;
+    dob?: string;
     regionRef?: Region;
-    birthYear?: number;
     image?: string;
-    bio?: string;
-    bioKk?: string;
-    bioEn?: string;
     nationalTeamMemberships?: NationalTeamMembership[];
-    coaches?: AthleteCoach[];
     isActive: boolean;
     rankings: Ranking[];
 }
@@ -84,30 +64,6 @@ async function getAthlete(id: string): Promise<Athlete | null> {
     }
 }
 
-const regionNames: Record<string, string> = {
-    'almaty_reg': 'Алматинская обл.',
-    'astana': 'г. Астана',
-    'almaty': 'г. Алматы',
-    'shymkent': 'г. Шымкент',
-    'west_kaz': 'Западно-Казахстанская обл.',
-    'east_kaz': 'Восточно-Казахстанская обл.',
-    'north_kaz': 'Северо-Казахстанская обл.',
-    'karaganda': 'Карагандинская обл.',
-    'kostanay': 'Костанайская обл.',
-    'pavlodar': 'Павлодарская обл.',
-    'akmola': 'Акмолинская обл.',
-    'aktobe': 'Актюбинская обл.',
-    'atyrau': 'Атырауская обл.',
-    'mangystau': 'Мангистауская обл.',
-    'kyzylorda': 'Кызылординская обл.',
-    'turkistan': 'Туркестанская обл.',
-    'zhambyl': 'Жамбылская обл.',
-    'zhetisu': 'Жетісу обл.',
-    'abai': 'Абайская обл.',
-    'ulytau': 'Ұлытау обл.',
-};
-
-
 export default async function AthleteProfile({ params }: { params: Promise<{ id: string; locale: string }> }) {
     const { id, locale } = await params;
     const athlete = await getAthlete(id);
@@ -125,7 +81,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
             if (locale === 'en' && athlete.regionRef.nameEn) return athlete.regionRef.nameEn;
             return athlete.regionRef.name;
         }
-        return regionNames[athlete.region] || athlete.region || 'Не указан';
+        return locale === 'kk' ? 'Көрсетілмеген' : locale === 'en' ? 'Not specified' : 'Не указан';
     };
     const regionDisplay = getRegionDisplay();
 
@@ -133,19 +89,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         if (locale === 'kk' && athlete.nameKk) return athlete.nameKk;
         if (locale === 'en' && athlete.nameEn) return athlete.nameEn;
         return athlete.name;
-    };
-
-    const getCoachName = (coach: Coach) => {
-        if (locale === 'kk' && coach.nameKk) return coach.nameKk;
-        if (locale === 'en' && coach.nameEn) return coach.nameEn;
-        return coach.name;
-    };
-
-    const getCoachesDisplay = () => {
-        if (!athlete.coaches || athlete.coaches.length === 0) {
-            return locale === 'kk' ? 'Көрсетілмеген' : locale === 'en' ? 'Not specified' : 'Не указан';
-        }
-        return athlete.coaches.map(ac => getCoachName(ac.coach)).join(', ');
     };
 
     return (
@@ -166,45 +109,29 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                             </div>
 
                             <div className="w-full space-y-3 text-sm">
-                                {athlete.birthYear && (
+                                {athlete.dob && (
                                     <div className="flex justify-between border-b pb-2">
-                                        <span className="text-muted-foreground">Год рождения</span>
-                                        <span className="font-medium">{athlete.birthYear}</span>
+                                        <span className="text-muted-foreground">
+                                            {locale === 'kk' ? 'Туған күні' : locale === 'en' ? 'Date of birth' : 'Дата рождения'}
+                                        </span>
+                                        <span className="font-medium">{athlete.dob}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">Тип лука</span>
+                                    <span className="text-muted-foreground">
+                                        {locale === 'kk' ? 'Садақ түрі' : locale === 'en' ? 'Bow type' : 'Тип лука'}
+                                    </span>
                                     <span className="font-medium">{athlete.type === 'Recurve' ? 'Классический (Recurve)' : 'Блочный (Compound)'}</span>
                                 </div>
                                 <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">Категория</span>
-                                    <span className="font-medium">{athlete.category}</span>
-                                </div>
-                                <div className="flex justify-between border-b pb-2">
                                     <span className="text-muted-foreground">
-                                        {locale === 'kk' ? 'Жаттықтырушы' : locale === 'en' ? 'Coach' : 'Тренер'}
-                                        {athlete.coaches && athlete.coaches.length > 1 && (locale === 'kk' ? 'лар' : locale === 'en' ? 'es' : 'ы')}
+                                        {locale === 'kk' ? 'Санат' : locale === 'en' ? 'Category' : 'Категория'}
                                     </span>
-                                    <span className="font-medium text-primary text-right">{getCoachesDisplay()}</span>
+                                    <span className="font-medium">{athlete.category}</span>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
-
-                    {athlete.bio && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2"><Target className="h-5 w-5" /> О спортсмене</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    {locale === 'kk' && athlete.bioKk ? athlete.bioKk :
-                                     locale === 'en' && athlete.bioEn ? athlete.bioEn :
-                                     athlete.bio}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    )}
                 </div>
 
                 {/* Right Column: Stats & History */}

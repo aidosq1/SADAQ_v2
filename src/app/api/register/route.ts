@@ -229,14 +229,13 @@ export async function POST(req: Request) {
                 }
             }
 
-            // 2. Create Registration (с первым судьей для обратной совместимости)
+            // 2. Create Registration
             const registration = await tx.registration.create({
                 data: {
                     registrationNumber,
                     userId: userId,
                     regionName: regionName,
                     regionId: userRegionId,
-                    judgeId: primaryJudgeId,
                     tournamentCategoryId: tournamentCategoryId,
                     status: 'PENDING',
                 }
@@ -324,27 +323,6 @@ export async function POST(req: Request) {
                         coachId: finalCoachId,
                     }
                 });
-
-                // Also create AthleteCoach relationship if it doesn't exist
-                if (finalAthleteId && finalCoachId) {
-                    const existingLink = await tx.athleteCoach.findUnique({
-                        where: {
-                            athleteId_coachId: {
-                                athleteId: finalAthleteId,
-                                coachId: finalCoachId
-                            }
-                        }
-                    });
-                    if (!existingLink) {
-                        await tx.athleteCoach.create({
-                            data: {
-                                athleteId: finalAthleteId,
-                                coachId: finalCoachId,
-                                isPrimary: true
-                            }
-                        });
-                    }
-                }
             }
 
             return registration;

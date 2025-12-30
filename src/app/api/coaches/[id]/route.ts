@@ -14,21 +14,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       where: { id: coachId },
       include: {
         region: true,
-        athletes: {
-          include: {
-            athlete: {
-              select: {
-                id: true,
-                name: true,
-                nameKk: true,
-                nameEn: true,
-                slug: true,
-                image: true,
-                gender: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -60,9 +45,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
-
-    // Extract athleteIds if provided (for managing athletes)
-    const { athleteIds, ...coachData } = body;
+    const coachData = body;
 
     // Update coach basic data
     if (coachData.regionId !== undefined) {
@@ -79,47 +62,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       data: coachData,
       include: {
         region: true,
-        athletes: {
-          include: {
-            athlete: true,
-          },
-        },
       },
     });
-
-    // If athleteIds provided, sync them
-    if (athleteIds !== undefined) {
-      // Delete existing athlete-coach relations
-      await prisma.athleteCoach.deleteMany({
-        where: { coachId },
-      });
-
-      // Create new relations
-      if (athleteIds?.length) {
-        await prisma.athleteCoach.createMany({
-          data: athleteIds.map((athleteId: number, index: number) => ({
-            coachId,
-            athleteId,
-            isPrimary: index === 0,
-          })),
-        });
-      }
-
-      // Fetch updated coach
-      const updated = await prisma.coach.findUnique({
-        where: { id: coachId },
-        include: {
-          region: true,
-          athletes: {
-            include: {
-              athlete: true,
-            },
-          },
-        },
-      });
-
-      return successResponse(updated);
-    }
 
     return successResponse(coach);
   } catch (error) {

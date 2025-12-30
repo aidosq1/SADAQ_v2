@@ -43,14 +43,6 @@ interface Region {
   name: string;
 }
 
-interface AthleteCoach {
-  athlete: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
-
 interface Coach {
   id: number;
   name: string;
@@ -61,10 +53,8 @@ interface Coach {
   regionId: number | null;
   region: Region | null;
   image: string | null;
-  bio: string | null;
   isActive: boolean;
   sortOrder: number;
-  athletes: AthleteCoach[];
 }
 
 const defaultFormData = {
@@ -75,7 +65,6 @@ const defaultFormData = {
   dob: "",
   regionId: "",
   image: "",
-  bio: "",
   isActive: true,
   sortOrder: 0,
 };
@@ -164,7 +153,6 @@ export default function AdminCoachesPage() {
       dob: item.dob || "",
       regionId: item.regionId?.toString() || "",
       image: item.image || "",
-      bio: item.bio || "",
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
@@ -286,7 +274,6 @@ export default function AdminCoachesPage() {
                 </button>
               </TableHead>
               <TableHead>Регион</TableHead>
-              <TableHead>Спортсмены</TableHead>
               <TableHead>Статус</TableHead>
               <TableHead className="w-[150px]">Действия</TableHead>
             </TableRow>
@@ -294,13 +281,13 @@ export default function AdminCoachesPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : sortedCoaches.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   Нет данных
                 </TableCell>
               </TableRow>
@@ -315,11 +302,6 @@ export default function AdminCoachesPage() {
                   </TableCell>
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>{item.region?.name || "-"}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">
-                      {item.athletes.length} спортсменов
-                    </Badge>
-                  </TableCell>
                   <TableCell>
                     <Button
                       variant="ghost"
@@ -441,15 +423,6 @@ export default function AdminCoachesPage() {
                 type="number"
                 value={formData.sortOrder}
                 onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Биография</Label>
-              <Textarea
-                rows={3}
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               />
             </div>
 

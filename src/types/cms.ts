@@ -102,22 +102,10 @@ export interface Coach {
   phone?: string | null;
   email?: string | null;
   image?: string | null;
-  bio?: string | null;
-  bioKk?: string | null;
-  bioEn?: string | null;
   isActive: boolean;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface AthleteCoach {
-  id: number;
-  athleteId: number;
-  coachId: number;
-  isPrimary: boolean;
-  createdAt: string;
-  coach: Coach;
 }
 
 export interface Region {
@@ -139,16 +127,10 @@ export interface Athlete {
   type: 'Recurve' | 'Compound';
   gender: 'M' | 'F';
   category: 'Adults' | 'Youth' | 'Juniors' | 'Cadets' | 'Cubs';
-  region?: string | null;
   regionId?: number | null;
   regionRef?: Region | null;
-  birthYear?: number | null;
   image?: string | null;
-  bio?: string | null;
-  bioKk?: string | null;
-  bioEn?: string | null;
   nationalTeamMemberships?: NationalTeamMembership[];
-  coaches?: AthleteCoach[];
   isActive: boolean;
   sortOrder: number;
   createdAt: string;
@@ -168,15 +150,9 @@ export interface CreateAthleteBody {
   type: string;
   gender: string;
   category: string;
-  region?: string;
   regionId?: number;
-  birthYear?: number;
   image?: string;
-  bio?: string;
-  bioKk?: string;
-  bioEn?: string;
   nationalTeamMemberships?: { category: string; gender: string; type: string }[];
-  coachIds?: number[];
   isActive?: boolean;
   sortOrder?: number;
 }
@@ -189,9 +165,6 @@ export interface CreateCoachBody {
   phone?: string;
   email?: string;
   image?: string;
-  bio?: string;
-  bioKk?: string;
-  bioEn?: string;
   isActive?: boolean;
   sortOrder?: number;
 }
@@ -213,10 +186,6 @@ export interface Judge {
   phone?: string | null;
   email?: string | null;
   image?: string | null;
-  bio?: string | null;
-  bioKk?: string | null;
-  bioEn?: string | null;
-  certifications?: string | null;
   isActive: boolean;
   sortOrder: number;
   createdAt: string;
@@ -234,10 +203,6 @@ export interface CreateJudgeBody {
   phone?: string;
   email?: string;
   image?: string;
-  bio?: string;
-  bioKk?: string;
-  bioEn?: string;
-  certifications?: string;
   isActive?: boolean;
   sortOrder?: number;
 }

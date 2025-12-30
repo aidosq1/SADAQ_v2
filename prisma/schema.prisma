@@ -14,21 +14,15 @@ model Athlete {
   nameKk                  String?
   nameEn                  String?
   iin                     String?
-  birthYear               Int?
   dob                     String?
   gender                  String
-  region                  String?
   image                   String?
-  bio                     String?
-  bioKk                   String?
-  bioEn                   String?
   isActive                Boolean                  @default(true)
   sortOrder               Int                      @default(0)
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @default(now())
   regionId                Int?
   regionRef               Region?                  @relation(fields: [regionId], references: [id])
-  coaches                 AthleteCoach[]
   athleteRegistrations    AthleteRegistration[]
   nationalTeamMemberships NationalTeamMembership[]
   rankings                RankingEntry[]
@@ -48,14 +42,10 @@ model Coach {
   dob                  String?
   regionId             Int?
   image                String?
-  bio                  String?
-  bioKk                String?
-  bioEn                String?
   isActive             Boolean               @default(true)
   sortOrder            Int                   @default(0)
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @default(now())
-  athletes             AthleteCoach[]
   athleteRegistrations AthleteRegistration[]
   region               Region?               @relation(fields: [regionId], references: [id])
 
@@ -75,35 +65,16 @@ model Judge {
   categoryEn         String?
   regionId           Int?
   image              String?
-  bio                String?
-  bioKk              String?
-  bioEn              String?
-  certifications     String?
   isActive           Boolean             @default(true)
   sortOrder          Int                 @default(0)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @default(now()) @updatedAt
   region             Region?             @relation(fields: [regionId], references: [id])
-  registrations      Registration[]
   registrationJudges RegistrationJudge[]
 
   @@index([isActive])
   @@index([regionId])
   @@index([category])
-}
-
-model AthleteCoach {
-  id        Int      @id @default(autoincrement())
-  athleteId Int
-  coachId   Int
-  isPrimary Boolean  @default(false)
-  createdAt DateTime @default(now())
-  athlete   Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  coach     Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
-
-  @@unique([athleteId, coachId])
-  @@index([athleteId])
-  @@index([coachId])
 }
 
 model AthleteRegistration {
@@ -346,13 +317,11 @@ model Registration {
   tournamentCategoryId Int?
   approvedAt           DateTime?
   approvedBy           String?
-  judgeId              Int?
   regionId             Int?
   registrationNumber   String                @unique
   rejectionReason      String?
   status               RegistrationStatus    @default(PENDING)
   athleteRegistrations AthleteRegistration[]
-  judge                Judge?                @relation(fields: [judgeId], references: [id])
   region               Region?               @relation(fields: [regionId], references: [id])
   tournamentCategory   TournamentCategory?   @relation(fields: [tournamentCategoryId], references: [id])
   user                 User                  @relation(fields: [userId], references: [id])
@@ -362,7 +331,6 @@ model Registration {
   @@index([tournamentCategoryId])
   @@index([userId])
   @@index([status])
-  @@index([judgeId])
   @@index([regionId])
 }
 

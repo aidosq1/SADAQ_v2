@@ -58,8 +58,6 @@ interface Judge {
   regionId: number | null;
   region: Region | null;
   image: string | null;
-  bio: string | null;
-  certifications: string | null;
   isActive: boolean;
   sortOrder: number;
 }
@@ -83,8 +81,6 @@ const defaultFormData = {
   categoryEn: "",
   regionId: "",
   image: "",
-  bio: "",
-  certifications: "",
   isActive: true,
   sortOrder: 0,
 };
@@ -186,8 +182,6 @@ export default function AdminJudgesPage() {
       categoryEn: item.categoryEn || "",
       regionId: item.regionId?.toString() || "",
       image: item.image || "",
-      bio: item.bio || "",
-      certifications: item.certifications || "",
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
@@ -481,15 +475,6 @@ export default function AdminJudgesPage() {
               </div>
             )}
 
-            <div className="grid gap-2">
-              <Label>Сертификаты/Лицензии</Label>
-              <Input
-                value={formData.certifications}
-                onChange={(e) => setFormData({ ...formData, certifications: e.target.value })}
-                placeholder="World Archery Level 2, ..."
-              />
-            </div>
-
             <ImageUpload
               label="Фото судьи"
               value={formData.image}
@@ -503,15 +488,6 @@ export default function AdminJudgesPage() {
                 type="number"
                 value={formData.sortOrder}
                 onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Биография</Label>
-              <Textarea
-                rows={3}
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               />
             </div>
 

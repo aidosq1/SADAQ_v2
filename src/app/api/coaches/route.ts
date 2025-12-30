@@ -34,13 +34,6 @@ export async function GET(request: NextRequest) {
         skip,
         include: {
           region: true,
-          athletes: {
-            include: {
-              athlete: {
-                select: { id: true, name: true, slug: true, image: true },
-              },
-            },
-          },
         },
       }),
       prisma.coach.count({ where }),
@@ -64,7 +57,7 @@ export async function POST(request: NextRequest) {
       name, nameKk, nameEn,
       iin, dob,
       regionId,
-      image, bio, bioKk, bioEn,
+      image,
       isActive, sortOrder
     } = body;
 
@@ -86,9 +79,6 @@ export async function POST(request: NextRequest) {
         dob: dob || null,
         regionId: regionId ? (typeof regionId === 'string' ? parseInt(regionId) : regionId) : null,
         image: image || null,
-        bio: bio || null,
-        bioKk: bioKk || null,
-        bioEn: bioEn || null,
         isActive: isActive ?? true,
         sortOrder: sortOrder ?? 0,
       },

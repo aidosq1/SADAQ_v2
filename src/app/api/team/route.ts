@@ -39,11 +39,6 @@ export async function GET(request: NextRequest) {
             nationalTeamMemberships: true,
             rankings: true,
             regionRef: true,
-            coaches: {
-              include: {
-                coach: true,
-              },
-            },
           },
         }),
         prisma.athlete.count({ where }),
@@ -98,10 +93,9 @@ export async function POST(request: NextRequest) {
     let {
       name, nameKk, nameEn,
       iin, dob,
-      gender, region, regionId,
-      birthYear, image, bio, bioKk, bioEn,
+      gender, regionId,
+      image,
       nationalTeamMemberships, // Array of { category, gender, type }
-      coachIds, // Array of coach IDs
       isActive, sortOrder
     } = body;
 
@@ -127,13 +121,8 @@ export async function POST(request: NextRequest) {
         iin,
         dob,
         gender,
-        region,
         regionId,
-        birthYear,
         image,
-        bio,
-        bioKk,
-        bioEn,
         isActive: isActive ?? true,
         sortOrder: sortOrder ?? 0,
         // Create national team memberships if provided
@@ -146,24 +135,10 @@ export async function POST(request: NextRequest) {
             })),
           },
         } : undefined,
-        // Create coach relations if provided
-        coaches: coachIds?.length ? {
-          createMany: {
-            data: coachIds.map((coachId: number, index: number) => ({
-              coachId,
-              isPrimary: index === 0,
-            })),
-          },
-        } : undefined,
       },
       include: {
         nationalTeamMemberships: true,
         regionRef: true,
-        coaches: {
-          include: {
-            coach: true,
-          },
-        },
       },
     });
 

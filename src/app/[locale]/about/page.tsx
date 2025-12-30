@@ -107,7 +107,7 @@ export default function Page() {
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
-            <section className="relative min-h-[420px] sm:min-h-[480px] md:h-[580px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
+            <section className="relative min-h-[480px] sm:min-h-[540px] md:h-[640px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
                 <div className="absolute inset-0 bg-black/20 z-10" />
 
                 <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center py-8 md:py-0">

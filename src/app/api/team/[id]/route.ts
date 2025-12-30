@@ -19,15 +19,6 @@ export async function GET(
         where: { isActive: true },
       },
       regionRef: true,
-      coaches: {
-        include: {
-          coach: {
-            include: {
-              region: true,
-            },
-          },
-        },
-      },
     };
 
     if (isNaN(athleteId)) {
@@ -79,8 +70,8 @@ export async function PATCH(
 
     const body = await request.json();
 
-    // Extract nationalTeamMemberships and coachIds if provided
-    let { nationalTeamMemberships, coachIds, regionId, ...athleteData } = body;
+    // Extract nationalTeamMemberships if provided
+    let { nationalTeamMemberships, regionId, ...athleteData } = body;
 
     // For RegionalRepresentative, force their region
     if (auth.userRegionId) {
@@ -99,11 +90,6 @@ export async function PATCH(
       include: {
         nationalTeamMemberships: true,
         regionRef: true,
-        coaches: {
-          include: {
-            coach: true,
-          },
-        },
       },
     });
 
@@ -125,34 +111,12 @@ export async function PATCH(
       }
     }
 
-    // If coachIds provided, sync them
-    if (coachIds !== undefined) {
-      await prisma.athleteCoach.deleteMany({
-        where: { athleteId },
-      });
-
-      if (coachIds?.length) {
-        await prisma.athleteCoach.createMany({
-          data: coachIds.map((coachId: number, index: number) => ({
-            athleteId,
-            coachId,
-            isPrimary: index === 0,
-          })),
-        });
-      }
-    }
-
     // Fetch updated athlete with all relations
     const updated = await prisma.athlete.findUnique({
       where: { id: athleteId },
       include: {
         nationalTeamMemberships: true,
         regionRef: true,
-        coaches: {
-          include: {
-            coach: true,
-          },
-        },
       },
     });
 

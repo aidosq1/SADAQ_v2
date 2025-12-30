@@ -30,10 +30,7 @@ export async function GET(
                     nameKk: true,
                     nameEn: true,
                     slug: true,
-                    region: true,
-                    regionRef: {
-                      select: { name: true }
-                    }
+                    regionRef: true
                   }
                 }
               },
