@@ -15,6 +15,7 @@ import {
 import { ArrowRight, Search, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CATEGORIES, GENDERS, BOW_TYPES, DEFAULT_FILTERS, getLocalizedLabel } from "@/lib/constants";
 import { useTranslations, useLocale } from "next-intl";
 
@@ -49,6 +50,7 @@ export default function RankingPage() {
   const t = useTranslations("RankingPage");
   const t_regions = useTranslations("Regions");
   const locale = useLocale();
+  const router = useRouter();
 
   const [rankings, setRankings] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -218,7 +220,8 @@ export default function RankingPage() {
               filteredRankings.map((ranking, index) => (
                 <TableRow
                   key={ranking.id}
-                  className="group hover:bg-muted/50"
+                  className="group hover:bg-muted/50 cursor-pointer"
+                  onClick={() => router.push(`/${locale}/team/${ranking.athlete.slug}`)}
                 >
                   <TableCell className="font-bold text-lg text-center">
                     #{index + 1}
@@ -241,11 +244,7 @@ export default function RankingPage() {
                     {ranking.points}
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" asChild onClick={(e) => e.stopPropagation()}>
-                      <Link href={`/team/${ranking.athlete.slug}`}>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                      </Link>
-                    </Button>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
                   </TableCell>
                 </TableRow>
               ))

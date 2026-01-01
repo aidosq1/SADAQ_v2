@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trophy } from "lucide-react";
 import { notFound } from "next/navigation";
+import { CATEGORIES, BOW_TYPES, GENDERS, getLocalizedLabel } from "@/lib/constants";
 
 interface NationalTeamMembership {
     id: number;
@@ -91,6 +92,21 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         return athlete.name;
     };
 
+    const getCategoryLabel = (categoryId: string) => {
+        const cat = CATEGORIES.find(c => c.id === categoryId);
+        return cat ? getLocalizedLabel(cat, locale) : categoryId;
+    };
+
+    const getBowTypeLabel = (typeId: string) => {
+        const type = BOW_TYPES.find(t => t.id === typeId);
+        return type ? getLocalizedLabel(type, locale) : typeId;
+    };
+
+    const getGenderLabel = (genderId: string) => {
+        const gender = GENDERS.find(g => g.id === genderId);
+        return gender ? getLocalizedLabel(gender, locale) : genderId;
+    };
+
     return (
         <div className="max-w-7xl mx-auto px-4 py-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -117,18 +133,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                         <span className="font-medium">{athlete.dob}</span>
                                     </div>
                                 )}
-                                <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">
-                                        {locale === 'kk' ? 'Садақ түрі' : locale === 'en' ? 'Bow type' : 'Тип лука'}
-                                    </span>
-                                    <span className="font-medium">{athlete.type === 'Recurve' ? 'Классический (Recurve)' : 'Блочный (Compound)'}</span>
-                                </div>
-                                <div className="flex justify-between border-b pb-2">
-                                    <span className="text-muted-foreground">
-                                        {locale === 'kk' ? 'Санат' : locale === 'en' ? 'Category' : 'Категория'}
-                                    </span>
-                                    <span className="font-medium">{athlete.category}</span>
-                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -137,7 +141,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                 {/* Right Column: Stats & History */}
                 <div className="md:col-span-2 space-y-6">
                     {/* Rank & Points Dashboard */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                         <Card className="bg-primary/5 border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
                             <CardContent className="pt-6 text-center">
                                 <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Нац. Рейтинг</div>
@@ -152,12 +156,6 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                 <div className="text-3xl font-bold">
                                     {currentRanking?.points || 0}
                                 </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
-                            <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Категория</div>
-                                <div className="text-xl font-bold">{currentRanking?.category || '-'}</div>
                             </CardContent>
                         </Card>
                     </div>
@@ -182,9 +180,9 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                     <TableBody>
                                         {athlete.rankings.map((ranking) => (
                                             <TableRow key={ranking.id}>
-                                                <TableCell className="font-medium">{ranking.category}</TableCell>
-                                                <TableCell>{ranking.gender === 'M' ? 'Муж' : 'Жен'}</TableCell>
-                                                <TableCell>{ranking.type === 'Recurve' ? 'Классический' : 'Блочный'}</TableCell>
+                                                <TableCell className="font-medium">{getCategoryLabel(ranking.category)}</TableCell>
+                                                <TableCell>{getGenderLabel(ranking.gender)}</TableCell>
+                                                <TableCell>{getBowTypeLabel(ranking.type)}</TableCell>
                                                 <TableCell>
                                                     <Badge variant={ranking.rank <= 3 ? "default" : "secondary"}>
                                                         #{ranking.rank}

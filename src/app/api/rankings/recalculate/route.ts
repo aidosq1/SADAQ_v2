@@ -3,16 +3,6 @@ import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// Determine classification based on total points
-function getClassification(points: number): string {
-    if (points >= 500) return 'МС'; // Master of Sport
-    if (points >= 300) return 'КМС'; // Candidate for Master of Sport
-    if (points >= 200) return '1 разряд';
-    if (points >= 100) return '2 разряд';
-    if (points >= 50) return '3 разряд';
-    return 'Без разряда';
-}
-
 // POST /api/rankings/recalculate - Recalculate all rankings based on tournament results
 export async function POST(req: Request) {
     try {
@@ -110,7 +100,6 @@ export async function POST(req: Request) {
             type: string;
             points: number;
             rank: number;
-            classification: string;
         }[] = [];
 
         for (const group of Object.values(groupedByCategory)) {
@@ -125,8 +114,7 @@ export async function POST(req: Request) {
                     gender: item.gender,
                     type: item.type,
                     points: item.totalPoints,
-                    rank: index + 1,
-                    classification: getClassification(item.totalPoints)
+                    rank: index + 1
                 });
             });
         }
@@ -146,8 +134,7 @@ export async function POST(req: Request) {
                     },
                     update: {
                         points: ranking.points,
-                        rank: ranking.rank,
-                        classification: ranking.classification
+                        rank: ranking.rank
                     },
                     create: {
                         athleteId: ranking.athleteId,
@@ -155,8 +142,7 @@ export async function POST(req: Request) {
                         gender: ranking.gender,
                         type: ranking.type,
                         points: ranking.points,
-                        rank: ranking.rank,
-                        classification: ranking.classification
+                        rank: ranking.rank
                     }
                 });
             }
