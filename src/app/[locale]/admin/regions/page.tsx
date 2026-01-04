@@ -228,7 +228,7 @@ export default function AdminRegionsPage() {
       return;
     }
     if (!formData.director.trim()) {
-      toast.error("Имя директора обязательно");
+      toast.error("Имя президента обязательно");
       return;
     }
     if (!formData.address.trim()) {
@@ -394,7 +394,7 @@ export default function AdminRegionsPage() {
             <TableRow>
               <TableHead className="w-[40px]"></TableHead>
               <TableHead>Название</TableHead>
-              <TableHead>Директор</TableHead>
+              <TableHead>Президент</TableHead>
               <TableHead>Телефон</TableHead>
               <TableHead>Учётки</TableHead>
               <TableHead>Статус</TableHead>
@@ -574,7 +574,7 @@ export default function AdminRegionsPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label>Директор (рус) *</Label>
+              <Label>Президент (рус) *</Label>
               <Input
                 value={formData.director}
                 onChange={(e) => setFormData({ ...formData, director: e.target.value })}
@@ -584,14 +584,14 @@ export default function AdminRegionsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>Директор (каз)</Label>
+                <Label>Президент (каз)</Label>
                 <Input
                   value={formData.directorKk}
                   onChange={(e) => setFormData({ ...formData, directorKk: e.target.value })}
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Директор (англ)</Label>
+                <Label>Президент (англ)</Label>
                 <Input
                   value={formData.directorEn}
                   onChange={(e) => setFormData({ ...formData, directorEn: e.target.value })}

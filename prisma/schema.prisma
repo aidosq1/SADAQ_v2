@@ -285,14 +285,17 @@ model RankingEntry {
 }
 
 model Region {
-  id            Int            @id @default(autoincrement())
-  name          String
-  nameKk        String?
-  nameEn        String?
-  director      String
-  directorKk    String?
-  directorEn    String?
-  address       String
+  id              Int            @id @default(autoincrement())
+  name            String
+  nameKk          String?
+  nameEn          String?
+  director        String
+  directorKk      String?
+  directorEn      String?
+  directorTitle   String         @default("Президент филиала")
+  directorTitleKk String?
+  directorTitleEn String?
+  address         String
   addressKk     String?
   addressEn     String?
   phone         String
