@@ -1,7 +1,6 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAuthWithRegion } from "@/lib/api-utils";
 
 interface NewJudge {
     name: string;
@@ -81,14 +80,12 @@ async function generateRegistrationNumber(): Promise<string> {
 
 export async function POST(req: Request) {
     try {
-        // 1. Authentication Check
-        const session = await getServerSession(authOptions);
-        if (!session || !session.user || !(session.user as any).id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        // 1. Authentication & Role Check - only RegionalRepresentative can submit
+        const auth = await requireAuthWithRegion(['RegionalRepresentative']);
+        if (!auth.authorized) return auth.error;
 
-        const userId = parseInt((session.user as any).id);
-        const userRegionId = (session.user as any).regionId ? parseInt((session.user as any).regionId) : null;
+        const userId = auth.userId!;
+        const userRegionId = auth.userRegionId;
         const body: RequestBody = await req.json();
         const { tournamentCategoryId, judgeId, newJudge, judges, participants, documents } = body;
 
@@ -228,7 +225,7 @@ export async function POST(req: Request) {
             }
 
             // Get user's region name for the registration
-            let regionName = session.user?.name || "Unknown";
+            let regionName = auth.userRegion || "Unknown";
             if (userRegionId) {
                 const region = await tx.region.findUnique({ where: { id: userRegionId } });
                 if (region) {

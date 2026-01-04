@@ -545,6 +545,24 @@ export default function TournamentApplyPage() {
         );
     }
 
+    // Check role - only RegionalRepresentative can submit applications
+    const userRole = (session?.user as any)?.role;
+    if (userRole !== "RegionalRepresentative") {
+        return (
+            <div className="container mx-auto py-8 px-4">
+                <Card className="max-w-lg mx-auto">
+                    <CardContent className="py-12 text-center space-y-4">
+                        <Lock className="h-12 w-12 mx-auto text-muted-foreground" />
+                        <h2 className="text-2xl font-bold">Доступ запрещён</h2>
+                        <p className="text-muted-foreground">
+                            Подача заявок доступна только региональным представителям.
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
     // No tournaments available
     if (tournaments.length === 0) {
         return (
