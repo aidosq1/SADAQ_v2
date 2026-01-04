@@ -73,7 +73,10 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         notFound();
     }
 
-    const currentRanking = athlete.rankings?.[0];
+    // Find the best ranking (lowest rank number = best position)
+    const bestRanking = athlete.rankings?.reduce((best, r) =>
+        !best || r.rank < best.rank ? r : best
+    , null as Ranking | null);
 
     // Get region display with localization
     const getRegionDisplay = () => {
@@ -144,17 +147,22 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                     <div className="grid grid-cols-2 gap-4">
                         <Card className="bg-primary/5 border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
                             <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Нац. Рейтинг</div>
+                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Лучший рейтинг</div>
                                 <div className="text-4xl font-extrabold text-primary">
-                                    #{currentRanking?.rank || '-'}
+                                    #{bestRanking?.rank || '-'}
                                 </div>
+                                {bestRanking && (
+                                    <div className="text-xs text-muted-foreground mt-1">
+                                        {getCategoryLabel(bestRanking.category)}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                         <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
                             <CardContent className="pt-6 text-center">
                                 <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Очки</div>
                                 <div className="text-3xl font-bold">
-                                    {currentRanking?.points || 0}
+                                    {bestRanking?.points || 0}
                                 </div>
                             </CardContent>
                         </Card>

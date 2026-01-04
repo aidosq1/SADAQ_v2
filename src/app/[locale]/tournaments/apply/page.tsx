@@ -25,10 +25,14 @@ import {
     Trophy,
     ChevronRight,
     Send,
-    ArrowLeft
+    ArrowLeft,
+    Paperclip,
+    FileText,
+    Upload,
+    X
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CATEGORIES, BOW_TYPES, GENDERS, getLocalizedLabel } from "@/lib/constants";
@@ -94,9 +98,13 @@ interface JudgeEntry {
 export default function TournamentApplyPage() {
     const { data: session, status: sessionStatus } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const format = useFormatter();
     const locale = useLocale();
     const t = useTranslations("Common");
+
+    // Get tournamentId from URL params (for direct links from calendar/tournament pages)
+    const urlTournamentId = searchParams.get('tournamentId');
 
     // Loading states
     const [loading, setLoading] = useState(true);
@@ -135,6 +143,10 @@ export default function TournamentApplyPage() {
     const [existingRegistration, setExistingRegistration] = useState<{ registrationNumber: string } | null>(null);
     const [checkingRegistration, setCheckingRegistration] = useState(false);
 
+    // Documents state
+    const [uploadedDocuments, setUploadedDocuments] = useState<{ fileName: string; fileUrl: string }[]>([]);
+    const [isUploadingDocument, setIsUploadingDocument] = useState(false);
+
     // Fetch tournaments with open registration
     useEffect(() => {
         async function fetchTournaments() {
@@ -152,6 +164,16 @@ export default function TournamentApplyPage() {
         }
         fetchTournaments();
     }, []);
+
+    // Auto-select tournament from URL param
+    useEffect(() => {
+        if (urlTournamentId && tournaments.length > 0 && !selectedTournamentId) {
+            const tournament = tournaments.find(t => t.id.toString() === urlTournamentId);
+            if (tournament) {
+                setSelectedTournamentId(urlTournamentId);
+            }
+        }
+    }, [urlTournamentId, tournaments, selectedTournamentId]);
 
     // Fetch athletes, coaches, judges
     useEffect(() => {
@@ -378,6 +400,49 @@ export default function TournamentApplyPage() {
     // Проверка, есть ли хотя бы один выбранный судья
     const hasValidJudge = judgeEntries.some(j => j.judgeId || j.newJudge);
 
+    // Document upload handler
+    const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        setIsUploadingDocument(true);
+
+        for (const file of Array.from(files)) {
+            try {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("folder", "registrations");
+
+                const response = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    setUploadedDocuments(prev => [...prev, {
+                        fileName: file.name,
+                        fileUrl: data.data.url,
+                    }]);
+                    toast.success(`Файл "${file.name}" загружен`);
+                } else {
+                    toast.error(data.error || `Ошибка загрузки файла "${file.name}"`);
+                }
+            } catch {
+                toast.error(`Ошибка загрузки файла "${file.name}"`);
+            }
+        }
+
+        setIsUploadingDocument(false);
+        // Reset input
+        e.target.value = '';
+    };
+
+    const removeDocument = (index: number) => {
+        setUploadedDocuments(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = async () => {
         // Validation
         if (!selectedCategoryId) {
@@ -419,7 +484,8 @@ export default function TournamentApplyPage() {
                     athleteId: p.athleteId,
                     coachId: p.coachId,
                     newCoach: p.newCoach ? { name: p.newCoach.name } : undefined,
-                }))
+                })),
+                documents: uploadedDocuments.length > 0 ? uploadedDocuments : undefined,
             };
 
             const res = await fetch("/api/register", {
@@ -920,6 +986,82 @@ export default function TournamentApplyPage() {
                 </div>
             )}
 
+            {/* Documents Section */}
+            {selectedCategoryId && hasValidJudge && !existingRegistration && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold">
+                            5
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-primary/10 rounded-full text-primary">
+                                <Paperclip className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold">Документы</h2>
+                                <p className="text-sm text-muted-foreground">Прикрепите файлы (опционально)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Card>
+                        <CardContent className="p-6 space-y-4">
+                            {/* Uploaded Documents List */}
+                            {uploadedDocuments.length > 0 && (
+                                <div className="space-y-2">
+                                    {uploadedDocuments.map((doc, index) => (
+                                        <div key={index} className="flex items-center gap-3 p-3 rounded-lg border bg-muted/50">
+                                            <div className="flex items-center justify-center w-10 h-10 rounded bg-primary/10">
+                                                <FileText className="h-5 w-5 text-primary" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium truncate">{doc.fileName}</p>
+                                                <p className="text-xs text-muted-foreground">PDF</p>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                                                onClick={() => removeDocument(index)}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Upload Zone */}
+                            <label className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg transition-colors cursor-pointer border-muted-foreground/25 hover:border-primary/50">
+                                {isUploadingDocument ? (
+                                    <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                                ) : (
+                                    <>
+                                        <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                                        <p className="text-sm text-muted-foreground">
+                                            Нажмите для выбора файлов
+                                        </p>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            PDF до 10MB
+                                        </p>
+                                    </>
+                                )}
+
+                                <input
+                                    type="file"
+                                    accept=".pdf"
+                                    multiple
+                                    onChange={handleDocumentUpload}
+                                    className="hidden"
+                                    disabled={isUploadingDocument}
+                                />
+                            </label>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
             {/* Submit Section */}
             {selectedCategoryId && hasValidJudge && !existingRegistration && (
                 <>
@@ -936,6 +1078,11 @@ export default function TournamentApplyPage() {
                             <p className="text-sm text-muted-foreground">
                                 Спортсменов: <span className="font-medium text-foreground">{participants.length}</span>
                             </p>
+                            {uploadedDocuments.length > 0 && (
+                                <p className="text-sm text-muted-foreground">
+                                    Документов: <span className="font-medium text-foreground">{uploadedDocuments.length}</span>
+                                </p>
+                            )}
                         </div>
                         <Button
                             size="lg"

@@ -25,9 +25,9 @@ export const KAZAKHSTAN_REGIONS = [
 export const CATEGORIES = [
     { id: "Adults", ru: "Взрослые", kk: "Ересектер", en: "Adults" },
     { id: "Youth", ru: "Молодёжь", kk: "Жастар", en: "Youth" },
-    { id: "Juniors", ru: "Юниоры", kk: "Юниорлар", en: "Juniors" },
-    { id: "Cadets", ru: "Кадеты", kk: "Кадеттер", en: "Cadets" },
-    { id: "Cubs", ru: "Юноши", kk: "Жасөспірімдер", en: "Cubs" },
+    { id: "Juniors", ru: "Юниор", kk: "Юниор", en: "Junior" },
+    { id: "Cadets", ru: "Юноша", kk: "Жасөспірім", en: "U18" },
+    { id: "Cubs", ru: "Младший юноша", kk: "Кіші жасөспірім", en: "U15" },
 ] as const;
 
 export const GENDERS = [

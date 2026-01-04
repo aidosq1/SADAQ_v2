@@ -210,7 +210,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
 
                     {(status === "planned" || status === "ongoing") && tournament.isActive && (
                         <Button size="lg" className="bg-green-600 hover:bg-green-700" asChild>
-                            <Link href={`/tournaments/${tournament.id}/register`}>
+                            <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>
                                 {t("registration")}
                             </Link>
                         </Button>

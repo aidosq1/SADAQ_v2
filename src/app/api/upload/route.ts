@@ -33,6 +33,7 @@ const ALLOWED_FOLDERS = [
   "coaches",
   "judges",
   "protocols",
+  "registrations",
 ];
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

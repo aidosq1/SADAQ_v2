@@ -42,6 +42,7 @@ interface Document {
   fileUrl: string;
   fileType: string | null;
   fileSize: string | null;
+  year: number | null;
   isPublished: boolean;
 }
 
@@ -53,8 +54,12 @@ const defaultFormData = {
   fileUrl: "",
   fileType: "pdf",
   fileSize: "",
+  year: "",
   isPublished: true,
 };
+
+// Sections that support year grouping
+const sectionsWithYear = ["ratings"];
 
 const TRANSLATION_FIELDS = {
   title: { kk: "titleKk", en: "titleEn" },
@@ -107,6 +112,7 @@ export default function AdminDocumentsPage() {
       fileUrl: item.fileUrl,
       fileType: item.fileType || "pdf",
       fileSize: item.fileSize || "",
+      year: item.year?.toString() || "",
       isPublished: item.isPublished,
     });
     setDialogOpen(true);
@@ -180,7 +186,7 @@ export default function AdminDocumentsPage() {
     rules: "Правила и Регламенты",
     antidoping: "Антидопинг",
     calendar: "Календарный план",
-    ratings: "Рейтинги и Протоколы",
+    ratings: "Протоколы",
   };
 
   return (
@@ -294,7 +300,7 @@ export default function AdminDocumentsPage() {
 
             <div className="grid gap-2">
               <Label>Раздел</Label>
-              <Select value={formData.section} onValueChange={(v) => setFormData({ ...formData, section: v })}>
+              <Select value={formData.section} onValueChange={(v) => setFormData({ ...formData, section: v, year: sectionsWithYear.includes(v) ? formData.year : "" })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -303,10 +309,31 @@ export default function AdminDocumentsPage() {
                   <SelectItem value="rules">Правила и Регламенты</SelectItem>
                   <SelectItem value="antidoping">Антидопинг</SelectItem>
                   <SelectItem value="calendar">Календарный план</SelectItem>
-                  <SelectItem value="ratings">Рейтинги и Протоколы</SelectItem>
+                  <SelectItem value="ratings">Протоколы</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {sectionsWithYear.includes(formData.section) && (
+              <div className="grid gap-2">
+                <Label>Год</Label>
+                <Select value={formData.year} onValueChange={(v) => setFormData({ ...formData, year: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Выберите год" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[...Array(10)].map((_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <FileUpload
               value={formData.fileUrl}
@@ -314,9 +341,7 @@ export default function AdminDocumentsPage() {
               onFileInfo={(info) => setFormData((prev) => ({
                 ...prev,
                 fileType: info.type,
-                fileSize: info.size > 1024 * 1024
-                  ? `${(info.size / (1024 * 1024)).toFixed(1)} MB`
-                  : `${(info.size / 1024).toFixed(1)} KB`,
+                fileSize: info.size.toString(),
               }))}
               label="Файл *"
               folder="documents"

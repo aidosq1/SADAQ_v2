@@ -8,16 +8,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const section = searchParams.get('section'); // statute | rules | antidoping | calendar | ratings
     const isPublished = searchParams.get('isPublished');
+    const year = searchParams.get('year');
     const { limit } = parseQueryParams(searchParams);
 
     const where = {
       ...(section && { section }),
       ...(isPublished !== null && { isPublished: isPublished !== 'false' }),
+      ...(year && { year: parseInt(year) }),
     };
 
     const documents = await prisma.document.findMany({
       where,
-      orderBy: { sortOrder: 'asc' },
+      orderBy: [{ year: 'desc' }, { sortOrder: 'asc' }],
       take: limit,
     });
 
@@ -37,7 +39,7 @@ export async function POST(request: NextRequest) {
     const {
       title, titleKk, titleEn,
       section, fileUrl, fileType, fileSize,
-      sortOrder, isPublished
+      year, sortOrder, isPublished
     } = body;
 
     if (!title || !section || !fileUrl) {
@@ -52,7 +54,8 @@ export async function POST(request: NextRequest) {
         section,
         fileUrl,
         fileType,
-        fileSize,
+        fileSize: fileSize ? parseInt(fileSize) : null,
+        year: year ? parseInt(year) : null,
         sortOrder: sortOrder ?? 0,
         isPublished: isPublished ?? true,
       },

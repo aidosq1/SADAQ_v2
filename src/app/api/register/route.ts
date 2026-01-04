@@ -36,6 +36,11 @@ interface JudgeEntry {
     newJudge?: NewJudge;
 }
 
+interface DocumentData {
+    fileName: string;
+    fileUrl: string;
+}
+
 interface RequestBody {
     tournamentCategoryId: number;
     // Поддержка старого формата (один судья)
@@ -44,6 +49,8 @@ interface RequestBody {
     // Новый формат (массив судей)
     judges?: JudgeEntry[];
     participants: Participant[];
+    // Прикреплённые документы (опционально)
+    documents?: DocumentData[];
 }
 
 // Generate unique registration number: REG-YYYY-XXXX
@@ -83,7 +90,7 @@ export async function POST(req: Request) {
         const userId = parseInt((session.user as any).id);
         const userRegionId = (session.user as any).regionId ? parseInt((session.user as any).regionId) : null;
         const body: RequestBody = await req.json();
-        const { tournamentCategoryId, judgeId, newJudge, judges, participants } = body;
+        const { tournamentCategoryId, judgeId, newJudge, judges, participants, documents } = body;
 
         // Validate tournamentCategoryId
         if (!tournamentCategoryId) {
@@ -323,6 +330,19 @@ export async function POST(req: Request) {
                         coachId: finalCoachId,
                     }
                 });
+            }
+
+            // 4. Create RegistrationDocument records for uploaded documents
+            if (documents && documents.length > 0) {
+                for (const doc of documents) {
+                    await tx.registrationDocument.create({
+                        data: {
+                            registrationId: registration.id,
+                            fileName: doc.fileName,
+                            fileUrl: doc.fileUrl,
+                        }
+                    });
+                }
             }
 
             return registration;

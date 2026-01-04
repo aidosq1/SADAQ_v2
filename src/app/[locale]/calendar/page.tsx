@@ -177,7 +177,7 @@ export default function CalendarPage() {
                                         )}
                                         {isRegistrationAvailable(tournament) && (
                                             <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
-                                                <Link href={`/tournaments/${tournament.id}/register`}>{t("btn_apply")}</Link>
+                                                <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>{t("btn_apply")}</Link>
                                             </Button>
                                         )}
                                         {status === "COMPLETED" && (
@@ -276,7 +276,7 @@ export default function CalendarPage() {
                                                     )}
                                                     {isRegistrationAvailable(tournament) && (
                                                         <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
-                                                            <Link href={`/tournaments/${tournament.id}/register`}>{t("btn_apply")}</Link>
+                                                            <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>{t("btn_apply")}</Link>
                                                         </Button>
                                                     )}
                                                 </div>

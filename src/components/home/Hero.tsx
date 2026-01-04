@@ -1,15 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MapPin, Trophy, Calendar } from "lucide-react";
+import { Users, MapPin, Trophy, Calendar, Activity } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { HeroNewsSlider } from "./HeroNewsSlider";
 import { Link } from "@/navigation";
 
-interface Stats {
-    athletes: number;
-    regions: number;
-    medals: number;
+interface SiteStat {
+    id: number;
+    key: string;
+    value: string;
+    label: string;
+    labelKk?: string;
+    labelEn?: string;
+    iconType: string;
+    sortOrder: number;
 }
 
 interface UpcomingEvent {
@@ -20,29 +25,36 @@ interface UpcomingEvent {
     startDate: string;
 }
 
+const iconMap: Record<string, React.ReactNode> = {
+    mapPin: <MapPin className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
+    users: <Users className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
+    badge: <Trophy className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
+    trophy: <Trophy className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
+    default: <Activity className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
+};
+
 export function Hero() {
     const t = useTranslations("Hero");
     const locale = useLocale();
-    const [stats, setStats] = useState<Stats>({ athletes: 0, regions: 0, medals: 0 });
+    const [stats, setStats] = useState<SiteStat[]>([]);
     const [upcomingEvent, setUpcomingEvent] = useState<UpcomingEvent | null>(null);
+
+    const getLocalizedLabel = (stat: SiteStat) => {
+        if (locale === 'kk' && stat.labelKk) return stat.labelKk;
+        if (locale === 'en' && stat.labelEn) return stat.labelEn;
+        return stat.label;
+    };
 
     useEffect(() => {
         async function fetchStats() {
             try {
                 const res = await fetch("/api/stats?isActive=true");
                 const data = await res.json();
-                if (data.data && data.data.length > 0) {
-                    const athletesStat = data.data.find((s: { key: string }) => s.key === "athletes_count");
-                    const regionsStat = data.data.find((s: { key: string }) => s.key === "regions_count");
-                    const medalsStat = data.data.find((s: { key: string }) => s.key === "medals_count");
-                    setStats({
-                        athletes: athletesStat?.value ? parseInt(athletesStat.value) : 150,
-                        regions: regionsStat?.value ? parseInt(regionsStat.value) : 17,
-                        medals: medalsStat?.value ? parseInt(medalsStat.value) : 50
-                    });
+                if (data.data) {
+                    setStats(data.data);
                 }
             } catch {
-                setStats({ athletes: 150, regions: 17, medals: 50 });
+                // silently fail
             }
         }
 
@@ -95,40 +107,20 @@ export function Hero() {
                             <h2 className="text-lg font-heading font-semibold text-[hsl(var(--official-maroon))] mb-4 gold-accent">
                                 {t("federation_stats")}
                             </h2>
-                            <div className="grid grid-cols-3 gap-4 mt-6">
-                                <div className="text-center">
-                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                                        <Users className="w-5 h-5 text-[hsl(var(--official-maroon))]" />
+                            <div className="grid grid-cols-2 gap-4 mt-6">
+                                {stats.map((stat) => (
+                                    <div key={stat.id} className="text-center p-3">
+                                        <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                                            {iconMap[stat.iconType] || iconMap.default}
+                                        </div>
+                                        <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
+                                            {stat.value}
+                                        </div>
+                                        <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1 uppercase tracking-wide">
+                                            {getLocalizedLabel(stat)}
+                                        </div>
                                     </div>
-                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
-                                        {stats.athletes}+
-                                    </div>
-                                    <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
-                                        {t("athletes")}
-                                    </div>
-                                </div>
-                                <div className="text-center border-x border-[hsl(var(--border-light))]">
-                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                                        <MapPin className="w-5 h-5 text-[hsl(var(--official-maroon))]" />
-                                    </div>
-                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
-                                        {stats.regions}
-                                    </div>
-                                    <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
-                                        {t("regions")}
-                                    </div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                                        <Trophy className="w-5 h-5 text-[hsl(var(--official-maroon))]" />
-                                    </div>
-                                    <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
-                                        {stats.medals}+
-                                    </div>
-                                    <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
-                                        {t("medals")}
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
 
