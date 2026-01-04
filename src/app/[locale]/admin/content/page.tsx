@@ -119,6 +119,9 @@ interface Staff {
   roleTitle: string | null;
   roleTitleKk: string | null;
   roleTitleEn: string | null;
+  description: string | null;
+  descriptionKk: string | null;
+  descriptionEn: string | null;
   department: string;
   image: string | null;
   sortOrder: number;
@@ -897,6 +900,9 @@ function StaffTab() {
     roleTitle: "",
     roleTitleKk: "",
     roleTitleEn: "",
+    description: "",
+    descriptionKk: "",
+    descriptionEn: "",
     department: "leadership",
     image: "",
     sortOrder: 0,
@@ -937,6 +943,9 @@ function StaffTab() {
       roleTitle: "",
       roleTitleKk: "",
       roleTitleEn: "",
+      description: "",
+      descriptionKk: "",
+      descriptionEn: "",
       department: "leadership",
       image: "",
       sortOrder: staff.length,
@@ -954,6 +963,9 @@ function StaffTab() {
       roleTitle: item.roleTitle || "",
       roleTitleKk: item.roleTitleKk || "",
       roleTitleEn: item.roleTitleEn || "",
+      description: item.description || "",
+      descriptionKk: item.descriptionKk || "",
+      descriptionEn: item.descriptionEn || "",
       department: item.department,
       image: item.image || "",
       sortOrder: item.sortOrder,
@@ -1128,6 +1140,7 @@ function StaffTab() {
                   <SelectContent>
                     <SelectItem value="president">Президент</SelectItem>
                     <SelectItem value="vice_president">Вице-президент</SelectItem>
+                    <SelectItem value="secretary_general">Генеральный секретарь</SelectItem>
                     <SelectItem value="head_coach">Главный тренер</SelectItem>
                     <SelectItem value="coach">Тренер</SelectItem>
                     <SelectItem value="staff">Сотрудник</SelectItem>
@@ -1174,6 +1187,36 @@ function StaffTab() {
                 <Input
                   value={formData.roleTitleEn}
                   onChange={(e) => setFormData({ ...formData, roleTitleEn: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Описание (рус)</Label>
+              <Textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onBlur={createTranslationBlurHandler(formData, setFormData, "description", "descriptionKk", "descriptionEn")}
+                placeholder="Отвечает за..."
+                rows={2}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label>Описание (каз)</Label>
+                <Textarea
+                  value={formData.descriptionKk}
+                  onChange={(e) => setFormData({ ...formData, descriptionKk: e.target.value })}
+                  rows={2}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Описание (англ)</Label>
+                <Textarea
+                  value={formData.descriptionEn}
+                  onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
+                  rows={2}
                 />
               </div>
             </div>
