@@ -52,6 +52,13 @@ interface Region {
   nameEn: string | null;
 }
 
+interface Coach {
+  id: number;
+  name: string;
+  nameKk: string | null;
+  nameEn: string | null;
+}
+
 interface Athlete {
   id: number;
   slug: string;
@@ -69,6 +76,21 @@ interface Athlete {
   nationalTeamMemberships: NationalTeamMembership[];
   isActive: boolean;
   sortOrder: number;
+  // Свидетельство о регистрации
+  registrationNumber: string | null;
+  registrationDate: string | null;
+  sportsRank: string | null;
+  sportsRankDate: string | null;
+  sportsRankOrder: string | null;
+  medicalStatus: string | null;
+  medicalDate: string | null;
+  medicalExpiry: string | null;
+  disqualificationInfo: string | null;
+  dopingInfo: string | null;
+  awardsInfo: string | null;
+  coachId: number | null;
+  coach: Coach | null;
+  additionalInfo: string | null;
 }
 
 const defaultFormData = {
@@ -83,6 +105,20 @@ const defaultFormData = {
   nationalTeamMemberships: [] as NationalTeamMembership[],
   isActive: true,
   sortOrder: 0,
+  // Свидетельство о регистрации
+  registrationNumber: "",
+  registrationDate: "",
+  sportsRank: "",
+  sportsRankDate: "",
+  sportsRankOrder: "",
+  medicalStatus: "",
+  medicalDate: "",
+  medicalExpiry: "",
+  disqualificationInfo: "",
+  dopingInfo: "",
+  awardsInfo: "",
+  coachId: null as number | null,
+  additionalInfo: "",
 };
 
 const TRANSLATION_FIELDS = {
@@ -98,6 +134,7 @@ export default function AdminTeamPage() {
 
   const [members, setMembers] = useState<Athlete[]>([]);
   const [regions, setRegions] = useState<Region[]>([]);
+  const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -126,6 +163,7 @@ export default function AdminTeamPage() {
   useEffect(() => {
     fetchMembers();
     fetchRegions();
+    fetchCoaches();
   }, []);
 
   async function fetchMembers() {
@@ -154,10 +192,31 @@ export default function AdminTeamPage() {
     }
   }
 
+  async function fetchCoaches() {
+    try {
+      const res = await fetch("/api/coaches?admin=true&limit=200");
+      const data = await res.json();
+      if (data.success) {
+        setCoaches(data.data);
+      }
+    } catch {
+      // silently fail
+    }
+  }
+
   function openCreateDialog() {
     setEditingId(null);
     setFormData({ ...defaultFormData, sortOrder: members.length });
     setDialogOpen(true);
+  }
+
+  function formatDateForInput(dateStr: string | null): string {
+    if (!dateStr) return "";
+    try {
+      return new Date(dateStr).toISOString().split("T")[0];
+    } catch {
+      return "";
+    }
   }
 
   function openEditDialog(item: Athlete) {
@@ -174,6 +233,20 @@ export default function AdminTeamPage() {
       nationalTeamMemberships: item.nationalTeamMemberships || [],
       isActive: item.isActive,
       sortOrder: item.sortOrder,
+      // Свидетельство о регистрации
+      registrationNumber: item.registrationNumber || "",
+      registrationDate: formatDateForInput(item.registrationDate),
+      sportsRank: item.sportsRank || "",
+      sportsRankDate: formatDateForInput(item.sportsRankDate),
+      sportsRankOrder: item.sportsRankOrder || "",
+      medicalStatus: item.medicalStatus || "",
+      medicalDate: formatDateForInput(item.medicalDate),
+      medicalExpiry: formatDateForInput(item.medicalExpiry),
+      disqualificationInfo: item.disqualificationInfo || "",
+      dopingInfo: item.dopingInfo || "",
+      awardsInfo: item.awardsInfo || "",
+      coachId: item.coachId,
+      additionalInfo: item.additionalInfo || "",
     });
     setDialogOpen(true);
   }
@@ -181,6 +254,11 @@ export default function AdminTeamPage() {
   function openDeleteDialog(id: number) {
     setDeletingId(id);
     setDeleteDialogOpen(true);
+  }
+
+  function convertDateToISO(dateStr: string): string {
+    if (!dateStr) return "";
+    return new Date(dateStr + "T12:00:00").toISOString();
   }
 
   async function handleSave() {
@@ -194,10 +272,14 @@ export default function AdminTeamPage() {
       const url = editingId ? `/api/team/${editingId}` : "/api/team";
       const method = editingId ? "PATCH" : "POST";
 
-      // Convert date string to ISO with local noon to avoid timezone day shift
+      // Convert date strings to ISO with local noon to avoid timezone day shift
       const dataToSend = {
         ...formData,
-        dob: formData.dob ? new Date(formData.dob + "T12:00:00").toISOString() : "",
+        dob: formData.dob ? convertDateToISO(formData.dob) : "",
+        registrationDate: formData.registrationDate ? convertDateToISO(formData.registrationDate) : null,
+        sportsRankDate: formData.sportsRankDate ? convertDateToISO(formData.sportsRankDate) : null,
+        medicalDate: formData.medicalDate ? convertDateToISO(formData.medicalDate) : null,
+        medicalExpiry: formData.medicalExpiry ? convertDateToISO(formData.medicalExpiry) : null,
       };
 
       const res = await fetch(url, {
@@ -460,6 +542,153 @@ export default function AdminTeamPage() {
               onChange={(url) => setFormData({ ...formData, image: url })}
               folder="team"
             />
+
+            {/* Свидетельство о регистрации спортсмена */}
+            <div className="border-t pt-4 mt-4">
+              <h3 className="font-semibold mb-4">Свидетельство о регистрации</h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid gap-2">
+                  <Label>Рег. номер свидетельства</Label>
+                  <Input
+                    value={formData.registrationNumber}
+                    onChange={(e) => setFormData({ ...formData, registrationNumber: e.target.value })}
+                    placeholder="№ свидетельства"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Дата присвоения рег. номера</Label>
+                  <Input
+                    type="date"
+                    value={formData.registrationDate}
+                    onChange={(e) => setFormData({ ...formData, registrationDate: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <div className="grid gap-2">
+                  <Label>Спортивный разряд/звание</Label>
+                  <Input
+                    value={formData.sportsRank}
+                    onChange={(e) => setFormData({ ...formData, sportsRank: e.target.value })}
+                    placeholder="напр. МСМК, МС, КМС"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Дата присвоения</Label>
+                  <Input
+                    type="date"
+                    value={formData.sportsRankDate}
+                    onChange={(e) => setFormData({ ...formData, sportsRankDate: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>№ приказа</Label>
+                  <Input
+                    value={formData.sportsRankOrder}
+                    onChange={(e) => setFormData({ ...formData, sportsRankOrder: e.target.value })}
+                    placeholder="Приказ № ..."
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <div className="grid gap-2">
+                  <Label>Медицинский допуск</Label>
+                  <Select
+                    value={formData.medicalStatus || "none"}
+                    onValueChange={(v) => setFormData({ ...formData, medicalStatus: v === "none" ? "" : v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите статус" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Не указан</SelectItem>
+                      <SelectItem value="Допуск">Допуск</SelectItem>
+                      <SelectItem value="Не допуск">Не допуск</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Дата мед. осмотра</Label>
+                  <Input
+                    type="date"
+                    value={formData.medicalDate}
+                    onChange={(e) => setFormData({ ...formData, medicalDate: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Срок действия допуска</Label>
+                  <Input
+                    type="date"
+                    value={formData.medicalExpiry}
+                    onChange={(e) => setFormData({ ...formData, medicalExpiry: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2 mb-4">
+                <Label>Личный тренер</Label>
+                <Select
+                  value={formData.coachId?.toString() || "none"}
+                  onValueChange={(v) => setFormData({ ...formData, coachId: v && v !== "none" ? parseInt(v) : null })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Выберите тренера" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Не указан</SelectItem>
+                    {coaches.map((c) => (
+                      <SelectItem key={c.id} value={c.id.toString()}>
+                        {locale === 'kk' && c.nameKk ? c.nameKk : locale === 'en' && c.nameEn ? c.nameEn : c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid gap-2">
+                  <Label>Сведения о дисквалификации</Label>
+                  <Textarea
+                    value={formData.disqualificationInfo}
+                    onChange={(e) => setFormData({ ...formData, disqualificationInfo: e.target.value })}
+                    placeholder="нет"
+                    rows={2}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Сведения о допинге</Label>
+                  <Textarea
+                    value={formData.dopingInfo}
+                    onChange={(e) => setFormData({ ...formData, dopingInfo: e.target.value })}
+                    placeholder="нет"
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2 mb-4">
+                <Label>Сведения о наградах</Label>
+                <Textarea
+                  value={formData.awardsInfo}
+                  onChange={(e) => setFormData({ ...formData, awardsInfo: e.target.value })}
+                  placeholder="нет"
+                  rows={2}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Иные сведения</Label>
+                <Textarea
+                  value={formData.additionalInfo}
+                  onChange={(e) => setFormData({ ...formData, additionalInfo: e.target.value })}
+                  placeholder="нет"
+                  rows={2}
+                />
+              </div>
+            </div>
 
             <div className="grid gap-2">
               <Label>Порядок</Label>

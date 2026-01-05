@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { Input } from "./input";
 import { Button } from "./button";
-import { Search, X, Plus, ChevronDown } from "lucide-react";
+import { X, Plus, ChevronDown } from "lucide-react";
 
 export interface SearchableSelectItem {
     id: number;
@@ -43,7 +44,9 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState("");
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+    const triggerRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const selectedItem = items.find((item) => item.id === value);
@@ -53,10 +56,26 @@ export function SearchableSelect({
         (item.subtitle && item.subtitle.toLowerCase().includes(search.toLowerCase()))
     );
 
+    // Calculate dropdown position
+    useEffect(() => {
+        if (isOpen && triggerRef.current) {
+            const rect = triggerRef.current.getBoundingClientRect();
+            setDropdownPosition({
+                top: rect.bottom + window.scrollY + 4,
+                left: rect.left + window.scrollX,
+                width: rect.width,
+            });
+        }
+    }, [isOpen]);
+
     // Close dropdown when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+            const target = event.target as Node;
+            if (
+                triggerRef.current && !triggerRef.current.contains(target) &&
+                dropdownRef.current && !dropdownRef.current.contains(target)
+            ) {
                 setIsOpen(false);
             }
         }
@@ -83,104 +102,117 @@ export function SearchableSelect({
         setSearch("");
     };
 
+    const dropdownContent = isOpen && typeof document !== 'undefined' ? createPortal(
+        <div
+            ref={dropdownRef}
+            className="fixed z-[9999] rounded-md border bg-background shadow-lg overflow-hidden"
+            style={{
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+            }}
+        >
+            {/* Search Input */}
+            <div className="p-2">
+                <Input
+                    ref={inputRef}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder={searchPlaceholder}
+                    className="h-8"
+                />
+            </div>
+
+            {/* Items List */}
+            <div className="max-h-[240px] overflow-y-auto">
+                {filteredItems.length === 0 ? (
+                    <div className="px-3 py-4 text-center text-sm text-muted-foreground">
+                        {emptyMessage}
+                    </div>
+                ) : (
+                    filteredItems.map((item) => (
+                        <div
+                            key={item.id}
+                            onClick={() => handleSelect(item.id)}
+                            className={cn(
+                                "px-3 py-2 cursor-pointer text-sm transition-colors",
+                                "hover:bg-accent",
+                                value === item.id && "bg-accent font-medium"
+                            )}
+                        >
+                            {renderItem ? (
+                                renderItem(item)
+                            ) : (
+                                <span>
+                                    {item.name}
+                                    {item.subtitle && (
+                                        <span className="ml-2 text-xs text-muted-foreground">
+                                            {item.subtitle}
+                                        </span>
+                                    )}
+                                </span>
+                            )}
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* Add New Button */}
+            {onAddNew && (
+                <div className="border-t p-2">
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start gap-2"
+                        onClick={() => {
+                            setIsOpen(false);
+                            onAddNew();
+                        }}
+                    >
+                        <Plus className="h-4 w-4" />
+                        {addNewLabel}
+                    </Button>
+                </div>
+            )}
+        </div>,
+        document.body
+    ) : null;
+
     return (
-        <div ref={containerRef} className={cn("relative", className)}>
+        <div className={cn("relative", className)}>
             {/* Trigger Button */}
             <div
+                ref={triggerRef}
                 onClick={() => !disabled && setIsOpen(!isOpen)}
                 className={cn(
-                    "flex items-center justify-between gap-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer",
-                    "hover:bg-accent/50 transition-colors",
+                    "flex items-center justify-between w-full h-9 px-3 rounded-md border bg-background text-sm cursor-pointer",
+                    "hover:border-primary/50 transition-colors",
                     disabled && "opacity-50 cursor-not-allowed",
-                    isOpen && "ring-2 ring-ring"
+                    isOpen && "ring-2 ring-primary/20 border-primary"
                 )}
             >
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <Search className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {selectedItem ? (
-                        <span className="truncate">{selectedItem.name}</span>
-                    ) : (
-                        <span className="text-muted-foreground truncate">{placeholder}</span>
-                    )}
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
+                <span className={cn(
+                    "truncate flex-1",
+                    !selectedItem && "text-muted-foreground"
+                )}>
+                    {selectedItem ? selectedItem.name : placeholder}
+                </span>
+                <div className="flex items-center gap-1 shrink-0 ml-2">
                     {selectedItem && (
                         <button
                             onClick={handleClear}
-                            className="p-1 hover:bg-destructive/20 rounded transition-colors"
+                            className="p-0.5 hover:bg-muted rounded transition-colors"
                         >
-                            <X className="h-3 w-3" />
+                            <X className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
                         </button>
                     )}
-                    <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isOpen && "rotate-180")} />
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </div>
             </div>
 
-            {/* Dropdown */}
-            {isOpen && (
-                <div className="absolute z-50 mt-1 w-full rounded-md border border-input bg-background shadow-lg">
-                    {/* Search Input */}
-                    <div className="p-2 border-b">
-                        <Input
-                            ref={inputRef}
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder={searchPlaceholder}
-                            className="h-8"
-                        />
-                    </div>
-
-                    {/* Items List */}
-                    <div className="max-h-[400px] overflow-y-auto">
-                        {filteredItems.length === 0 ? (
-                            <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                                {emptyMessage}
-                            </div>
-                        ) : (
-                            filteredItems.map((item) => (
-                                <div
-                                    key={item.id}
-                                    onClick={() => handleSelect(item.id)}
-                                    className={cn(
-                                        "px-3 py-2 cursor-pointer hover:bg-accent transition-colors",
-                                        value === item.id && "bg-accent"
-                                    )}
-                                >
-                                    {renderItem ? (
-                                        renderItem(item)
-                                    ) : (
-                                        <div>
-                                            <div className="text-sm font-medium">{item.name}</div>
-                                            {item.subtitle && (
-                                                <div className="text-xs text-muted-foreground">{item.subtitle}</div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    {/* Add New Button */}
-                    {onAddNew && (
-                        <div className="border-t p-2">
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="w-full justify-start gap-2"
-                                onClick={() => {
-                                    setIsOpen(false);
-                                    onAddNew();
-                                }}
-                            >
-                                <Plus className="h-4 w-4" />
-                                {addNewLabel}
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            )}
+            {/* Dropdown via Portal */}
+            {dropdownContent}
         </div>
     );
 }

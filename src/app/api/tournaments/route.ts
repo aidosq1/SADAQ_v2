@@ -21,21 +21,22 @@ export async function GET(request: NextRequest) {
       where.isRegistrationOpen = isRegistrationOpen === 'true';
     }
 
-    // Filter by computed status
-    if (status) {
-      if (status === 'upcoming' || status === 'registration_open') {
-        // Tournaments with open registration (not started yet)
-        where.startDate = { gt: now };
+    // Filter by computed status (case-insensitive)
+    const statusLower = status?.toLowerCase();
+    if (statusLower) {
+      if (statusLower === 'upcoming' || statusLower === 'registration_open') {
+        // Tournaments with open registration (not started yet, or deadline not passed)
         where.isRegistrationOpen = true;
+        where.endDate = { gt: now }; // Tournament not finished
         where.OR = [
           { registrationDeadline: null },
           { registrationDeadline: { gte: now } }
         ];
-      } else if (status === 'in_progress') {
+      } else if (statusLower === 'in_progress') {
         // Tournaments currently happening
         where.startDate = { lte: now };
         where.endDate = { gte: now };
-      } else if (status === 'completed') {
+      } else if (statusLower === 'completed') {
         // Finished tournaments
         where.endDate = { lt: now };
       }
@@ -56,6 +57,19 @@ export async function GET(request: NextRequest) {
       prisma.tournament.findMany({
         where,
         include: {
+          organizingRegion: {
+            select: {
+              id: true,
+              name: true,
+              nameKk: true,
+              nameEn: true,
+              address: true,
+              addressKk: true,
+              addressEn: true,
+              phone: true,
+              email: true
+            }
+          },
           categories: {
             orderBy: [
               { category: 'asc' },
@@ -92,6 +106,7 @@ export async function POST(request: NextRequest) {
       location, locationKk, locationEn,
       regulationUrl,
       isRegistrationOpen, registrationDeadline, isFeatured,
+      organizingRegionId,
       categories = []
     } = body;
 
@@ -124,6 +139,7 @@ export async function POST(request: NextRequest) {
         isRegistrationOpen: isRegistrationOpen ?? true,
         registrationDeadline: registrationDeadline ? new Date(registrationDeadline) : null,
         isFeatured: isFeatured ?? false,
+        organizingRegionId: organizingRegionId ? parseInt(organizingRegionId) : null,
         categories: {
           create: categories.map((cat: { category: string; gender: string; type: string }) => ({
             category: cat.category,
@@ -133,6 +149,7 @@ export async function POST(request: NextRequest) {
         }
       },
       include: {
+        organizingRegion: true,
         categories: true
       }
     });

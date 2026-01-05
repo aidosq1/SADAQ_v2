@@ -18,6 +18,19 @@ export async function GET(
     const tournament = await prisma.tournament.findUnique({
       where: { id: tournamentId },
       include: {
+        organizingRegion: {
+          select: {
+            id: true,
+            name: true,
+            nameKk: true,
+            nameEn: true,
+            address: true,
+            addressKk: true,
+            addressEn: true,
+            phone: true,
+            email: true
+          }
+        },
         categories: {
           include: {
             protocols: true,
@@ -88,12 +101,16 @@ export async function PATCH(
     if (tournamentData.startDate) tournamentData.startDate = new Date(tournamentData.startDate);
     if (tournamentData.endDate) tournamentData.endDate = new Date(tournamentData.endDate);
     if (tournamentData.registrationDeadline) tournamentData.registrationDeadline = new Date(tournamentData.registrationDeadline);
+    // Convert organizingRegionId to integer or null
+    if (tournamentData.organizingRegionId !== undefined) {
+      tournamentData.organizingRegionId = tournamentData.organizingRegionId ? parseInt(tournamentData.organizingRegionId) : null;
+    }
 
     // Update tournament
     const tournament = await prisma.tournament.update({
       where: { id: tournamentId },
       data: tournamentData,
-      include: { categories: true }
+      include: { organizingRegion: true, categories: true }
     });
 
     // If categories provided, update them smartly (preserve IDs for existing categories)
@@ -154,7 +171,7 @@ export async function PATCH(
       // Fetch updated tournament with categories
       const updatedTournament = await prisma.tournament.findUnique({
         where: { id: tournamentId },
-        include: { categories: true }
+        include: { organizingRegion: true, categories: true }
       });
 
       return successResponse(updatedTournament);

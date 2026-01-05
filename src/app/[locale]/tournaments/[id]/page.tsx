@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, MapPin, Download, Users, Trophy, ArrowLeft, Loader2 } from "lucide-react";
+import { Calendar, MapPin, Download, Users, Trophy, ArrowLeft, Loader2, Building, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { useTranslations, useFormatter, useLocale } from "next-intl";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
@@ -43,6 +43,18 @@ interface TournamentCategory {
     protocols: Protocol[];
 }
 
+interface OrganizingRegion {
+    id: number;
+    name: string;
+    nameKk?: string;
+    nameEn?: string;
+    address: string;
+    addressKk?: string;
+    addressEn?: string;
+    phone: string;
+    email?: string | null;
+}
+
 interface Tournament {
     id: number;
     title: string;
@@ -58,6 +70,7 @@ interface Tournament {
     locationEn?: string;
     regulationUrl?: string | null;
     isActive: boolean;
+    organizingRegion?: OrganizingRegion | null;
     categories: TournamentCategory[];
 }
 
@@ -128,6 +141,18 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
         if (locale === 'kk' && tournament.descriptionKk) return tournament.descriptionKk;
         if (locale === 'en' && tournament.descriptionEn) return tournament.descriptionEn;
         return tournament.description || "";
+    };
+
+    const getLocalizedRegionName = (region: OrganizingRegion) => {
+        if (locale === 'kk' && region.nameKk) return region.nameKk;
+        if (locale === 'en' && region.nameEn) return region.nameEn;
+        return region.name;
+    };
+
+    const getLocalizedRegionAddress = (region: OrganizingRegion) => {
+        if (locale === 'kk' && region.addressKk) return region.addressKk;
+        if (locale === 'en' && region.addressEn) return region.addressEn;
+        return region.address;
     };
 
     const getCategoryLabel = (cat: TournamentCategory) => {
@@ -252,6 +277,44 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                     </Button>
                 )}
             </div>
+
+            {/* Organizing Region */}
+            {tournament.organizingRegion && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <Building className="h-5 w-5" />
+                            {t("organizer")}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <div>
+                            <h4 className="font-semibold">{getLocalizedRegionName(tournament.organizingRegion)}</h4>
+                            <p className="text-muted-foreground">{getLocalizedRegionAddress(tournament.organizingRegion)}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-4 text-sm">
+                            {tournament.organizingRegion.phone && (
+                                <a
+                                    href={`tel:${tournament.organizingRegion.phone}`}
+                                    className="flex items-center gap-2 text-muted-foreground hover:text-primary"
+                                >
+                                    <Phone className="h-4 w-4" />
+                                    {tournament.organizingRegion.phone}
+                                </a>
+                            )}
+                            {tournament.organizingRegion.email && (
+                                <a
+                                    href={`mailto:${tournament.organizingRegion.email}`}
+                                    className="flex items-center gap-2 text-muted-foreground hover:text-primary"
+                                >
+                                    <Mail className="h-4 w-4" />
+                                    {tournament.organizingRegion.email}
+                                </a>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Categories */}
             {tournament.categories?.length > 0 ? (

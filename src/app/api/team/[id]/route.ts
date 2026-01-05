@@ -19,6 +19,7 @@ export async function GET(
         where: { isActive: true },
       },
       regionRef: true,
+      coach: true,
     };
 
     if (isNaN(athleteId)) {
@@ -83,6 +84,25 @@ export async function PATCH(
       athleteData.regionId = regionId;
     }
 
+    // Convert date fields
+    if (athleteData.registrationDate !== undefined) {
+      athleteData.registrationDate = athleteData.registrationDate ? new Date(athleteData.registrationDate) : null;
+    }
+    if (athleteData.sportsRankDate !== undefined) {
+      athleteData.sportsRankDate = athleteData.sportsRankDate ? new Date(athleteData.sportsRankDate) : null;
+    }
+    if (athleteData.medicalDate !== undefined) {
+      athleteData.medicalDate = athleteData.medicalDate ? new Date(athleteData.medicalDate) : null;
+    }
+    if (athleteData.medicalExpiry !== undefined) {
+      athleteData.medicalExpiry = athleteData.medicalExpiry ? new Date(athleteData.medicalExpiry) : null;
+    }
+
+    // Convert coachId to integer
+    if (athleteData.coachId !== undefined) {
+      athleteData.coachId = athleteData.coachId ? parseInt(athleteData.coachId) : null;
+    }
+
     // Update athlete data
     const athlete = await prisma.athlete.update({
       where: { id: athleteId },
@@ -90,6 +110,7 @@ export async function PATCH(
       include: {
         nationalTeamMemberships: true,
         regionRef: true,
+        coach: true,
       },
     });
 
@@ -117,6 +138,7 @@ export async function PATCH(
       include: {
         nationalTeamMemberships: true,
         regionRef: true,
+        coach: true,
       },
     });
 

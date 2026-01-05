@@ -45,6 +45,16 @@ interface TournamentCategory {
   type: string;
 }
 
+interface Region {
+  id: number;
+  name: string;
+  nameKk: string | null;
+  nameEn: string | null;
+  address: string;
+  phone: string;
+  email: string | null;
+}
+
 interface Tournament {
   id: number;
   title: string;
@@ -62,6 +72,8 @@ interface Tournament {
   isRegistrationOpen: boolean;
   registrationDeadline: string | null;
   isFeatured: boolean;
+  organizingRegionId: number | null;
+  organizingRegion: Region | null;
   categories: TournamentCategory[];
 }
 
@@ -81,6 +93,7 @@ const defaultFormData = {
   isRegistrationOpen: true,
   registrationDeadline: "",
   isFeatured: false,
+  organizingRegionId: "" as string | number,
   categories: [] as TournamentCategory[],
 };
 
@@ -120,6 +133,7 @@ function formatDateForInput(dateStr: string) {
 export default function AdminTournamentsPage() {
   const locale = useLocale();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [regions, setRegions] = useState<Region[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -134,7 +148,20 @@ export default function AdminTournamentsPage() {
 
   useEffect(() => {
     fetchTournaments();
+    fetchRegions();
   }, []);
+
+  async function fetchRegions() {
+    try {
+      const res = await fetch("/api/regions");
+      const data = await res.json();
+      if (data.success) {
+        setRegions(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch regions:", error);
+    }
+  }
 
   async function fetchTournaments() {
     try {
@@ -181,6 +208,7 @@ export default function AdminTournamentsPage() {
       isRegistrationOpen: deadlinePassed ? false : item.isRegistrationOpen,
       registrationDeadline: item.registrationDeadline ? formatDateForInput(item.registrationDeadline) : "",
       isFeatured: item.isFeatured,
+      organizingRegionId: item.organizingRegionId || "",
       categories: item.categories || [],
     });
     setNewCategory({ ...defaultCategory });
@@ -563,6 +591,30 @@ export default function AdminTournamentsPage() {
                   onChange={(e) => setFormData({ ...formData, locationEn: e.target.value })}
                 />
               </div>
+            </div>
+
+            {/* Organizing Region */}
+            <div className="grid gap-2">
+              <Label>Филиал-организатор</Label>
+              <Select
+                value={formData.organizingRegionId ? String(formData.organizingRegionId) : "none"}
+                onValueChange={(v) => setFormData({ ...formData, organizingRegionId: v === "none" ? "" : v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите филиал" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60 overflow-y-auto">
+                  <SelectItem value="none">Не указан</SelectItem>
+                  {regions.map((region) => (
+                    <SelectItem key={region.id} value={String(region.id)}>
+                      {locale === "kk" && region.nameKk ? region.nameKk : locale === "en" && region.nameEn ? region.nameEn : region.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Информация о филиале будет отображаться на странице турнира
+              </p>
             </div>
 
             {/* Regulation */}

@@ -167,6 +167,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Registration deadline has passed" }, { status: 400 });
         }
 
+        // Validate participants count based on whether user's region is the host
+        const isHostRegion = tournament.organizingRegionId === userRegionId;
+        const maxParticipants = isHostRegion ? 6 : 4;
+
+        if (participants.length > maxParticipants) {
+            return NextResponse.json({
+                error: `Максимум ${maxParticipants} спортсменов для вашего региона`
+            }, { status: 400 });
+        }
+
         // Check if this region already has a registration for this category
         // Allow resubmission if previous registration was rejected
         if (userRegionId) {

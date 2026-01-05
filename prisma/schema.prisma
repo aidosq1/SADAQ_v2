@@ -22,7 +22,24 @@ model Athlete {
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @default(now())
   regionId                Int?
+
+  // Свидетельство о регистрации спортсмена
+  registrationNumber      String?                  // Регистрационный номер свидетельства
+  registrationDate        DateTime?                // Дата присвоения регистрационного номера
+  sportsRank              String?                  // Спортивный разряд/звание (напр. "МСМК")
+  sportsRankDate          DateTime?                // Дата присвоения разряда
+  sportsRankOrder         String?                  // Номер приказа о присвоении
+  medicalStatus           String?                  // Статус медицинского допуска
+  medicalDate             DateTime?                // Дата последнего медосмотра
+  medicalExpiry           DateTime?                // Срок действия допуска
+  disqualificationInfo    String?                  // Сведения о дисквалификации
+  dopingInfo              String?                  // Сведения о допинге
+  awardsInfo              String?                  // Сведения о наградах
+  coachId                 Int?                     // Личный тренер
+  additionalInfo          String?                  // Иные сведения
+
   regionRef               Region?                  @relation(fields: [regionId], references: [id])
+  coach                   Coach?                   @relation("PersonalCoach", fields: [coachId], references: [id])
   athleteRegistrations    AthleteRegistration[]
   nationalTeamMemberships NationalTeamMembership[]
   rankings                RankingEntry[]
@@ -31,6 +48,7 @@ model Athlete {
   @@index([isActive])
   @@index([regionId])
   @@index([gender])
+  @@index([coachId])
 }
 
 model Coach {
@@ -47,6 +65,7 @@ model Coach {
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @default(now())
   athleteRegistrations AthleteRegistration[]
+  athletes             Athlete[]             @relation("PersonalCoach")
   region               Region?               @relation(fields: [regionId], references: [id])
 
   @@index([isActive])
@@ -306,9 +325,10 @@ model Region {
   updatedAt     DateTime       @default(now()) @updatedAt
   athletes      Athlete[]
   coaches       Coach[]
-  judges        Judge[]
-  registrations Registration[]
-  users         User[]
+  judges               Judge[]
+  registrations        Registration[]
+  users                User[]
+  organizedTournaments Tournament[]   @relation("TournamentOrganizer")
 
   @@index([isActive])
 }
@@ -432,9 +452,12 @@ model Tournament {
   isRegistrationOpen   Boolean              @default(true)
   registrationDeadline DateTime?
   regulationUrl        String?
+  organizingRegionId   Int?
+  organizingRegion     Region?              @relation("TournamentOrganizer", fields: [organizingRegionId], references: [id])
   categories           TournamentCategory[]
 
   @@index([startDate])
+  @@index([organizingRegionId])
   @@index([isRegistrationOpen])
 }
 

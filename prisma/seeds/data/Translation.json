@@ -2230,6 +2230,16 @@
     "updatedAt": "2025-12-22T11:59:17.423Z"
   },
   {
+    "id": 500,
+    "namespace": "TournamentPage",
+    "key": "organizer",
+    "ru": "Организатор",
+    "kk": "Ұйымдастырушы",
+    "en": "Organizer",
+    "createdAt": "2025-12-22T11:59:17.423Z",
+    "updatedAt": "2025-12-22T11:59:17.423Z"
+  },
+  {
     "id": 224,
     "namespace": "CalendarWidget",
     "key": "title",
