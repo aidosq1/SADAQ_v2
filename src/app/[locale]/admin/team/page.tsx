@@ -79,12 +79,14 @@ interface Athlete {
   // Свидетельство о регистрации
   registrationNumber: string | null;
   registrationDate: string | null;
+  federationName: string | null;
   sportsRank: string | null;
   sportsRankDate: string | null;
   sportsRankOrder: string | null;
   medicalStatus: string | null;
   medicalDate: string | null;
   medicalExpiry: string | null;
+  competitionResults: string | null;
   disqualificationInfo: string | null;
   dopingInfo: string | null;
   awardsInfo: string | null;
@@ -108,12 +110,14 @@ const defaultFormData = {
   // Свидетельство о регистрации
   registrationNumber: "",
   registrationDate: "",
+  federationName: "",
   sportsRank: "",
   sportsRankDate: "",
   sportsRankOrder: "",
   medicalStatus: "",
   medicalDate: "",
   medicalExpiry: "",
+  competitionResults: "",
   disqualificationInfo: "",
   dopingInfo: "",
   awardsInfo: "",
@@ -236,12 +240,14 @@ export default function AdminTeamPage() {
       // Свидетельство о регистрации
       registrationNumber: item.registrationNumber || "",
       registrationDate: formatDateForInput(item.registrationDate),
+      federationName: item.federationName || "",
       sportsRank: item.sportsRank || "",
       sportsRankDate: formatDateForInput(item.sportsRankDate),
       sportsRankOrder: item.sportsRankOrder || "",
       medicalStatus: item.medicalStatus || "",
       medicalDate: formatDateForInput(item.medicalDate),
       medicalExpiry: formatDateForInput(item.medicalExpiry),
+      competitionResults: item.competitionResults || "",
       disqualificationInfo: item.disqualificationInfo || "",
       dopingInfo: item.dopingInfo || "",
       awardsInfo: item.awardsInfo || "",
@@ -446,7 +452,7 @@ export default function AdminTeamPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingId ? "Редактировать" : "Добавить спортсмена"}</DialogTitle>
           </DialogHeader>
@@ -566,7 +572,16 @@ export default function AdminTeamPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div className="grid gap-2 mb-4">
+                <Label>Наименование федерации</Label>
+                <Input
+                  value={formData.federationName}
+                  onChange={(e) => setFormData({ ...formData, federationName: e.target.value })}
+                  placeholder="РОО «Федерация стрельбы из лука, арбалета и дартса РК»"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div className="grid gap-2">
                   <Label>Спортивный разряд/звание</Label>
                   <Input
@@ -576,24 +591,25 @@ export default function AdminTeamPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Дата присвоения</Label>
+                  <Label>Дата присвоения разряда</Label>
                   <Input
                     type="date"
                     value={formData.sportsRankDate}
                     onChange={(e) => setFormData({ ...formData, sportsRankDate: e.target.value })}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label>№ приказа</Label>
-                  <Input
-                    value={formData.sportsRankOrder}
-                    onChange={(e) => setFormData({ ...formData, sportsRankOrder: e.target.value })}
-                    placeholder="Приказ № ..."
-                  />
-                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div className="grid gap-2 mb-4">
+                <Label>№ приказа о присвоении разряда</Label>
+                <Input
+                  value={formData.sportsRankOrder}
+                  onChange={(e) => setFormData({ ...formData, sportsRankOrder: e.target.value })}
+                  placeholder="Приказ № 256 от 02.06.2021 г."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div className="grid gap-2">
                   <Label>Медицинский допуск</Label>
                   <Select
@@ -618,6 +634,9 @@ export default function AdminTeamPage() {
                     onChange={(e) => setFormData({ ...formData, medicalDate: e.target.value })}
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div className="grid gap-2">
                   <Label>Срок действия допуска</Label>
                   <Input
@@ -626,26 +645,35 @@ export default function AdminTeamPage() {
                     onChange={(e) => setFormData({ ...formData, medicalExpiry: e.target.value })}
                   />
                 </div>
+                <div className="grid gap-2">
+                  <Label>Личный тренер</Label>
+                  <Select
+                    value={formData.coachId?.toString() || "none"}
+                    onValueChange={(v) => setFormData({ ...formData, coachId: v && v !== "none" ? parseInt(v) : null })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите тренера" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Не указан</SelectItem>
+                      {coaches.map((c) => (
+                        <SelectItem key={c.id} value={c.id.toString()}>
+                          {locale === 'kk' && c.nameKk ? c.nameKk : locale === 'en' && c.nameEn ? c.nameEn : c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="grid gap-2 mb-4">
-                <Label>Личный тренер</Label>
-                <Select
-                  value={formData.coachId?.toString() || "none"}
-                  onValueChange={(v) => setFormData({ ...formData, coachId: v && v !== "none" ? parseInt(v) : null })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите тренера" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Не указан</SelectItem>
-                    {coaches.map((c) => (
-                      <SelectItem key={c.id} value={c.id.toString()}>
-                        {locale === 'kk' && c.nameKk ? c.nameKk : locale === 'en' && c.nameEn ? c.nameEn : c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label>Результаты на соревнованиях</Label>
+                <Textarea
+                  value={formData.competitionResults}
+                  onChange={(e) => setFormData({ ...formData, competitionResults: e.target.value })}
+                  placeholder="Спартакиада народов 2-е место&#10;Чемпионат Казахстана 1-е место 2025 г.&#10;Кубок Мира 3 место 2024 год"
+                  rows={3}
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
