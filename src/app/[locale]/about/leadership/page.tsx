@@ -135,11 +135,20 @@ export default function LeadershipPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[...otherLeadership, ...committeeStaff].map((person) => (
                             <Card key={person.id} className="hover:shadow-md transition-shadow">
-                                <CardContent className="pt-6 flex flex-col items-center text-center space-y-3">
-                                    <Avatar className="w-24 h-24">
-                                        {person.image && <AvatarImage src={person.image} alt={getLocalizedName(person)} />}
-                                        <AvatarFallback>{getLocalizedName(person).charAt(0)}</AvatarFallback>
-                                    </Avatar>
+                                <CardContent className="pt-6 flex flex-col items-center text-center space-y-4">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 shrink-0">
+                                        {person.image ? (
+                                            <img
+                                                src={person.image}
+                                                alt={getLocalizedName(person)}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                                <User className="w-12 h-12 opacity-30" />
+                                            </div>
+                                        )}
+                                    </div>
                                     <div>
                                         <h4 className="font-bold text-lg">{getLocalizedName(person)}</h4>
                                         <p className="text-sm font-medium text-primary">{getLocalizedRole(person)}</p>
