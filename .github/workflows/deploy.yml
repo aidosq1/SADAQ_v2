@@ -115,7 +115,7 @@ jobs:
             docker --config \$DOCKER_CONFIG compose rm -f app || true
 
             echo "=== Starting new container ==="
-            docker --config \$DOCKER_CONFIG compose up -d app
+            docker --config \$DOCKER_CONFIG compose up -d --force-recreate --pull always app
 
             echo "=== Container status ==="
             docker --config \$DOCKER_CONFIG compose ps app
