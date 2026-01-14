@@ -22,9 +22,13 @@ export function Header() {
     const { data: session, status } = useSession();
 
     const navItems = [
-        { name: t("competitions"), href: "/calendar" },
         { name: t("team"), href: "/team" },
         { name: t("ranking"), href: "/ranking" },
+    ];
+
+    const calendarItems = [
+        { name: t("competitions"), href: "/calendar" },
+        { name: t("protocols"), href: "/results" },
     ];
 
     const aboutItems = [
@@ -133,6 +137,22 @@ export function Header() {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
+                        {/* Calendar Dropdown */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
+                                {t("tournaments")} <ChevronDown className="h-4 w-4" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                                {calendarItems.map((item) => (
+                                    <DropdownMenuItem key={item.href} asChild>
+                                        <Link href={item.href} className="w-full cursor-pointer">
+                                            {item.name}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         {/* Regular Nav Items */}
                         {navItems.map((item) => (
                             <Link
@@ -218,6 +238,12 @@ export function Header() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">
                                 {aboutItems.map((item) => (
+                                    <DropdownMenuItem key={item.href} asChild>
+                                        <Link href={item.href}>{item.name}</Link>
+                                    </DropdownMenuItem>
+                                ))}
+                                <div className="h-px bg-border my-1" />
+                                {calendarItems.map((item) => (
                                     <DropdownMenuItem key={item.href} asChild>
                                         <Link href={item.href}>{item.name}</Link>
                                     </DropdownMenuItem>

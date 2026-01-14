@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { FileText, Download, Scale, Shield, PenTool, Calendar, BarChart3 } from "lucide-react";
+import { FileText, Download, Scale, Shield, PenTool, Calendar } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
 interface Document {
@@ -26,24 +19,22 @@ interface Document {
   isPublished: boolean;
 }
 
-type SectionKey = "statute" | "rules" | "antidoping" | "calendar" | "ratings";
+type SectionKey = "statute" | "rules" | "antidoping" | "calendar";
 
 const sectionConfig: Record<SectionKey, { icon: React.ReactNode; translationKey: string; groupByYear: boolean }> = {
   statute: { icon: <Scale className="h-5 w-5" />, translationKey: "sec_statute", groupByYear: false },
   rules: { icon: <PenTool className="h-5 w-5" />, translationKey: "sec_rules", groupByYear: false },
   antidoping: { icon: <Shield className="h-5 w-5" />, translationKey: "sec_antidoping", groupByYear: false },
   calendar: { icon: <Calendar className="h-5 w-5" />, translationKey: "sec_calendar", groupByYear: false },
-  ratings: { icon: <BarChart3 className="h-5 w-5" />, translationKey: "sec_ratings", groupByYear: true },
 };
 
-const sectionOrder: SectionKey[] = ["statute", "rules", "antidoping", "calendar", "ratings"];
+const sectionOrder: SectionKey[] = ["statute", "rules", "antidoping", "calendar"];
 
 export default function DocumentsPage() {
   const t = useTranslations("DocumentsPage");
   const locale = useLocale();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedYear, setSelectedYear] = useState<string>("all");
 
   useEffect(() => {
     async function fetchDocuments() {
@@ -61,13 +52,6 @@ export default function DocumentsPage() {
     }
     fetchDocuments();
   }, []);
-
-  // Get available years from ratings section documents
-  const ratingsYears = [...new Set(
-    documents
-      .filter(doc => doc.section === "ratings" && doc.year)
-      .map(doc => doc.year as number)
-  )].sort((a, b) => b - a);
 
   // Group documents by section
   const groupedDocuments = documents.reduce((acc, doc) => {
@@ -138,38 +122,14 @@ export default function DocumentsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {sectionsWithDocs.map((section) => {
           const config = sectionConfig[section];
-          let docs = groupedDocuments[section];
-
-          // Filter by year for sections with groupByYear enabled
-          if (config.groupByYear && selectedYear !== "all") {
-            docs = docs.filter(doc => doc.year === parseInt(selectedYear));
-          }
+          const docs = groupedDocuments[section];
 
           return (
             <Card key={section}>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    {config.icon}
-                    {t(config.translationKey)}
-                  </span>
-                  {config.groupByYear && ratingsYears.length > 0 && (
-                    <Select value={selectedYear} onValueChange={setSelectedYear}>
-                      <SelectTrigger className="w-[120px] h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">
-                          {locale === "kk" ? "Барлығы" : locale === "en" ? "All" : "Все"}
-                        </SelectItem>
-                        {ratingsYears.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                <CardTitle className="flex items-center gap-2">
+                  {config.icon}
+                  {t(config.translationKey)}
                 </CardTitle>
               </CardHeader>
               <CardContent>

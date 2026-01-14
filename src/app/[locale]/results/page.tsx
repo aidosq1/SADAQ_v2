@@ -22,6 +22,7 @@ interface Protocol {
     locationEn?: string;
     fileUrl?: string;
     year: number;
+    source: 'protocol' | 'document';
 }
 
 interface GroupedProtocols {
@@ -36,19 +37,74 @@ export default function ResultsPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchProtocols() {
+        async function fetchAllProtocols() {
             try {
-                const res = await fetch('/api/protocols?limit=100');
-                const data = await res.json();
-                if (data.data) {
-                    setGroupedProtocols(data.data.groupedByYear || {});
-                }
+                // Fetch tournament protocols
+                const protocolsRes = await fetch('/api/protocols?limit=100');
+                const protocolsData = await protocolsRes.json();
+
+                // Fetch document protocols (ratings section)
+                const documentsRes = await fetch('/api/documents?section=ratings&isPublished=true');
+                const documentsData = await documentsRes.json();
+
+                // Normalize tournament protocols
+                const tournamentProtocols: Protocol[] = protocolsData.data?.protocols?.map((p: any) => ({
+                    id: p.id,
+                    title: p.title,
+                    titleKk: p.titleKk,
+                    titleEn: p.titleEn,
+                    eventDate: p.eventDate,
+                    location: p.location,
+                    locationKk: p.locationKk,
+                    locationEn: p.locationEn,
+                    fileUrl: p.fileUrl,
+                    year: p.year,
+                    source: 'protocol' as const,
+                })) || [];
+
+                // Normalize document protocols
+                const documentProtocols: Protocol[] = documentsData.data?.map((d: any) => ({
+                    id: d.id,
+                    title: d.title,
+                    titleKk: d.titleKk,
+                    titleEn: d.titleEn,
+                    eventDate: '', // Documents don't have eventDate
+                    location: '',
+                    locationKk: '',
+                    locationEn: '',
+                    fileUrl: d.fileUrl,
+                    year: d.year || new Date().getFullYear(),
+                    source: 'document' as const,
+                })) || [];
+
+                // Combine and group by year
+                const allProtocols = [...tournamentProtocols, ...documentProtocols];
+                const grouped = allProtocols.reduce((acc, protocol) => {
+                    const yearKey = protocol.year.toString();
+                    if (!acc[yearKey]) {
+                        acc[yearKey] = [];
+                    }
+                    acc[yearKey].push(protocol);
+                    return acc;
+                }, {} as GroupedProtocols);
+
+                // Sort within each year (tournament protocols first, by date descending)
+                Object.keys(grouped).forEach(year => {
+                    grouped[year].sort((a, b) => {
+                        if (!a.eventDate) return 1; // Documents go last
+                        if (!b.eventDate) return -1;
+                        return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime();
+                    });
+                });
+
+                setGroupedProtocols(grouped);
             } catch (error) {
+                console.error('Failed to fetch protocols:', error);
             } finally {
                 setLoading(false);
             }
         }
-        fetchProtocols();
+        fetchAllProtocols();
     }, []);
 
     const getLocalizedTitle = (protocol: Protocol) => {
@@ -96,9 +152,16 @@ export default function ResultsPage() {
                                         <div key={protocol.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-muted/30 rounded-lg border">
                                             <div className="mb-2 sm:mb-0">
                                                 <h3 className="font-bold text-lg">{getLocalizedTitle(protocol)}</h3>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {formatDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
-                                                </p>
+                                                {protocol.eventDate && protocol.location && (
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {formatDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
+                                                    </p>
+                                                )}
+                                                {protocol.source === 'document' && (
+                                                    <p className="text-xs text-muted-foreground italic">
+                                                        {locale === 'kk' ? 'Құжат' : locale === 'en' ? 'Document' : 'Документ'}
+                                                    </p>
+                                                )}
                                             </div>
                                             <div className="flex gap-2">
                                                 {protocol.fileUrl ? (
