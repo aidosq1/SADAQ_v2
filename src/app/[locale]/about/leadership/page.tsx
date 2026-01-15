@@ -100,30 +100,25 @@ export default function LeadershipPage() {
             {/* President Section */}
             {president && (
                 <section className="bg-muted/30 rounded-3xl p-8 md:p-12 border">
-                    <div className="flex flex-col md:flex-row gap-10 items-start">
-                        <div className="shrink-0 mx-auto md:mx-0">
-                            <div className="relative w-64 h-80 rounded-2xl overflow-hidden bg-gray-200 shadow-xl">
-                                {president.image ? (
-                                    <img src={president.image} alt={getLocalizedName(president)} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                                        <User className="w-20 h-20 opacity-20" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="mt-4 text-center md:text-left">
-                                <h3 className="text-2xl font-bold">{getLocalizedName(president)}</h3>
-                                <p className="text-primary font-medium">{getLocalizedRole(president)}</p>
+                    <div className="flex flex-col items-center text-center">
+                        <div className="relative w-48 h-60 rounded-2xl overflow-hidden bg-gray-200 shadow-xl mb-6">
+                            {president.image ? (
+                                <img
+                                    src={president.image}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                    }}
+                                />
+                            ) : null}
+                            <div className={`absolute inset-0 flex items-center justify-center text-muted-foreground ${president.image ? 'hidden' : ''}`}>
+                                <User className="w-16 h-16 opacity-30" />
                             </div>
                         </div>
-                        <div className="space-y-6 flex-1">
-                            <h2 className="text-2xl font-semibold">{t("president_speech_title")}</h2>
-                            {president.description && (
-                                <blockquote className="text-lg italic text-muted-foreground border-l-4 border-primary pl-6 py-2">
-                                    "{getLocalizedDescription(president)}"
-                                </blockquote>
-                            )}
-                        </div>
+                        <h3 className="text-2xl font-bold">{getLocalizedName(president)}</h3>
+                        <p className="text-primary font-medium text-lg">{getLocalizedRole(president)}</p>
                     </div>
                 </section>
             )}
@@ -136,18 +131,21 @@ export default function LeadershipPage() {
                         {[...otherLeadership, ...committeeStaff].map((person) => (
                             <Card key={person.id} className="hover:shadow-md transition-shadow">
                                 <CardContent className="pt-6 flex flex-col items-center text-center space-y-4">
-                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 shrink-0">
+                                    <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100 shrink-0">
                                         {person.image ? (
                                             <img
                                                 src={person.image}
-                                                alt={getLocalizedName(person)}
+                                                alt=""
                                                 className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                                }}
                                             />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                                <User className="w-12 h-12 opacity-30" />
-                                            </div>
-                                        )}
+                                        ) : null}
+                                        <div className={`absolute inset-0 flex items-center justify-center text-muted-foreground ${person.image ? 'hidden' : ''}`}>
+                                            <User className="w-12 h-12 opacity-30" />
+                                        </div>
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-lg">{getLocalizedName(person)}</h4>
@@ -167,44 +165,23 @@ export default function LeadershipPage() {
             {coachingStaff.length > 0 && (
                 <section>
                     <h2 className="text-3xl font-bold mb-8">{t("coaching_title")}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {coachingStaff.slice(0, 1).map((coach) => (
-                            <Card key={coach.id}>
-                                <CardHeader>
-                                    <CardTitle>{t("head_coach_title")}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {coachingStaff.map((coach) => (
+                            <Card key={coach.id} className="hover:shadow-md transition-shadow">
+                                <CardContent className="pt-6">
                                     <div className="flex items-center gap-4">
-                                        <Avatar>
-                                            {coach.image && <AvatarImage src={coach.image} alt={getLocalizedName(coach)} />}
-                                            <AvatarFallback>{getLocalizedName(coach).charAt(0)}</AvatarFallback>
+                                        <Avatar className="h-14 w-14">
+                                            {coach.image && <AvatarImage src={coach.image} alt="" />}
+                                            <AvatarFallback className="text-lg">{getLocalizedName(coach).charAt(0)}</AvatarFallback>
                                         </Avatar>
-                                        <div>
-                                            <div className="font-bold">{getLocalizedName(coach)}</div>
-                                            <div className="text-sm text-muted-foreground">{getLocalizedRole(coach)}</div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-bold truncate">{getLocalizedName(coach)}</div>
+                                            <div className="text-sm font-medium text-primary">{getLocalizedRole(coach)}</div>
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
                         ))}
-                        {coachingStaff.length > 1 && (
-                            <Card className="md:col-span-2">
-                                <CardHeader>
-                                    <CardTitle>{t("senior_coaches_title")}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        {coachingStaff.slice(1).map((coach) => (
-                                            <div key={coach.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
-                                                <div className="w-2 h-2 rounded-full bg-primary" />
-                                                <span className="font-medium">{getLocalizedRole(coach)}:</span>
-                                                <span className="text-muted-foreground">{getLocalizedName(coach)}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
                     </div>
                 </section>
             )}

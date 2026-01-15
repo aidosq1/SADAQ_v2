@@ -13,6 +13,9 @@ interface Region {
     director: string;
     directorKk?: string;
     directorEn?: string;
+    directorTitle?: string;
+    directorTitleKk?: string;
+    directorTitleEn?: string;
     address: string;
     addressKk?: string;
     addressEn?: string;
@@ -61,6 +64,12 @@ export default function RegionsPage() {
         return region.address;
     };
 
+    const getLocalizedDirectorTitle = (region: Region) => {
+        if (locale === 'kk' && region.directorTitleKk) return region.directorTitleKk;
+        if (locale === 'en' && region.directorTitleEn) return region.directorTitleEn;
+        return region.directorTitle || t("director");
+    };
+
     return (
         <div className="max-w-7xl mx-auto px-4 py-16 space-y-12">
             <div className="text-center space-y-4">
@@ -96,7 +105,7 @@ export default function RegionsPage() {
                                     <div className="flex items-start gap-3">
                                         <User className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
                                         <div>
-                                            <div className="text-xs text-muted-foreground">{t("director")}</div>
+                                            <div className="text-xs text-muted-foreground">{getLocalizedDirectorTitle(region)}</div>
                                             <div className="font-medium">{getLocalizedDirector(region)}</div>
                                         </div>
                                     </div>

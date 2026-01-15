@@ -60,7 +60,6 @@
     }
   }
 
-  --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
 }
 
@@ -107,7 +106,6 @@
 
   --radius: 0.5rem;
 
-  --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
 }
 
@@ -126,7 +124,7 @@
   h4,
   h5,
   h6 {
-    @apply font-heading tracking-tight text-primary;
+    @apply font-sans font-semibold tracking-tight text-primary;
   }
 }
 
