@@ -1167,11 +1167,28 @@ function StaffTab() {
 
             <div className="grid gap-2">
               <Label>Должность (рус)</Label>
-              <Input
-                value={formData.roleTitle}
-                onChange={(e) => setFormData({ ...formData, roleTitle: e.target.value })}
-                onBlur={createTranslationBlurHandler(formData, setFormData, "roleTitle", "roleTitleKk", "roleTitleEn")}
-              />
+              {formData.department === "coaching" ? (
+                <Select
+                  value={formData.roleTitle || ""}
+                  onValueChange={(v) => setFormData({ ...formData, roleTitle: v, roleTitleKk: v, roleTitleEn: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Выберите должность" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Штатный тренер национальной команды">Штатный тренер национальной команды</SelectItem>
+                    <SelectItem value="Главный тренер">Главный тренер</SelectItem>
+                    <SelectItem value="Старший тренер">Старший тренер</SelectItem>
+                    <SelectItem value="Молод старший тренер">Молод старший тренер</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  value={formData.roleTitle}
+                  onChange={(e) => setFormData({ ...formData, roleTitle: e.target.value })}
+                  onBlur={createTranslationBlurHandler(formData, setFormData, "roleTitle", "roleTitleKk", "roleTitleEn")}
+                />
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
