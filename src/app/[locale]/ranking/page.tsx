@@ -171,7 +171,7 @@ export default function RankingPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="font-bold text-primary">#{index + 1}</span>
+                      <span className="font-bold text-primary">{index + 1}</span>
                     </div>
                     <Avatar className="h-12 w-12 border">
                       <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
@@ -224,7 +224,7 @@ export default function RankingPage() {
                   onClick={() => router.push(`/${locale}/team/${ranking.athlete.slug}`)}
                 >
                   <TableCell className="font-bold text-lg text-center">
-                    #{index + 1}
+                    {index + 1}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-4">

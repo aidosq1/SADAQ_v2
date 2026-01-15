@@ -94,7 +94,7 @@ export function RankingWidget() {
             <thead>
               <tr className="border-b border-[hsl(var(--border-light))] bg-[hsl(var(--light-cream))]">
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
-                  #
+                  №
                 </th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                   {locale === 'kk' ? 'Атлет' : locale === 'en' ? 'Athlete' : 'Атлет'}
