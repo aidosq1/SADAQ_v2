@@ -164,7 +164,7 @@ export default function LeadershipPage() {
             {/* Штатный тренер национальной команды */}
             {coachingStaff.length > 0 && (
                 <section>
-                    <h2 className="text-3xl font-bold mb-8">Штатный тренер национальной команды</h2>
+                    <h2 className="text-3xl font-bold mb-8">{t("national_coach_title")}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {coachingStaff.map((coach) => (
                             <Card key={coach.id} className="hover:shadow-md transition-shadow">

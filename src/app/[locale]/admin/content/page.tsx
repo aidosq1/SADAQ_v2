@@ -1127,42 +1127,25 @@ function StaffTab() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>Роль</Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(v) => setFormData({ ...formData, role: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="president">Президент</SelectItem>
-                    <SelectItem value="vice_president">Вице-президент</SelectItem>
-                    <SelectItem value="secretary_general">Генеральный секретарь</SelectItem>
-                    <SelectItem value="head_coach">Главный тренер</SelectItem>
-                    <SelectItem value="coach">Тренер</SelectItem>
-                    <SelectItem value="staff">Сотрудник</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label>Отдел</Label>
-                <Select
-                  value={formData.department}
-                  onValueChange={(v) => setFormData({ ...formData, department: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="leadership">Руководство</SelectItem>
-                    <SelectItem value="coaching">Тренерский штаб</SelectItem>
-                    <SelectItem value="committee">Комитет</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="grid gap-2">
+              <Label>Отдел</Label>
+              <Select
+                value={formData.department}
+                onValueChange={(v) => setFormData({
+                  ...formData,
+                  department: v,
+                  role: v === "coaching" ? "coach" : "staff"
+                })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="leadership">Руководство</SelectItem>
+                  <SelectItem value="coaching">Тренерский штаб</SelectItem>
+                  <SelectItem value="committee">Комитет</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-2">
