@@ -62,6 +62,7 @@ interface Athlete {
     iin?: string;
     dob?: string;
     gender: string;
+    regionId?: number;
     regionRef?: { name: string };
 }
 
@@ -441,10 +442,12 @@ export default function RegistrationDetailPage() {
         return item ? getLocalizedLabel(item, locale) : gender;
     };
 
-    // Filter out already added athletes
-    const availableAthletes = allAthletes.filter(
-        (a) => !athletes.some((ar) => ar.athlete.id === a.id)
-    );
+    // Filter out already added athletes and filter by region
+    const availableAthletes = allAthletes.filter((a) => {
+        const isNotAdded = !athletes.some((ar) => ar.athlete.id === a.id);
+        const matchesRegion = !registration?.regionId || a.regionId === registration.regionId;
+        return isNotAdded && matchesRegion;
+    });
 
     // Calculate max athletes
     const isHostRegion =

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -126,6 +127,7 @@ const statusConfig = {
 
 export default function AdminRegistrationsPage() {
     const locale = useLocale();
+    const router = useRouter();
     const { data: session } = useSession();
     const isRegionalRep = session?.user?.role === "RegionalRepresentative";
 
@@ -365,7 +367,11 @@ export default function AdminRegistrationsPage() {
                             registrations.map((reg) => {
                                 const StatusIcon = statusConfig[reg.status].icon;
                                 return (
-                                    <TableRow key={reg.id}>
+                                    <TableRow
+                                        key={reg.id}
+                                        className="cursor-pointer hover:bg-muted/50 transition-colors"
+                                        onClick={() => router.push(`/${locale}/admin/registrations/${reg.id}`)}
+                                    >
                                         <TableCell className="font-mono text-sm">
                                             {reg.registrationNumber}
                                         </TableCell>
@@ -403,7 +409,7 @@ export default function AdminRegistrationsPage() {
                                         <TableCell className="text-sm text-muted-foreground">
                                             {formatDate(reg.createdAt)}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell onClick={(e) => e.stopPropagation()}>
                                             <div className="flex gap-1">
                                                 <Button
                                                     variant="ghost"

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { Input } from "./input";
 import { Button } from "./button";
@@ -44,7 +43,6 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState("");
-    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
     const triggerRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -55,18 +53,6 @@ export function SearchableSelect({
         item.name.toLowerCase().includes(search.toLowerCase()) ||
         (item.subtitle && item.subtitle.toLowerCase().includes(search.toLowerCase()))
     );
-
-    // Calculate dropdown position
-    useEffect(() => {
-        if (isOpen && triggerRef.current) {
-            const rect = triggerRef.current.getBoundingClientRect();
-            setDropdownPosition({
-                top: rect.bottom + window.scrollY + 4,
-                left: rect.left + window.scrollX,
-                width: rect.width,
-            });
-        }
-    }, [isOpen]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -102,24 +88,19 @@ export function SearchableSelect({
         setSearch("");
     };
 
-    const dropdownContent = isOpen && typeof document !== 'undefined' ? createPortal(
+    const dropdownContent = isOpen && (
         <div
             ref={dropdownRef}
-            className="fixed z-[9999] rounded-md border bg-background shadow-lg overflow-hidden"
-            style={{
-                top: dropdownPosition.top,
-                left: dropdownPosition.left,
-                width: dropdownPosition.width,
-            }}
+            className="absolute top-full left-0 right-0 z-50 mt-1 min-w-[200px] rounded-md border bg-background shadow-lg overflow-hidden animate-in fade-in zoom-in-95 duration-100"
         >
             {/* Search Input */}
-            <div className="p-2">
+            <div className="p-2 border-b">
                 <Input
                     ref={inputRef}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder={searchPlaceholder}
-                    className="h-8"
+                    className="h-8 text-sm"
                 />
             </div>
 
@@ -136,8 +117,8 @@ export function SearchableSelect({
                             onClick={() => handleSelect(item.id)}
                             className={cn(
                                 "px-3 py-2 cursor-pointer text-sm transition-colors",
-                                "hover:bg-accent",
-                                value === item.id && "bg-accent font-medium"
+                                "hover:bg-accent hover:text-accent-foreground",
+                                value === item.id && "bg-accent font-medium text-accent-foreground"
                             )}
                         >
                             {renderItem ? (
@@ -146,7 +127,7 @@ export function SearchableSelect({
                                 <span>
                                     {item.name}
                                     {item.subtitle && (
-                                        <span className="ml-2 text-xs text-muted-foreground">
+                                        <span className="ml-2 text-xs text-muted-foreground block">
                                             {item.subtitle}
                                         </span>
                                     )}
@@ -167,7 +148,7 @@ export function SearchableSelect({
                         className="w-full justify-start gap-2"
                         onClick={() => {
                             setIsOpen(false);
-                            onAddNew();
+                            onAddNew?.();
                         }}
                     >
                         <Plus className="h-4 w-4" />
@@ -175,9 +156,8 @@ export function SearchableSelect({
                     </Button>
                 </div>
             )}
-        </div>,
-        document.body
-    ) : null;
+        </div>
+    );
 
     return (
         <div className={cn("relative", className)}>
@@ -211,7 +191,7 @@ export function SearchableSelect({
                 </div>
             </div>
 
-            {/* Dropdown via Portal */}
+            {/* Dropdown Inline */}
             {dropdownContent}
         </div>
     );
