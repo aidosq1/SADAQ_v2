@@ -30,6 +30,7 @@ interface GalleryItem {
   type: string;
   url: string;
   thumbnailUrl: string | null;
+  cloudUrl: string | null;
   albumName: string | null;
   eventDate: string | null;
   isPublished: boolean;
@@ -40,6 +41,7 @@ interface AlbumGroup {
   items: GalleryItem[];
   eventDate: string | null;
   isPublished: boolean;
+  cloudUrl: string | null;
   coverUrl: string;
 }
 
@@ -83,6 +85,7 @@ export default function AdminGalleryPage() {
           items: [],
           eventDate: item.eventDate, // Take first available date
           isPublished: item.isPublished, // Take status of first item
+          cloudUrl: item.cloudUrl, // Take cloudUrl from first item
           coverUrl: item.thumbnailUrl || item.url,
         };
       }

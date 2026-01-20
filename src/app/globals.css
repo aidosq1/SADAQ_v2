@@ -194,3 +194,52 @@
     letter-spacing: 0.05em;
   }
 }
+
+/* ===== Print Styles ===== */
+@media print {
+  /* Hide navigation, header, footer, sidebar */
+  header,
+  footer,
+  nav,
+  aside,
+  [class*="print:hidden"] {
+    display: none !important;
+  }
+
+  /* Reset background and colors for printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Ensure content takes full width */
+  main {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Optimize tables for print */
+  table {
+    page-break-inside: avoid;
+  }
+
+  /* Show print-only content */
+  [class*="print:block"] {
+    display: block !important;
+  }
+
+  /* Remove shadows and borders for cleaner print */
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+
+  /* Ensure text is readable */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

@@ -82,7 +82,6 @@ interface Athlete {
   federationName: string | null;
   sportsRank: string | null;
   sportsRankDate: string | null;
-  sportsRankOrder: string | null;
   medicalStatus: string | null;
   medicalDate: string | null;
   medicalExpiry: string | null;
@@ -113,7 +112,6 @@ const defaultFormData = {
   federationName: "",
   sportsRank: "",
   sportsRankDate: "",
-  sportsRankOrder: "",
   medicalStatus: "",
   medicalDate: "",
   medicalExpiry: "",
@@ -243,7 +241,6 @@ export default function AdminTeamPage() {
       federationName: item.federationName || "",
       sportsRank: item.sportsRank || "",
       sportsRankDate: formatDateForInput(item.sportsRankDate),
-      sportsRankOrder: item.sportsRankOrder || "",
       medicalStatus: item.medicalStatus || "",
       medicalDate: formatDateForInput(item.medicalDate),
       medicalExpiry: formatDateForInput(item.medicalExpiry),
@@ -598,15 +595,6 @@ export default function AdminTeamPage() {
                     onChange={(e) => setFormData({ ...formData, sportsRankDate: e.target.value })}
                   />
                 </div>
-              </div>
-
-              <div className="grid gap-2 mb-4">
-                <Label>№ приказа о присвоении разряда</Label>
-                <Input
-                  value={formData.sportsRankOrder}
-                  onChange={(e) => setFormData({ ...formData, sportsRankOrder: e.target.value })}
-                  placeholder="Приказ № 256 от 02.06.2021 г."
-                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">

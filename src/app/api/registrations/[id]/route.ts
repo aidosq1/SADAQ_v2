@@ -35,9 +35,28 @@ export async function GET(
                 },
                 athleteRegistrations: {
                     include: {
-                        athlete: true
+                        athlete: {
+                            include: {
+                                regionRef: true
+                            }
+                        },
+                        coach: {
+                            include: {
+                                region: true
+                            }
+                        }
                     }
-                }
+                },
+                registrationJudges: {
+                    include: {
+                        judge: {
+                            include: {
+                                region: true
+                            }
+                        }
+                    }
+                },
+                documents: true
             }
         });
 

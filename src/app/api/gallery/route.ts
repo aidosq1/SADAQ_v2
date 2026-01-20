@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
 
     return successResponse(items, { total, page, limit });
   } catch (error) {
+    console.error('Gallery GET error:', error);
     return errorResponse('Failed to fetch gallery items', 500);
   }
 }

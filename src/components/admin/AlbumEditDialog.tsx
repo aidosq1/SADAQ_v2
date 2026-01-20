@@ -31,6 +31,7 @@ interface AlbumEditDialogProps {
         items: any[];
         eventDate: string | null;
         isPublished: boolean;
+        cloudUrl?: string | null;
     } | null;
     onSuccess: () => void;
 }
@@ -39,11 +40,12 @@ export function AlbumEditDialog({ isOpen, onClose, album, onSuccess }: AlbumEdit
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         albumName: "",
-        title: "", // This will update the title of ALL items in album? Maybe just album name is enough? 
+        title: "", // This will update the title of ALL items in album? Maybe just album name is enough?
         // User request was "one album", so probably they want to change the "Album Name" field primarily.
         // But usually title is also common. Let's allow editing both.
         eventDate: "",
         isPublished: true,
+        cloudUrl: "",
     });
     const [albumItems, setAlbumItems] = useState<GalleryItem[]>([]);
 
@@ -54,6 +56,7 @@ export function AlbumEditDialog({ isOpen, onClose, album, onSuccess }: AlbumEdit
                 title: album.items[0]?.title || "", // Take title from first item
                 eventDate: album.eventDate ? new Date(album.eventDate).toISOString().split('T')[0] : "",
                 isPublished: album.isPublished,
+                cloudUrl: album.cloudUrl || "",
             });
             setAlbumItems(album.items);
         }
@@ -69,6 +72,7 @@ export function AlbumEditDialog({ isOpen, onClose, album, onSuccess }: AlbumEdit
                 title: formData.title,
                 eventDate: formData.eventDate ? new Date(formData.eventDate + "T12:00:00") : null,
                 isPublished: formData.isPublished,
+                cloudUrl: formData.cloudUrl || null,
             });
 
             if (result.success) {
@@ -145,6 +149,17 @@ export function AlbumEditDialog({ isOpen, onClose, album, onSuccess }: AlbumEdit
                                 />
                                 <Label htmlFor="album-published">Опубликован</Label>
                             </div>
+                        </div>
+                        <div className="grid gap-2 mt-4">
+                            <Label>Ссылка на облако</Label>
+                            <Input
+                                placeholder="https://drive.google.com/drive/folders/..."
+                                value={formData.cloudUrl}
+                                onChange={(e) => setFormData({ ...formData, cloudUrl: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Ссылка на папку с дополнительными материалами (Google Drive, Яндекс.Диск)
+                            </p>
                         </div>
                     </div>
 

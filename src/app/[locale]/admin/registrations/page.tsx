@@ -408,9 +408,11 @@ export default function AdminRegistrationsPage() {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={() => openDetails(reg)}
+                                                    asChild
                                                 >
-                                                    <Eye className="h-4 w-4" />
+                                                    <Link href={`/${locale}/admin/registrations/${reg.id}`}>
+                                                        <Eye className="h-4 w-4" />
+                                                    </Link>
                                                 </Button>
                                                 {reg.status === "PENDING" && !isRegionalRep && (
                                                     <>

@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +13,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Image as ImageIcon,
+  ExternalLink,
+  ImageIcon,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface GalleryItem {
   id: number;
@@ -28,6 +29,7 @@ interface GalleryItem {
   type: "photo" | "video";
   url: string;
   thumbnailUrl?: string | null;
+  cloudUrl?: string | null;
   albumName?: string | null;
   eventDate?: string | null;
 }
@@ -61,7 +63,8 @@ export default function GalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [filter, setFilter] = useState<"all" | "photo">("all");
+  const [albumFilter, setAlbumFilter] = useState<string>("all");
+  const [albums, setAlbums] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -70,6 +73,28 @@ export default function GalleryPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const ITEMS_PER_PAGE = 12;
+
+  // Fetch unique album names
+  const fetchAlbums = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/gallery?limit=1000&isPublished=true`);
+      const data: GalleryResponse = await res.json();
+      if (data.success) {
+        const uniqueAlbums = [...new Set(
+          data.data
+            .map((item) => item.albumName)
+            .filter((name): name is string => !!name)
+        )];
+        setAlbums(uniqueAlbums);
+      }
+    } catch (error) {
+      console.error("Error fetching albums:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAlbums();
+  }, [fetchAlbums]);
 
   const fetchGallery = useCallback(
     async (pageNum: number, reset: boolean = false) => {
@@ -86,8 +111,8 @@ export default function GalleryPage() {
           isPublished: "true",
         });
 
-        if (filter !== "all") {
-          params.append("type", filter);
+        if (albumFilter !== "all") {
+          params.append("album", albumFilter);
         }
 
         const res = await fetch(`/api/gallery?${params}`);
@@ -112,15 +137,15 @@ export default function GalleryPage() {
         setLoadingMore(false);
       }
     },
-    [filter]
+    [albumFilter]
   );
 
   useEffect(() => {
     fetchGallery(1, true);
   }, [fetchGallery]);
 
-  function handleFilterChange(value: string) {
-    setFilter(value as "all" | "photo");
+  function handleAlbumChange(value: string) {
+    setAlbumFilter(value);
     setPage(1);
   }
 
@@ -178,18 +203,57 @@ export default function GalleryPage() {
         <p className="text-muted-foreground text-lg">{t("subtitle")}</p>
       </div>
 
-      {/* Filter Tabs */}
-      <Tabs value={filter} onValueChange={handleFilterChange} className="w-full">
-        <TabsList className="grid w-full max-w-xs grid-cols-2">
-          <TabsTrigger value="all" className="flex items-center gap-2">
-            {t("filter_all")}
-          </TabsTrigger>
-          <TabsTrigger value="photo" className="flex items-center gap-2">
-            <ImageIcon className="h-4 w-4" />
-            {t("filter_photo")}
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      {/* Album Filter Tabs */}
+      {albums.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => handleAlbumChange("all")}
+            className={cn(
+              "px-4 py-2 rounded-full text-sm font-medium transition-colors",
+              albumFilter === "all"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted hover:bg-muted/80 text-muted-foreground"
+            )}
+          >
+            Все
+          </button>
+          {albums.map((album) => (
+            <button
+              key={album}
+              onClick={() => handleAlbumChange(album)}
+              className={cn(
+                "px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                albumFilter === album
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
+              )}
+            >
+              {album}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Album Cloud Link Banner */}
+      {albumFilter !== "all" && items.length > 0 && items[0].cloudUrl && (
+        <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+          <div className="flex items-center gap-3">
+            <ImageIcon className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              Дополнительные фотографии доступны в облаке
+            </span>
+          </div>
+          <a
+            href={items[0].cloudUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Открыть в облаке
+          </a>
+        </div>
+      )}
 
       {/* Gallery Grid */}
       {items.length === 0 ? (
@@ -300,18 +364,34 @@ export default function GalleryPage() {
 
               {/* Caption */}
               <div className="p-4 bg-black/50">
-                <h3 className="text-white font-semibold text-lg">
-                  {getLocalizedTitle(selectedItem, locale)}
-                </h3>
-                {(selectedItem.description ||
-                  selectedItem.descriptionKk ||
-                  selectedItem.descriptionEn) && (
-                  <p className="text-white/70 text-sm mt-1">
-                    {getLocalizedDescription(selectedItem, locale)}
-                  </p>
-                )}
-                <div className="text-white/50 text-xs mt-2">
-                  {currentIndex + 1} / {items.length}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-white font-semibold text-lg">
+                      {getLocalizedTitle(selectedItem, locale)}
+                    </h3>
+                    {(selectedItem.description ||
+                      selectedItem.descriptionKk ||
+                      selectedItem.descriptionEn) && (
+                      <p className="text-white/70 text-sm mt-1">
+                        {getLocalizedDescription(selectedItem, locale)}
+                      </p>
+                    )}
+                    <div className="text-white/50 text-xs mt-2">
+                      {currentIndex + 1} / {items.length}
+                    </div>
+                  </div>
+                  {selectedItem.cloudUrl && (
+                    <a
+                      href={selectedItem.cloudUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Все фото в облаке
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

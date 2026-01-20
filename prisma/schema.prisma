@@ -29,7 +29,6 @@ model Athlete {
   federationName          String?                  // Наименование спортивной федерации
   sportsRank              String?                  // Спортивный разряд/звание (напр. "МСМК")
   sportsRankDate          DateTime?                // Дата присвоения разряда
-  sportsRankOrder         String?                  // Номер приказа о присвоении
   medicalStatus           String?                  // Статус медицинского допуска
   medicalDate             DateTime?                // Дата последнего медосмотра
   medicalExpiry           DateTime?                // Срок действия допуска
@@ -178,6 +177,7 @@ model GalleryItem {
   type          String    @default("photo")
   url           String
   thumbnailUrl  String?
+  cloudUrl      String?   // Ссылка на облачное хранилище (Google Drive, Яндекс.Диск)
   albumName     String?
   eventDate     DateTime?
   sortOrder     Int       @default(0)
@@ -336,30 +336,51 @@ model Region {
 }
 
 model Registration {
-  id                   Int                   @id @default(autoincrement())
+  id                   Int                      @id @default(autoincrement())
   regionName           String
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @default(now()) @updatedAt
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @default(now()) @updatedAt
   userId               Int
   tournamentCategoryId Int?
   approvedAt           DateTime?
   approvedBy           String?
   regionId             Int?
-  registrationNumber   String                @unique
+  registrationNumber   String                   @unique
   rejectionReason      String?
-  status               RegistrationStatus    @default(PENDING)
+  status               RegistrationStatus       @default(PENDING)
   athleteRegistrations AthleteRegistration[]
   documents            RegistrationDocument[]
-  region               Region?               @relation(fields: [regionId], references: [id])
-  tournamentCategory   TournamentCategory?   @relation(fields: [tournamentCategoryId], references: [id])
-  user                 User                  @relation(fields: [userId], references: [id])
+  region               Region?                  @relation(fields: [regionId], references: [id])
+  tournamentCategory   TournamentCategory?      @relation(fields: [tournamentCategoryId], references: [id])
+  user                 User                     @relation(fields: [userId], references: [id])
   registrationJudges   RegistrationJudge[]
+  auditLogs            RegistrationAuditLog[]
 
   @@unique([tournamentCategoryId, regionId])
   @@index([tournamentCategoryId])
   @@index([userId])
   @@index([status])
   @@index([regionId])
+}
+
+model RegistrationAuditLog {
+  id             Int          @id @default(autoincrement())
+  registrationId Int
+  userId         Int
+  action         String       // CREATE, UPDATE, DELETE, STATUS_CHANGE
+  entityType     String       // registration, athlete, judge, document
+  entityId       Int?
+  previousData   Json?
+  newData        Json?
+  description    String
+  createdAt      DateTime     @default(now())
+
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@index([registrationId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model RegistrationJudge {
@@ -495,16 +516,17 @@ model TournamentResult {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  username      String         @unique
+  id            Int                    @id @default(autoincrement())
+  username      String                 @unique
   password      String
-  role          String         @default("RegionalRepresentative")
-  createdAt     DateTime       @default(now())
+  role          String                 @default("RegionalRepresentative")
+  createdAt     DateTime               @default(now())
   email         String?
   region        String?
   regionId      Int?
   registrations Registration[]
-  regionRef     Region?        @relation(fields: [regionId], references: [id])
+  regionRef     Region?                @relation(fields: [regionId], references: [id])
+  auditLogs     RegistrationAuditLog[]
 
   @@index([regionId])
 }

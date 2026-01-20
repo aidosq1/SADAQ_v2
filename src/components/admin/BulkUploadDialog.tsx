@@ -30,6 +30,7 @@ export function BulkUploadDialog({ onSuccess }: BulkUploadDialogProps) {
         title: "",
         albumName: "",
         eventDate: "",
+        cloudUrl: "",
     });
 
     const handleUploadComplete = (uploadedFiles: UploadedFile[]) => {
@@ -61,7 +62,7 @@ export function BulkUploadDialog({ onSuccess }: BulkUploadDialogProps) {
                 toast.success(result.message);
                 setOpen(false);
                 setFiles([]);
-                setMetadata({ title: "", albumName: "", eventDate: "" });
+                setMetadata({ title: "", albumName: "", eventDate: "", cloudUrl: "" });
                 onSuccess();
             } else {
                 toast.error(result.error);
@@ -116,6 +117,18 @@ export function BulkUploadDialog({ onSuccess }: BulkUploadDialogProps) {
                                 onChange={(e) => setMetadata({ ...metadata, eventDate: e.target.value })}
                             />
                         </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Ссылка на облако</Label>
+                        <Input
+                            placeholder="https://drive.google.com/drive/folders/..."
+                            value={metadata.cloudUrl}
+                            onChange={(e) => setMetadata({ ...metadata, cloudUrl: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Ссылка на папку с дополнительными материалами (Google Drive, Яндекс.Диск)
+                        </p>
                     </div>
 
                     <div className="grid gap-2">

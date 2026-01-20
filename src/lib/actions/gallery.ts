@@ -16,6 +16,7 @@ export interface BulkGalleryMetadata {
     eventDate?: Date | null;
     albumName?: string;
     isPublished?: boolean;
+    cloudUrl?: string;
 }
 
 export async function createBulkGalleryItems(
@@ -35,6 +36,7 @@ export async function createBulkGalleryItems(
             albumName: metadata.albumName,
             isPublished: metadata.isPublished ?? true,
             type: 'photo',
+            cloudUrl: metadata.cloudUrl || null,
         };
 
         // Prepare data for createMany
@@ -91,6 +93,7 @@ export async function updateGalleryGroup(
         title: string;
         eventDate: Date | null;
         isPublished: boolean;
+        cloudUrl?: string | null;
     }
 ) {
     try {
@@ -105,6 +108,7 @@ export async function updateGalleryGroup(
                 title: data.title,
                 eventDate: data.eventDate,
                 isPublished: data.isPublished,
+                cloudUrl: data.cloudUrl,
             },
         });
 
