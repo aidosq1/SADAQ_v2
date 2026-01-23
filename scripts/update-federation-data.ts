@@ -36,19 +36,8 @@ async function main() {
     }
   });
 
-  if (astanaRegion) {
-    await prisma.region.update({
-      where: { id: astanaRegion.id },
-      data: {
-        directorTitle: 'Президент',
-        directorTitleKk: 'Президент',
-        directorTitleEn: 'President'
-      }
-    });
-    console.log(`Updated Astana (id: ${astanaRegion.id}) director title to "Президент"`);
-  } else {
-    console.log('Warning: Astana region not found in database');
-  }
+  // Director title is now managed through centralized translations (RegionsPage.director)
+  // No need to update directorTitle field in database
 
   console.log('Done!');
 }

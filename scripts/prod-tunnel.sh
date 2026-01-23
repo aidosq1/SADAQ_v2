@@ -4,7 +4,7 @@
 # Usage: ./scripts/prod-tunnel.sh
 
 PORT=5434
-REMOTE_HOST="172.20.0.3"
+REMOTE_HOST="172.20.0.2"
 REMOTE_PORT=5432
 SSH_HOST="deploy@kazarchery.kz"
 

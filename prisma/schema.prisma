@@ -313,7 +313,7 @@ model Region {
   director        String
   directorKk      String?
   directorEn      String?
-  directorTitle   String         @default("Президент филиала")
+  directorTitle   String?
   directorTitleKk String?
   directorTitleEn String?
   address         String
