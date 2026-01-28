@@ -84,7 +84,7 @@ export default function AdminDocumentsPage() {
 
   async function fetchDocuments() {
     try {
-      const res = await fetch("/api/documents");
+      const res = await fetch("/api/documents?limit=1000");
       const data = await res.json();
       if (data.success) {
         setDocuments(data.data);
