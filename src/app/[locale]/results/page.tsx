@@ -144,7 +144,7 @@ export default function ResultsPage() {
                     {years.map((year) => (
                         <AccordionItem key={year} value={year}>
                             <AccordionTrigger className="text-xl font-bold">
-                                {t("season")} {year}
+                                {year}
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="space-y-4 pt-2">
