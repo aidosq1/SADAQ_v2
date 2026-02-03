@@ -40,11 +40,11 @@ export default function ResultsPage() {
         async function fetchAllProtocols() {
             try {
                 // Fetch tournament protocols
-                const protocolsRes = await fetch('/api/protocols?limit=100');
+                const protocolsRes = await fetch('/api/protocols?limit=1000');
                 const protocolsData = await protocolsRes.json();
 
                 // Fetch document protocols (ratings section)
-                const documentsRes = await fetch('/api/documents?section=ratings&isPublished=true');
+                const documentsRes = await fetch('/api/documents?section=ratings&isPublished=true&limit=1000');
                 const documentsData = await documentsRes.json();
 
                 // Normalize tournament protocols
