@@ -89,8 +89,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    await prisma.coach.delete({
+    await prisma.coach.update({
       where: { id: coachId },
+      data: { isActive: false },
     });
 
     return successResponse({ deleted: true });

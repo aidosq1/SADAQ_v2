@@ -87,8 +87,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    await prisma.judge.delete({
+    await prisma.judge.update({
       where: { id: judgeId },
+      data: { isActive: false },
     });
 
     return successResponse({ deleted: true });

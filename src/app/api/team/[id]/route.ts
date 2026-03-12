@@ -149,7 +149,7 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/team/[id] - Protected
+// DELETE /api/team/[id] - Soft delete (deactivate athlete)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -169,8 +169,9 @@ export async function DELETE(
       }
     }
 
-    await prisma.athlete.delete({
+    await prisma.athlete.update({
       where: { id: athleteId },
+      data: { isActive: false },
     });
 
     return successResponse({ deleted: true });
