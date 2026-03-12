@@ -62,6 +62,7 @@ interface Tournament {
         id: number;
         name?: string;
     };
+    organizingRegionId?: number;
 }
 
 interface Athlete {
@@ -221,10 +222,10 @@ export default function TournamentApplyPage() {
 
     // Max participants: 6 for host region, 4 for others
     const maxParticipants = useMemo(() => {
-        if (selectedTournament?.organizingRegion?.id && userRegionId) {
-            return selectedTournament.organizingRegion.id === userRegionId ? 6 : 4;
-        }
-        return 4; // Default for non-host regions
+        if (!userRegionId) return 4;
+        const orgRegionId = selectedTournament?.organizingRegion?.id
+            ?? selectedTournament?.organizingRegionId;
+        return orgRegionId === userRegionId ? 6 : 4;
     }, [selectedTournament, userRegionId]);
 
     // Helper functions
@@ -373,6 +374,10 @@ export default function TournamentApplyPage() {
         setIsUploadingDocument(true);
 
         for (const file of Array.from(files)) {
+            if (file.size > 10 * 1024 * 1024) {
+                toast.error(`Файл "${file.name}" превышает 10MB`);
+                continue;
+            }
             try {
                 const formData = new FormData();
                 formData.append("file", file);
@@ -1027,7 +1032,7 @@ export default function TournamentApplyPage() {
                 ) : (
                     <Button
                         onClick={handleSubmit}
-                        disabled={isSubmitting || !canProceedFromStep(3)}
+                        disabled={isSubmitting || !(canProceedFromStep(0) && canProceedFromStep(1) && canProceedFromStep(2) && canProceedFromStep(3))}
                         className="bg-green-600 hover:bg-green-700"
                     >
                         {isSubmitting ? (

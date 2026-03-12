@@ -116,6 +116,14 @@ export async function POST(req: Request) {
                     error: `Judge ${i + 1}: must have either existing judge or new judge data`
                 }, { status: 400 });
             }
+            if (!entry.judgeId && entry.newJudge) {
+                if (!entry.newJudge.name?.trim()) {
+                    return NextResponse.json({ error: `Судья ${i + 1}: укажите ФИО` }, { status: 400 });
+                }
+                if (!entry.newJudge.category?.trim()) {
+                    return NextResponse.json({ error: `Судья ${i + 1}: укажите категорию` }, { status: 400 });
+                }
+            }
         }
 
         // Validate participants
@@ -184,7 +192,7 @@ export async function POST(req: Request) {
                 where: {
                     tournamentCategoryId: tournamentCategoryId,
                     regionId: userRegionId,
-                    status: { not: 'REJECTED' }
+                    status: { notIn: ['REJECTED', 'WITHDRAWN'] }
                 }
             });
 

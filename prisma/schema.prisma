@@ -103,7 +103,7 @@ model AthleteRegistration {
   registrationId Int
   createdAt      DateTime     @default(now())
   coachId        Int?
-  athlete        Athlete      @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  athlete        Athlete      @relation(fields: [athleteId], references: [id], onDelete: Restrict)
   coach          Coach?       @relation(fields: [coachId], references: [id])
   registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
@@ -356,7 +356,7 @@ model Registration {
   registrationJudges   RegistrationJudge[]
   auditLogs            RegistrationAuditLog[]
 
-  @@unique([tournamentCategoryId, regionId])
+  // unique constraint handled by partial index in migration (allows re-registration after REJECTED/WITHDRAWN)
   @@index([tournamentCategoryId])
   @@index([userId])
   @@index([status])

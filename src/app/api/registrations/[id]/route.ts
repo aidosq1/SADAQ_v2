@@ -177,6 +177,26 @@ export async function PATCH(
             }
         });
 
+        // Write audit log for status changes
+        if (status && status !== existingRegistration.status) {
+            await prisma.registrationAuditLog.create({
+                data: {
+                    registrationId,
+                    userId,
+                    action: 'STATUS_CHANGE',
+                    entityType: 'registration',
+                    entityId: registrationId,
+                    previousData: { status: existingRegistration.status },
+                    newData: { status, rejectionReason: rejectionReason || null },
+                    description: status === 'APPROVED'
+                        ? 'Заявка одобрена'
+                        : status === 'REJECTED'
+                            ? `Заявка отклонена: ${rejectionReason}`
+                            : `Статус изменён на ${status}`
+                }
+            });
+        }
+
         return NextResponse.json({
             success: true,
             registration,
