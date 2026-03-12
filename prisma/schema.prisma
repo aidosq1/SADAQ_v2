@@ -166,6 +166,30 @@ model GalleryImage {
   @@index([galleryId])
 }
 
+model GalleryItem {
+  id            Int       @id @default(autoincrement())
+  title         String
+  titleKk       String?
+  titleEn       String?
+  description   String?
+  descriptionKk String?
+  descriptionEn String?
+  type          String    @default("photo")
+  url           String
+  thumbnailUrl  String?
+  cloudUrl      String?
+  albumName     String?
+  eventDate     DateTime?
+  sortOrder     Int       @default(0)
+  isPublished   Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  @@index([albumName])
+  @@index([eventDate])
+  @@index([isPublished])
+}
+
 model HistoryEvent {
   id            Int      @id @default(autoincrement())
   year          String
