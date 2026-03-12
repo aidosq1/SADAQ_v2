@@ -22,17 +22,19 @@ export function MediaBlock() {
     const locale = useLocale();
     const [items, setItems] = useState<GalleryItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchGallery() {
             try {
                 const res = await fetch('/api/gallery?limit=4');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.data) {
                     setItems(data.data);
                 }
             } catch {
-                // silently fail
+                setError(true);
             } finally {
                 setLoading(false);
             }
@@ -52,6 +54,10 @@ export function MediaBlock() {
                 <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-maroon))]" />
             </div>
         );
+    }
+
+    if (error) {
+        return null;
     }
 
     return (

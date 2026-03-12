@@ -57,8 +57,8 @@ export async function GET(
         }
 
         // Check access
-        const userRole = (session.user as any).role;
-        const userId = parseInt((session.user as any).id);
+        const userRole = session.user.role;
+        const userId = parseInt(session.user.id || '0');
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
         const isOwner = registration.userId === userId;
 

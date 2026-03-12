@@ -93,7 +93,7 @@ export default function AdminRankingsPage() {
       const data = await res.json();
       if (data.success) setAthletes(data.data);
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -104,7 +104,7 @@ export default function AdminRankingsPage() {
       const data = await res.json();
       if (data.success) setRankings(data.data);
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }

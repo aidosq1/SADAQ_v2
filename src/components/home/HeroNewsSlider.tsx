@@ -34,18 +34,20 @@ export function HeroNewsSlider() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const locale = useLocale();
 
   useEffect(() => {
     async function fetchSlides() {
       try {
         const res = await fetch('/api/slides?isActive=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.data?.length > 0) {
           setSlides(data.data);
         }
       } catch {
-        // silently fail
+        setError(true);
       } finally {
         setLoading(false);
       }

@@ -177,7 +177,7 @@ function StatsTab() {
         setStats(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }
@@ -272,7 +272,7 @@ function StatsTab() {
       });
       fetchStats();
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -540,7 +540,7 @@ function HistoryTab() {
         setEvents(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }
@@ -639,7 +639,7 @@ function HistoryTab() {
       });
       fetchEvents();
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -927,7 +927,7 @@ function StaffTab() {
         setStaff(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }
@@ -1307,7 +1307,7 @@ function TranslationsTab() {
         }
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }

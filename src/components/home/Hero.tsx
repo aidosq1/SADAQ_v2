@@ -38,6 +38,7 @@ export function Hero() {
     const locale = useLocale();
     const [stats, setStats] = useState<SiteStat[]>([]);
     const [upcomingEvent, setUpcomingEvent] = useState<UpcomingEvent | null>(null);
+    const [error, setError] = useState(false);
 
     const getLocalizedLabel = (stat: SiteStat) => {
         if (locale === 'kk' && stat.labelKk) return stat.labelKk;
@@ -49,24 +50,28 @@ export function Hero() {
         async function fetchStats() {
             try {
                 const res = await fetch("/api/stats?isActive=true");
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.data) {
                     setStats(data.data);
                 }
-            } catch {
-                // silently fail
+            } catch (err) {
+                setError(true);
+                console.error('Failed to load data:', err);
             }
         }
 
         async function fetchUpcomingEvent() {
             try {
                 const res = await fetch("/api/tournaments/featured");
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.success && data.data) {
                     setUpcomingEvent(data.data);
                 }
-            } catch {
-                // silently fail
+            } catch (err) {
+                setError(true);
+                console.error('Failed to load data:', err);
             }
         }
 

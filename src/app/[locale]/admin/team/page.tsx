@@ -190,7 +190,7 @@ export default function AdminTeamPage() {
         setRegions(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -202,7 +202,7 @@ export default function AdminTeamPage() {
         setCoaches(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -340,7 +340,7 @@ export default function AdminTeamPage() {
         fetchMembers();
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 

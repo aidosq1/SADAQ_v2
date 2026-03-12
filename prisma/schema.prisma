@@ -20,7 +20,7 @@ model Athlete {
   isActive                Boolean                  @default(true)
   sortOrder               Int                      @default(0)
   createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @default(now()) @updatedAt
   regionId                Int?
 
   // Свидетельство о регистрации спортсмена
@@ -64,7 +64,7 @@ model Coach {
   isActive             Boolean               @default(true)
   sortOrder            Int                   @default(0)
   createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now()) @updatedAt
   athleteRegistrations AthleteRegistration[]
   athletes             Athlete[]             @relation("PersonalCoach")
   region               Region?               @relation(fields: [regionId], references: [id])
@@ -164,30 +164,6 @@ model GalleryImage {
   gallery   Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
 
   @@index([galleryId])
-}
-
-model GalleryItem {
-  id            Int       @id @default(autoincrement())
-  title         String
-  titleKk       String?
-  titleEn       String?
-  description   String?
-  descriptionKk String?
-  descriptionEn String?
-  type          String    @default("photo")
-  url           String
-  thumbnailUrl  String?
-  cloudUrl      String?   // Ссылка на облачное хранилище (Google Drive, Яндекс.Диск)
-  albumName     String?
-  eventDate     DateTime?
-  sortOrder     Int       @default(0)
-  isPublished   Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-
-  @@index([albumName])
-  @@index([eventDate])
-  @@index([isPublished])
 }
 
 model HistoryEvent {

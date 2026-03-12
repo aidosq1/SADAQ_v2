@@ -65,8 +65,8 @@ export async function GET(
         }
 
         // Check access: admin or own registration
-        const userRole = (session.user as any).role;
-        const userId = parseInt((session.user as any).id);
+        const userRole = session.user.role;
+        const userId = parseInt(session.user.id || '0');
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
 
         if (!isAdmin && registration.userId !== userId) {
@@ -91,8 +91,8 @@ export async function PATCH(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const userRole = (session.user as any).role;
-        const userId = parseInt((session.user as any).id);
+        const userRole = session.user.role;
+        const userId = parseInt(session.user.id || '0');
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
 
         const { id } = await params;
@@ -133,7 +133,7 @@ export async function PATCH(
             return NextResponse.json({ error: "Rejection reason is required" }, { status: 400 });
         }
 
-        const updateData: any = {};
+        const updateData: Record<string, unknown> = {};
 
         if (status) {
             updateData.status = status;
@@ -224,7 +224,7 @@ export async function DELETE(
         }
 
         // Admin check
-        const userRole = (session.user as any).role;
+        const userRole = session.user.role;
         if (userRole !== 'Admin') {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }

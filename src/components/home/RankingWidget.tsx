@@ -30,18 +30,20 @@ function getLocalizedName(item: RankingEntry['athlete'], locale: string): string
 export function RankingWidget() {
   const [rankings, setRankings] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const locale = useLocale();
 
   useEffect(() => {
     async function fetchRankings() {
       try {
         const res = await fetch('/api/rankings?limit=5');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.data) {
           setRankings(data.data);
         }
       } catch {
-        // silently fail
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -63,7 +65,7 @@ export function RankingWidget() {
     );
   }
 
-  if (rankings.length === 0) {
+  if (error || rankings.length === 0) {
     return null;
   }
 

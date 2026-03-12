@@ -133,7 +133,7 @@ export default function AdminCoachesPage() {
         setRegions(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -232,7 +232,7 @@ export default function AdminCoachesPage() {
         fetchCoaches();
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 

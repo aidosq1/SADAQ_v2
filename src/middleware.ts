@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { withAuth } from "next-auth/middleware";
 import { routing } from './navigation';
+import { NextRequest, NextResponse } from 'next/server';
 
 const handleI18n = createMiddleware(routing);
 
@@ -15,12 +16,12 @@ const authMiddleware = withAuth(
     }
 );
 
-export default function middleware(req: any) {
+export default function middleware(req: NextRequest): NextResponse | Response {
     // Check if the path is an admin path (handling locale prefix)
     const pathname = req.nextUrl.pathname;
     // Simple check for admin in path, assuming /admin or /ru/admin
     if (pathname.includes('/admin')) {
-        return (authMiddleware as any)(req);
+        return (authMiddleware as (req: NextRequest) => NextResponse | Response)(req);
     }
     return handleI18n(req);
 }

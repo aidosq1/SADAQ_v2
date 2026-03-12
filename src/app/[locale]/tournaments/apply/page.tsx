@@ -218,7 +218,7 @@ export default function TournamentApplyPage() {
     );
 
     // User's region ID from session
-    const userRegionId = (session?.user as any)?.regionId as number | undefined;
+    const userRegionId = session?.user?.regionId ?? undefined;
 
     // Max participants: 6 for host region, 4 for others
     const maxParticipants = useMemo(() => {
@@ -542,7 +542,7 @@ export default function TournamentApplyPage() {
     }
 
     // Check role - only RegionalRepresentative can submit applications
-    const userRole = (session?.user as any)?.role;
+    const userRole = session?.user?.role;
     if (userRole !== "RegionalRepresentative") {
         return (
             <div className="container mx-auto py-8 px-4">

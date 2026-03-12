@@ -16,17 +16,19 @@ export function PartnersBlock() {
   const locale = useLocale();
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function fetchPartners() {
       try {
         const res = await fetch('/api/partners?isActive=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.data) {
           setPartners(data.data);
         }
       } catch {
-        // silently fail
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -50,7 +52,7 @@ export function PartnersBlock() {
     );
   }
 
-  if (partners.length === 0) {
+  if (error || partners.length === 0) {
     return null;
   }
 

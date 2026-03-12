@@ -36,17 +36,19 @@ export function CalendarWidget() {
     const format = useFormatter();
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchTournaments() {
             try {
                 const res = await fetch('/api/tournaments?limit=10');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.data) {
                     setTournaments(data.data);
                 }
             } catch {
-                // silently fail
+                setError(true);
             } finally {
                 setLoading(false);
             }
@@ -114,6 +116,14 @@ export function CalendarWidget() {
         return (
             <div className="flex flex-col h-full justify-center items-center min-h-[300px]">
                 <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-maroon))]" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col h-full justify-center items-center min-h-[300px] text-muted-foreground">
+                <p className="text-sm">{t("no_events") || "Не удалось загрузить события"}</p>
             </div>
         );
     }

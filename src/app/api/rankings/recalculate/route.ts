@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         }
 
         // Admin check
-        const userRole = (session.user as any).role;
+        const userRole = session.user.role;
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
         if (!isAdmin) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -121,22 +121,27 @@ export async function POST(req: Request) {
 
         // Update rankings in transaction
         await prisma.$transaction(async (tx) => {
-            // Upsert all ranking entries
-            for (const ranking of rankingUpdates) {
-                await tx.rankingEntry.upsert({
+            // Collect all unique category/gender/type groups that have new results
+            const groupsToUpdate = new Set(
+                rankingUpdates.map(r => JSON.stringify({ category: r.category, gender: r.gender, type: r.type }))
+            );
+
+            // Delete stale ranking entries for groups that have new results
+            for (const groupJson of groupsToUpdate) {
+                const group = JSON.parse(groupJson);
+                await tx.rankingEntry.deleteMany({
                     where: {
-                        athleteId_category_gender_type: {
-                            athleteId: ranking.athleteId,
-                            category: ranking.category,
-                            gender: ranking.gender,
-                            type: ranking.type
-                        }
-                    },
-                    update: {
-                        points: ranking.points,
-                        rank: ranking.rank
-                    },
-                    create: {
+                        category: group.category,
+                        gender: group.gender,
+                        type: group.type,
+                    }
+                });
+            }
+
+            // Create fresh ranking entries
+            for (const ranking of rankingUpdates) {
+                await tx.rankingEntry.create({
+                    data: {
                         athleteId: ranking.athleteId,
                         category: ranking.category,
                         gender: ranking.gender,

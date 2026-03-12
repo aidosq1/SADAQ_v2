@@ -6,6 +6,7 @@ import { ArrowLeft, Calendar, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
+import DOMPurify from "isomorphic-dompurify";
 
 interface NewsArticle {
   id: number;
@@ -157,7 +158,7 @@ export default async function NewsArticlePage({ params }: Props) {
             prose-img:rounded-lg
             prose-blockquote:border-l-primary prose-blockquote:bg-muted/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
           "
-          dangerouslySetInnerHTML={{ __html: content }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
         />
       </article>
 

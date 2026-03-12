@@ -68,7 +68,7 @@ export default function AdminPartnersPage() {
         setPartners(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ export default function AdminPartnersPage() {
       });
       fetchPartners();
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 

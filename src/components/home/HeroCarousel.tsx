@@ -26,17 +26,19 @@ export function HeroCarousel() {
     const [isPaused, setIsPaused] = useState(false);
     const [slides, setSlides] = useState<Slide[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchSlides() {
             try {
                 const res = await fetch('/api/slides');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.data) {
                     setSlides(data.data.filter((s: Slide) => s.isActive));
                 }
             } catch {
-                // silently fail
+                setError(true);
             } finally {
                 setLoading(false);
             }
@@ -86,7 +88,7 @@ export function HeroCarousel() {
         );
     }
 
-    if (slides.length === 0) {
+    if (error || slides.length === 0) {
         return null;
     }
 

@@ -153,7 +153,7 @@ export default function AdminRegionsPage() {
         setRegionUsers((prev) => ({ ...prev, [regionId]: data.data }));
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -372,7 +372,7 @@ export default function AdminRegionsPage() {
         fetchRegions();
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 

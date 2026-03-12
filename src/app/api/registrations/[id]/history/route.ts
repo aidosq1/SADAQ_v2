@@ -26,8 +26,8 @@ export async function GET(
             return NextResponse.json({ error: "Registration not found" }, { status: 404 });
         }
 
-        const userRole = (session.user as any).role;
-        const userId = parseInt((session.user as any).id);
+        const userRole = session.user.role;
+        const userId = parseInt(session.user.id || '0');
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
         const isOwner = registration.userId === userId;
 

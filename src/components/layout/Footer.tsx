@@ -18,11 +18,13 @@ export function Footer() {
     const t = useTranslations("Footer");
     const locale = useLocale();
     const [content, setContent] = useState<Record<string, SiteContent>>({});
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchContent() {
             try {
                 const res = await fetch('/api/content?section=footer');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.data) {
                     const contentMap: Record<string, SiteContent> = {};
@@ -31,8 +33,9 @@ export function Footer() {
                     });
                     setContent(contentMap);
                 }
-            } catch {
-                // silently fail
+            } catch (err) {
+                setError(true);
+                console.error('Failed to load data:', err);
             }
         }
         fetchContent();

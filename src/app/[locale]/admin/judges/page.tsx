@@ -159,7 +159,7 @@ export default function AdminJudgesPage() {
         setRegions(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 
@@ -267,7 +267,7 @@ export default function AdminJudgesPage() {
         fetchJudges();
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 

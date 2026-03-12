@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { requireAuthWithRegion } from "@/lib/api-utils";
+import { requireAuthWithRegion, generateSlug } from "@/lib/api-utils";
+import { Prisma } from "@prisma/client";
 
 interface NewJudge {
     name: string;
@@ -52,13 +53,16 @@ interface RequestBody {
     documents?: DocumentData[];
 }
 
+type TransactionClient = Prisma.TransactionClient;
+
 // Generate unique registration number: REG-YYYY-XXXX
-async function generateRegistrationNumber(): Promise<string> {
+// Must be called inside a transaction to prevent race conditions
+async function generateRegistrationNumber(tx: TransactionClient): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `REG-${year}-`;
 
     // Find the last registration number for this year
-    const lastReg = await prisma.registration.findFirst({
+    const lastReg = await tx.registration.findFirst({
         where: {
             registrationNumber: {
                 startsWith: prefix
@@ -185,29 +189,28 @@ export async function POST(req: Request) {
             }, { status: 400 });
         }
 
-        // Check if this region already has a registration for this category
-        // Allow resubmission if previous registration was rejected
-        if (userRegionId) {
-            const existingRegistration = await prisma.registration.findFirst({
-                where: {
-                    tournamentCategoryId: tournamentCategoryId,
-                    regionId: userRegionId,
-                    status: { notIn: ['REJECTED', 'WITHDRAWN'] }
-                }
-            });
-
-            if (existingRegistration) {
-                return NextResponse.json({
-                    error: "Ваш регион уже подал заявку на эту категорию турнира"
-                }, { status: 400 });
-            }
-        }
-
-        // Generate registration number
-        const registrationNumber = await generateRegistrationNumber();
-
         // Create Registration Transaction
+        // All checks and creation happen inside the transaction to prevent race conditions
         const result = await prisma.$transaction(async (tx) => {
+            // Check if this region already has a registration for this category
+            // Allow resubmission if previous registration was rejected
+            if (userRegionId) {
+                const existingRegistration = await tx.registration.findFirst({
+                    where: {
+                        tournamentCategoryId: tournamentCategoryId,
+                        regionId: userRegionId,
+                        status: { notIn: ['REJECTED', 'WITHDRAWN'] }
+                    }
+                });
+
+                if (existingRegistration) {
+                    throw new Error("DUPLICATE_REGISTRATION");
+                }
+            }
+
+            // Generate registration number inside transaction
+            const registrationNumber = await generateRegistrationNumber(tx);
+
             // 1. Handle Judges - create new ones if needed, collect all judge IDs
             const finalJudgeIds: number[] = [];
             let primaryJudgeId: number | null = null;
@@ -278,12 +281,8 @@ export async function POST(req: Request) {
                 // Handle Athlete
                 let finalAthleteId = p.athleteId;
                 if (!finalAthleteId && p.newAthlete) {
-                    // Generate slug from name
-                    const baseSlug = p.newAthlete.name
-                        .toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[.']/g, '')
-                        .replace(/[^a-z0-9-]/g, '');
+                    // Generate slug from name with proper Cyrillic transliteration
+                    const baseSlug = generateSlug(p.newAthlete.name);
                     const uniqueSlug = `${baseSlug}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
                     // Check if athlete with same IIN exists
@@ -371,6 +370,11 @@ export async function POST(req: Request) {
         });
     } catch (error) {
         console.error('Registration error:', error);
+        if (error instanceof Error && error.message === "DUPLICATE_REGISTRATION") {
+            return NextResponse.json({
+                error: "Ваш регион уже подал заявку на эту категорию турнира"
+            }, { status: 400 });
+        }
         const message = error instanceof Error ? error.message : "Internal Server Error";
         return NextResponse.json({ error: message }, { status: 500 });
     }

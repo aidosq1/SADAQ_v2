@@ -90,7 +90,7 @@ export default function AdminDocumentsPage() {
         setDocuments(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }
@@ -177,7 +177,7 @@ export default function AdminDocumentsPage() {
       });
       fetchDocuments();
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     }
   }
 

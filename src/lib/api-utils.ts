@@ -17,7 +17,7 @@ export async function requireAuth(allowedRoles?: string[]) {
     return { authorized: false, error: errorResponse('Unauthorized', 401) };
   }
 
-  const userRole = (session.user as { role?: string }).role;
+  const userRole = session.user?.role;
 
   if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
     return { authorized: false, error: errorResponse('Forbidden', 403) };
@@ -34,12 +34,7 @@ export async function requireAuthWithRegion(allowedRoles?: string[]) {
     return { authorized: false as const, error: errorResponse('Unauthorized', 401) };
   }
 
-  const user = session.user as {
-    id?: string;
-    role?: string;
-    regionId?: number | null;
-    region?: string | null;
-  };
+  const user = session.user;
 
   if (allowedRoles && user.role && !allowedRoles.includes(user.role)) {
     return { authorized: false as const, error: errorResponse('Forbidden', 403) };

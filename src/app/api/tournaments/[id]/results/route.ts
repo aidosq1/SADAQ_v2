@@ -101,7 +101,7 @@ export async function POST(
         }
 
         // Admin check
-        const userRole = (session.user as any).role;
+        const userRole = session.user.role;
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
         if (!isAdmin) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });

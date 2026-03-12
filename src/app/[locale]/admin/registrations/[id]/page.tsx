@@ -181,7 +181,7 @@ export default function RegistrationDetailPage() {
     const [rejectionReason, setRejectionReason] = useState("");
 
     const isAdmin = session?.user?.role === "Admin" || session?.user?.role === "Editor";
-    const isOwner = registration?.user?.id === parseInt((session?.user as any)?.id || "0");
+    const isOwner = registration?.user?.id === parseInt(session?.user?.id || "0");
     const canEdit = isAdmin || (isOwner && registration?.status === "PENDING");
 
     const fetchRegistration = useCallback(async () => {

@@ -66,7 +66,7 @@ export default function AdminGalleryPage() {
         setItems(data.data);
       }
     } catch {
-      // silently fail
+      toast.error("Ошибка загрузки");
     } finally {
       setLoading(false);
     }

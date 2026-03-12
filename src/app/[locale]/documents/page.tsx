@@ -45,7 +45,7 @@ export default function DocumentsPage() {
           setDocuments(data.data);
         }
       } catch {
-        // silently fail
+        console.error("Failed to fetch documents");
       } finally {
         setLoading(false);
       }

@@ -17,12 +17,12 @@ export async function GET(req: Request) {
         const region = searchParams.get('region');
         const myOnly = searchParams.get('my') === 'true';
 
-        const userRole = (session.user as any).role;
-        const userId = parseInt((session.user as any).id);
+        const userRole = session.user.role;
+        const userId = parseInt(session.user.id || '0');
         const isAdmin = userRole === 'Admin' || userRole === 'Editor';
 
         // Build where clause
-        const where: any = {};
+        const where: Record<string, unknown> = {};
 
         // If not admin or requesting own registrations, filter by user
         if (!isAdmin || myOnly) {
