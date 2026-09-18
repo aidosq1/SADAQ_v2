@@ -10,6 +10,7 @@ interface Partner {
   name: string;
   logo?: string | null;
   websiteUrl?: string | null;
+  isGeneral?: boolean;
 }
 
 export function PartnersBlock() {
@@ -37,6 +38,10 @@ export function PartnersBlock() {
   }, []);
 
   const sectionTitle = locale === 'kk' ? 'Серіктестер' : locale === 'en' ? 'Partners & Affiliations' : 'Партнёры и аффилиации';
+  const generalTitle = locale === 'kk' ? 'Бас серіктес' : locale === 'en' ? 'General Partner' : 'Генеральный партнёр';
+
+  const generalPartners = partners.filter((p) => p.isGeneral);
+  const regularPartners = partners.filter((p) => !p.isGeneral);
 
   if (loading) {
     return (
@@ -59,16 +64,86 @@ export function PartnersBlock() {
   return (
     <section className="py-12 bg-white border-t border-[hsl(var(--border-light))]">
       <div className="max-w-7xl mx-auto px-4">
+        {/* General Partner(s) */}
+        {generalPartners.length > 0 && (
+          <div className="mb-12">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent mx-auto w-fit uppercase">
+                {generalTitle}
+              </h2>
+            </div>
+            <div className="flex flex-wrap justify-center items-center gap-12">
+              {generalPartners.map((partner) => (
+                <div key={partner.id}>
+                  {partner.websiteUrl ? (
+                    <Link
+                      href={partner.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-col items-center gap-3"
+                    >
+                      {partner.logo ? (
+                        <Image
+                          src={partner.logo}
+                          alt={partner.name}
+                          width={220}
+                          height={220}
+                          className="object-contain w-40 h-40 md:w-56 md:h-56"
+                        />
+                      ) : (
+                        <div className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                          <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
+                            {partner.name.slice(0, 2)}
+                          </span>
+                        </div>
+                      )}
+                      <span className="text-sm text-center text-[hsl(var(--muted-foreground))] max-w-xs leading-tight">
+                        {partner.name}
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      {partner.logo ? (
+                        <Image
+                          src={partner.logo}
+                          alt={partner.name}
+                          width={220}
+                          height={220}
+                          className="object-contain w-40 h-40 md:w-56 md:h-56"
+                        />
+                      ) : (
+                        <div className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                          <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
+                            {partner.name.slice(0, 2)}
+                          </span>
+                        </div>
+                      )}
+                      <span className="text-sm text-center text-[hsl(var(--muted-foreground))] max-w-xs leading-tight">
+                        {partner.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {regularPartners.length > 0 && (
+              <div className="mt-10 border-b border-[hsl(var(--border-light))]" />
+            )}
+          </div>
+        )}
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent mx-auto w-fit">
-            {sectionTitle}
-          </h2>
-        </div>
+        {regularPartners.length > 0 && (
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent mx-auto w-fit">
+              {sectionTitle}
+            </h2>
+          </div>
+        )}
 
         {/* Partners Grid */}
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-          {partners.map((partner) => (
+          {regularPartners.map((partner) => (
             <div key={partner.id}>
               {partner.websiteUrl ? (
                 <Link

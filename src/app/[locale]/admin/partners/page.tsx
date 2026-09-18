@@ -34,6 +34,7 @@ interface Partner {
   facebookUrl: string | null;
   sortOrder: number;
   isActive: boolean;
+  isGeneral: boolean;
 }
 
 const defaultFormData = {
@@ -44,6 +45,7 @@ const defaultFormData = {
   facebookUrl: "",
   sortOrder: 0,
   isActive: true,
+  isGeneral: false,
 };
 
 export default function AdminPartnersPage() {
@@ -90,6 +92,7 @@ export default function AdminPartnersPage() {
       facebookUrl: item.facebookUrl || "",
       sortOrder: item.sortOrder,
       isActive: item.isActive,
+      isGeneral: item.isGeneral,
     });
     setDialogOpen(true);
   }
@@ -195,7 +198,14 @@ export default function AdminPartnersPage() {
                       <img src={item.logo} alt={item.name} className="h-10 w-auto object-contain" />
                     )}
                   </TableCell>
-                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell className="font-medium">
+                    {item.name}
+                    {item.isGeneral && (
+                      <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
+                        ГЕНЕРАЛЬНЫЙ
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {item.websiteUrl && (
                       <a href={item.websiteUrl} target="_blank" className="text-primary hover:underline flex items-center gap-1">
@@ -270,6 +280,10 @@ export default function AdminPartnersPage() {
             <div className="flex items-center gap-2">
               <Checkbox id="isActive" checked={formData.isActive} onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked as boolean })} />
               <Label htmlFor="isActive">Активен</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="isGeneral" checked={formData.isGeneral} onCheckedChange={(checked) => setFormData({ ...formData, isGeneral: checked as boolean })} />
+              <Label htmlFor="isGeneral">Генеральный партнёр</Label>
             </div>
           </div>
 

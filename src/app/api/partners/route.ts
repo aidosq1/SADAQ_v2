@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const {
       name, logo, websiteUrl, instagramUrl, facebookUrl,
       description, descriptionKk, descriptionEn,
-      sortOrder, isActive
+      sortOrder, isActive, isGeneral
     } = body;
 
     if (!name) {
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         descriptionEn,
         sortOrder: sortOrder ?? 0,
         isActive: isActive ?? true,
+        isGeneral: isGeneral ?? false,
       },
     });
 
