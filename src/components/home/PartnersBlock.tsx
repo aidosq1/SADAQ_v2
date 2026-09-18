@@ -86,9 +86,9 @@ export function PartnersBlock() {
                         <Image
                           src={partner.logo}
                           alt={partner.name}
-                          width={320}
+                          width={560}
                           height={320}
-                          className="object-contain w-56 h-56 md:w-80 md:h-80"
+                          className="object-contain h-auto w-64 sm:w-80 md:w-[420px]"
                         />
                       ) : (
                         <div className="w-56 h-56 md:w-80 md:h-80 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
@@ -107,9 +107,9 @@ export function PartnersBlock() {
                         <Image
                           src={partner.logo}
                           alt={partner.name}
-                          width={320}
+                          width={560}
                           height={320}
-                          className="object-contain w-56 h-56 md:w-80 md:h-80"
+                          className="object-contain h-auto w-64 sm:w-80 md:w-[420px]"
                         />
                       ) : (
                         <div className="w-56 h-56 md:w-80 md:h-80 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
