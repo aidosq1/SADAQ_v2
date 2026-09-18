@@ -86,12 +86,12 @@ export function PartnersBlock() {
                         <Image
                           src={partner.logo}
                           alt={partner.name}
-                          width={220}
-                          height={220}
-                          className="object-contain w-40 h-40 md:w-56 md:h-56"
+                          width={320}
+                          height={320}
+                          className="object-contain w-56 h-56 md:w-80 md:h-80"
                         />
                       ) : (
-                        <div className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                        <div className="w-56 h-56 md:w-80 md:h-80 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
                           <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
                             {partner.name.slice(0, 2)}
                           </span>
@@ -107,12 +107,12 @@ export function PartnersBlock() {
                         <Image
                           src={partner.logo}
                           alt={partner.name}
-                          width={220}
-                          height={220}
-                          className="object-contain w-40 h-40 md:w-56 md:h-56"
+                          width={320}
+                          height={320}
+                          className="object-contain w-56 h-56 md:w-80 md:h-80"
                         />
                       ) : (
-                        <div className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
+                        <div className="w-56 h-56 md:w-80 md:h-80 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
                           <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
                             {partner.name.slice(0, 2)}
                           </span>
