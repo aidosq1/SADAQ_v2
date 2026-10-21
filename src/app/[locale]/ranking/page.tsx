@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, GENDERS, BOW_TYPES, DEFAULT_FILTERS, getLocalizedLabel } from "@/lib/constants";
 import { useTranslations, useLocale } from "next-intl";
+import { getRegionName } from "@/lib/localization";
 
 interface Athlete {
   id: number;
@@ -35,6 +37,7 @@ interface Athlete {
 interface RankingEntry {
   id: number;
   rank: number;
+  position: number;
   points: number;
   season: string;
   athlete: Athlete;
@@ -90,16 +93,12 @@ export default function RankingPage() {
     .filter((r) => {
       if (searchQuery && !r.athlete.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
-    })
-    .sort((a, b) => a.rank - b.rank);
+    });
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10 space-y-6 lg:space-y-8">
       <div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm lg:text-lg">
-          {t("subtitle")}
-        </p>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{t("title")}</h1>
       </div>
 
       {/* Filters */}
@@ -165,22 +164,22 @@ export default function RankingPage() {
         ) : filteredRankings.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">{t("no_data")}</p>
         ) : (
-          filteredRankings.map((ranking, index) => (
+          filteredRankings.map((ranking) => (
             <Link key={ranking.id} href={`/team/${ranking.athlete.slug}`}>
               <Card className="hover:bg-muted/50 transition-colors">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="font-bold text-primary">{index + 1}</span>
+                      <span className="font-bold text-primary">{ranking.position}</span>
                     </div>
                     <Avatar className="h-12 w-12 border">
                       <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
-                      <AvatarFallback>{ranking.athlete.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{getLocalizedName(ranking.athlete, locale)}</p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {(ranking.athlete as any).regionRef?.name || ranking.athlete.region || '—'}
+                        {getRegionName(ranking.athlete, locale)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -217,20 +216,20 @@ export default function RankingPage() {
                 <TableCell colSpan={5} className="h-24 text-center">{t("no_data")}</TableCell>
               </TableRow>
             ) : (
-              filteredRankings.map((ranking, index) => (
+              filteredRankings.map((ranking) => (
                 <TableRow
                   key={ranking.id}
                   className="group hover:bg-muted/50 cursor-pointer"
                   onClick={() => router.push(`/${locale}/team/${ranking.athlete.slug}`)}
                 >
                   <TableCell className="font-bold text-lg text-center">
-                    {index + 1}
+                    {ranking.position}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-4">
                       <Avatar className="h-10 w-10 border">
                         <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
-                        <AvatarFallback>{ranking.athlete.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
                         <span className="font-semibold group-hover:text-primary transition-colors">
@@ -239,7 +238,7 @@ export default function RankingPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{(ranking.athlete as any).regionRef?.name || ranking.athlete.region || '—'}</TableCell>
+                  <TableCell>{getRegionName(ranking.athlete, locale)}</TableCell>
                   <TableCell className="text-right font-mono font-bold text-lg text-primary">
                     {ranking.points}
                   </TableCell>

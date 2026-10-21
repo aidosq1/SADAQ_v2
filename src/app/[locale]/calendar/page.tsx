@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, MapPin, Loader2, ChevronRight, Download, Calendar } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { FileText, MapPin, Loader2, Download } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useTranslations, useFormatter, useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateRange } from "@/lib/date-format";
+import { splitByTime, groupByMonth } from "@/lib/calendar-groups";
 import { CATEGORIES, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 import {
     getTournamentStatus,
@@ -42,13 +41,14 @@ interface Tournament extends TournamentForStatus {
     categories: TournamentCategory[];
 }
 
+type CalendarTab = "upcoming" | "past";
+
 export default function CalendarPage() {
     const t = useTranslations("CalendarPage");
-    const format = useFormatter();
     const locale = useLocale();
-    const router = useRouter();
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedTab, setSelectedTab] = useState<CalendarTab | null>(null);
 
     useEffect(() => {
         async function fetchTournaments() {
@@ -79,17 +79,19 @@ export default function CalendarPage() {
         return tournament.location;
     };
 
+    const getRegulationUrl = (tournament: Tournament) =>
+        tournament.regulationUrl || tournament.categories?.find(c => c.regulationUrl)?.regulationUrl || null;
+
     const getCategoryBadges = (categories: TournamentCategory[]) => {
-        // Group categories by type
         const types = [...new Set(categories.map(c => c.type))];
         const ages = [...new Set(categories.map(c => c.category))];
 
         return (
-            <div className="flex flex-wrap gap-1">
+            <>
                 {types.map(type => {
                     const typeItem = BOW_TYPES.find(t => t.id === type);
                     return (
-                        <Badge key={type} variant="outline" className="text-xs">
+                        <Badge key={type} variant="outline" className="text-xs font-normal">
                             {typeItem ? getLocalizedLabel(typeItem, locale) : type}
                         </Badge>
                     );
@@ -97,200 +99,134 @@ export default function CalendarPage() {
                 {ages.slice(0, 2).map(age => {
                     const ageItem = CATEGORIES.find(c => c.id === age);
                     return (
-                        <Badge key={age} variant="secondary" className="text-xs">
+                        <Badge key={age} variant="secondary" className="text-xs font-normal">
                             {ageItem ? getLocalizedLabel(ageItem, locale) : age}
                         </Badge>
                     );
                 })}
                 {ages.length > 2 && (
-                    <Badge variant="secondary" className="text-xs">+{ages.length - 2}</Badge>
+                    <Badge variant="secondary" className="text-xs font-normal">+{ages.length - 2}</Badge>
                 )}
-            </div>
+            </>
         );
     };
 
     if (loading) {
         return (
-            <div className="container mx-auto py-8 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="container mx-auto px-4 py-6 lg:py-8">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">{t("title")}</h1>
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
             </div>
         );
     }
 
+    const { upcoming, past } = splitByTime(tournaments);
+    // Пока будущих турниров нет, сразу открываем прошедшие
+    const activeTab: CalendarTab = selectedTab ?? (upcoming.length > 0 || past.length === 0 ? "upcoming" : "past");
+    const visible = activeTab === "upcoming" ? upcoming : past;
+    const groups = groupByMonth(visible, locale);
+
+    const tabs: { id: CalendarTab; label: string; count: number }[] = [
+        { id: "upcoming", label: t("tab_upcoming"), count: upcoming.length },
+        { id: "past", label: t("tab_past"), count: past.length },
+    ];
+
+    const renderTournament = (tournament: Tournament) => {
+        const status = getTournamentStatus(tournament);
+        const regulationUrl = getRegulationUrl(tournament);
+        const canApply = isRegistrationAvailable(tournament);
+
+        return (
+            <li key={tournament.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-6">
+                <div className="text-sm font-semibold text-[hsl(var(--official-maroon))] sm:w-44 sm:shrink-0">
+                    {formatDateRange(tournament.startDate, tournament.endDate, locale)}
+                </div>
+                <div className="min-w-0 flex-1">
+                    <Link
+                        href={`/tournaments/${tournament.id}`}
+                        className="font-semibold leading-snug hover:text-primary hover:underline"
+                    >
+                        {getLocalizedTitle(tournament)}
+                    </Link>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4 shrink-0" />
+                            {getLocalizedLocation(tournament)}
+                        </span>
+                        {tournament.categories?.length > 0 && getCategoryBadges(tournament.categories)}
+                    </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
+                    {activeTab === "upcoming" && (
+                        <Badge className={`${getStatusClasses(status)} whitespace-nowrap border-0`}>
+                            {getStatusLabel(status, locale)}
+                        </Badge>
+                    )}
+                    {regulationUrl && (
+                        <Button variant="outline" size="sm" asChild>
+                            <a href={regulationUrl} target="_blank" rel="noopener noreferrer">
+                                <Download className="h-4 w-4 mr-1" />
+                                {t("btn_regulations")}
+                            </a>
+                        </Button>
+                    )}
+                    {canApply && (
+                        <Button size="sm" asChild>
+                            <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>{t("btn_apply")}</Link>
+                        </Button>
+                    )}
+                    {status === "COMPLETED" && (
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href={`/tournaments/${tournament.id}`}>
+                                <FileText className="h-4 w-4 mr-1" /> {t("btn_protocol")}
+                            </Link>
+                        </Button>
+                    )}
+                </div>
+            </li>
+        );
+    };
+
     return (
         <div className="container mx-auto px-4 py-6 lg:py-8">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">{t("title")}</h1>
 
-            {/* Mobile Card View */}
-            <div className="md:hidden space-y-4">
-                {tournaments.length === 0 ? (
-                    <p className="text-center py-8 text-muted-foreground">
-                        {t("no_tournaments") || "Турниры не найдены"}
-                    </p>
-                ) : (
-                    tournaments.map((tournament) => {
-                        const startDate = new Date(tournament.startDate);
-                        const endDate = new Date(tournament.endDate);
-                        const status = getTournamentStatus(tournament);
-
-                        return (
-                            <Card key={tournament.id}>
-                                <CardContent className="p-4">
-                                    <div className="flex justify-between items-start mb-3">
-                                        <Badge className={`${getStatusClasses(status)} border-0`}>
-                                            {getStatusLabel(status, locale)}
-                                        </Badge>
-                                        <span className="text-sm text-muted-foreground flex items-center gap-1">
-                                            <Calendar className="h-4 w-4" />
-                                            {format.dateTime(startDate, { month: 'short', day: 'numeric' })}
-                                            {startDate.getTime() !== endDate.getTime() &&
-                                                ` - ${format.dateTime(endDate, { month: 'short', day: 'numeric' })}`
-                                            }
-                                        </span>
-                                    </div>
-                                    <Link
-                                        href={`/tournaments/${tournament.id}`}
-                                        className="font-bold text-lg hover:text-primary transition-colors block mb-2"
-                                    >
-                                        {getLocalizedTitle(tournament)}
-                                    </Link>
-                                    <p className="text-sm text-muted-foreground flex items-center gap-1 mb-3">
-                                        <MapPin className="h-4 w-4" />
-                                        {getLocalizedLocation(tournament)}
-                                    </p>
-                                    {tournament.categories?.length > 0 && (
-                                        <div className="mb-3">
-                                            {getCategoryBadges(tournament.categories)}
-                                        </div>
-                                    )}
-                                    <div className="flex gap-2 flex-wrap">
-                                        {tournament.categories?.some(c => c.regulationUrl) && (
-                                            <Button variant="outline" size="sm" asChild>
-                                                <a
-                                                    href={tournament.categories.find(c => c.regulationUrl)?.regulationUrl || "#"}
-                                                    target="_blank"
-                                                >
-                                                    <Download className="h-4 w-4 mr-1" />
-                                                    {t("btn_regulations")}
-                                                </a>
-                                            </Button>
-                                        )}
-                                        {isRegistrationAvailable(tournament) && (
-                                            <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
-                                                <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>{t("btn_apply")}</Link>
-                                            </Button>
-                                        )}
-                                        {status === "COMPLETED" && (
-                                            <Button variant="outline" size="sm" asChild>
-                                                <Link href={`/tournaments/${tournament.id}`}>
-                                                    <FileText className="h-4 w-4 mr-1" /> {t("btn_protocol")}
-                                                </Link>
-                                            </Button>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })
-                )}
+            <div className="flex gap-1 mb-6" role="tablist">
+                {tabs.map(tab => (
+                    <Button
+                        key={tab.id}
+                        role="tab"
+                        aria-selected={activeTab === tab.id}
+                        variant={activeTab === tab.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedTab(tab.id)}
+                    >
+                        {tab.label}
+                        <span className="ml-1.5 opacity-70">{tab.count}</span>
+                    </Button>
+                ))}
             </div>
 
-            {/* Desktop Table View */}
-            <div className="hidden md:block rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">{t("th_status")}</TableHead>
-                            <TableHead>{t("th_date")}</TableHead>
-                            <TableHead>{t("th_title")}</TableHead>
-                            <TableHead>{t("th_city")}</TableHead>
-                            <TableHead>{locale === 'kk' ? 'Санаттар' : locale === 'en' ? 'Categories' : 'Категории'}</TableHead>
-                            <TableHead className="text-right">{t("btn_regulations")}</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {tournaments.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                                    {t("no_tournaments") || "Турниры не найдены"}
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            tournaments.map((tournament) => {
-                                const startDate = new Date(tournament.startDate);
-                                const endDate = new Date(tournament.endDate);
-                                const status = getTournamentStatus(tournament);
-
-                                return (
-                                    <TableRow
-                                        key={tournament.id}
-                                        className="group cursor-pointer hover:bg-muted/50"
-                                        onClick={() => router.push(`/tournaments/${tournament.id}`)}
-                                    >
-                                        <TableCell>
-                                            <Badge className={`${getStatusClasses(status)} whitespace-nowrap border-0`}>
-                                                {getStatusLabel(status, locale)}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="font-medium whitespace-nowrap">
-                                            {format.dateTime(startDate, { month: 'short', day: 'numeric' })}
-                                            {startDate.getTime() !== endDate.getTime() &&
-                                                ` - ${format.dateTime(endDate, { month: 'short', day: 'numeric', year: 'numeric' })}`
-                                            }
-                                        </TableCell>
-                                        <TableCell>
-                                            <Link
-                                                href={`/tournaments/${tournament.id}`}
-                                                className="font-bold hover:text-primary transition-colors flex items-center gap-1 group-hover:underline"
-                                            >
-                                                {getLocalizedTitle(tournament)}
-                                                <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className="flex items-center gap-1">
-                                                <MapPin className="h-4 w-4 text-muted-foreground" />
-                                                {getLocalizedLocation(tournament)}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>
-                                            {tournament.categories?.length > 0 ? (
-                                                getCategoryBadges(tournament.categories)
-                                            ) : (
-                                                <span className="text-muted-foreground">—</span>
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                                            {(tournament.regulationUrl || isRegistrationAvailable(tournament)) ? (
-                                                <div className="flex gap-2 justify-end">
-                                                    {tournament.regulationUrl && (
-                                                        <Button variant="ghost" size="sm" asChild>
-                                                            <a
-                                                                href={tournament.regulationUrl}
-                                                                target="_blank"
-                                                                title={t("btn_regulations")}
-                                                            >
-                                                                <Download className="h-4 w-4" />
-                                                            </a>
-                                                        </Button>
-                                                    )}
-                                                    {isRegistrationAvailable(tournament) && (
-                                                        <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
-                                                            <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>{t("btn_apply")}</Link>
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <span className="text-muted-foreground">—</span>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+            {groups.length === 0 ? (
+                <p className="py-12 text-center text-muted-foreground">
+                    {activeTab === "upcoming" ? t("no_upcoming") : t("no_tournaments")}
+                </p>
+            ) : (
+                <div className="space-y-6">
+                    {groups.map(group => (
+                        <section key={group.key} className="overflow-hidden rounded-lg border bg-card">
+                            <h2 className="border-b bg-muted/40 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                                {group.label}
+                            </h2>
+                            <ul className="divide-y">
+                                {group.items.map(renderTournament)}
+                            </ul>
+                        </section>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

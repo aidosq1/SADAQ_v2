@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import { Providers } from "@/components/providers";
@@ -17,14 +17,28 @@ const notoSans = Noto_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "SADAQ | Садақ ату федерациясы",
-  description: "Қазақстан Республикасының Садақ Ату Федерациясының ресми сайты",
-  icons: {
-    icon: "/logo_federation_circular.png",
-    apple: "/logo_federation_circular.png",
-  },
+const SITE_DESCRIPTIONS: Record<string, string> = {
+  kk: "Қазақстан Республикасының Ұлттық садақ ату федерациясының ресми сайты",
+  ru: "Официальный сайт Национальной федерации стрельбы из лука Республики Казахстан",
+  en: "Official website of the National Archery Federation of the Republic of Kazakhstan",
 };
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Hero" });
+
+  return {
+    title: {
+      default: t("title"),
+      template: "%s | SADAQ",
+    },
+    description: SITE_DESCRIPTIONS[locale] ?? SITE_DESCRIPTIONS.kk,
+    icons: {
+      icon: "/logo_federation_circular.png",
+      apple: "/logo_federation_circular.png",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

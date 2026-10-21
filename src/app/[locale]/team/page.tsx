@@ -1,10 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getLocale } from "next-intl/server";
 import { getLocalizedField } from "@/lib/localization";
 import TeamFilters from "./TeamFilters";
+import type { Metadata } from "next";
 
 interface Props {
   searchParams: Promise<{ category?: string; gender?: string; type?: string }>;
@@ -31,23 +33,12 @@ async function getAthletes(category: string, gender: string, type: string) {
   }
 }
 
-function getLocalizedType(type: string, locale: string): string {
-  const typeMap: Record<string, Record<string, string>> = {
-    Recurve: { ru: 'Классический лук', kk: 'Классикалық садақ', en: 'Recurve' },
-    Compound: { ru: 'Блочный лук', kk: 'Блоктық садақ', en: 'Compound' },
-  };
-  return typeMap[type]?.[locale] || type;
+function getPageTitle(locale: string): string {
+  return locale === 'kk' ? 'Ұлттық құрама' : locale === 'en' ? 'National Team' : 'Сборная команда';
 }
 
-function getLocalizedCategory(category: string, locale: string): string {
-  const categoryMap: Record<string, Record<string, string>> = {
-    Adults: { ru: 'Взрослые', kk: 'Ересектер', en: 'Adults' },
-    Youth: { ru: 'Молодёжь', kk: 'Жастар', en: 'Youth' },
-    Juniors: { ru: 'Юниоры', kk: 'Юниорлар', en: 'Juniors' },
-    Cadets: { ru: 'Кадеты', kk: 'Кадеттер', en: 'Cadets' },
-    Cubs: { ru: 'Юноши', kk: 'Жасөспірімдер', en: 'Cubs' },
-  };
-  return categoryMap[category]?.[locale] || category;
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: getPageTitle(await getLocale()) };
 }
 
 export default async function TeamPage({ searchParams }: Props) {
@@ -59,16 +50,11 @@ export default async function TeamPage({ searchParams }: Props) {
   const athletes = await getAthletes(category, gender, type);
   const locale = await getLocale();
 
-  const pageTitle = locale === 'kk' ? 'Ұлттық құрама' : locale === 'en' ? 'National Team' : 'Сборная Команда';
-  const genderLabel = gender === 'M'
-    ? (locale === 'kk' ? 'Ерлер' : locale === 'en' ? 'Men' : 'Мужчины')
-    : (locale === 'kk' ? 'Әйелдер' : locale === 'en' ? 'Women' : 'Женщины');
-  const subTitle = `${getLocalizedCategory(category, locale)} • ${genderLabel} • ${getLocalizedType(type, locale)}`;
+  const pageTitle = getPageTitle(locale);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{pageTitle}</h1>
-      <p className="text-sm sm:text-base text-muted-foreground mb-4 lg:mb-6">{subTitle}</p>
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 lg:mb-6">{pageTitle}</h1>
 
       <TeamFilters
         currentCategory={category}
@@ -89,10 +75,9 @@ export default async function TeamPage({ searchParams }: Props) {
                 <CardContent className="pt-4 sm:pt-6 flex flex-col items-center">
                   <Avatar className="h-20 w-20 sm:h-28 sm:w-28 md:h-32 md:w-32 mb-3 sm:mb-4">
                     <AvatarImage src={athlete.image || undefined} alt={getLocalizedField(athlete, 'name', locale)} />
-                    <AvatarFallback>{athlete.name[0]}</AvatarFallback>
+                    <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                   </Avatar>
                   <h3 className="font-bold text-sm sm:text-base md:text-lg text-center line-clamp-2">{getLocalizedField(athlete, 'name', locale)}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{getLocalizedType(athlete.type, locale)}</p>
                 </CardContent>
               </Card>
             </Link>

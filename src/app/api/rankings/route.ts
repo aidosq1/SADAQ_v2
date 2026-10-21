@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuth, parseQueryParams } from '@/lib/api-utils';
+import { withPositions } from '@/lib/ranking-position';
 
 // GET /api/rankings - Public
 export async function GET(request: NextRequest) {
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
       prisma.rankingEntry.count({ where }),
     ]);
 
-    return successResponse(rankings, { total, page, limit, category, gender, type });
+    return successResponse(withPositions(rankings, skip), { total, page, limit, category, gender, type });
   } catch (error) {
     console.error('Rankings API error:', error);
     return errorResponse('Failed to fetch rankings', 500);

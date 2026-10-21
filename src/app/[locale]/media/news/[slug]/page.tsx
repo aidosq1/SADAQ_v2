@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
 import DOMPurify from "isomorphic-dompurify";
+import { formatDate } from "@/lib/date-format";
 import { toNewsHtml } from "@/lib/news-content";
 
 interface NewsArticle {
@@ -97,14 +98,7 @@ export default async function NewsArticlePage({ params }: Props) {
   const title = getLocalizedTitle(news, locale);
   const content = getLocalizedContent(news, locale);
 
-  const formattedDate = news.publishedAt.toLocaleDateString(
-    locale === "kk" ? "kk-KZ" : locale === "en" ? "en-US" : "ru-RU",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-  );
+  const formattedDate = formatDate(news.publishedAt, locale);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">

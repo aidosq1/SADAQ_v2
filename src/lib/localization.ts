@@ -37,3 +37,22 @@ export async function getLocaleFromCookies(): Promise<string> {
   const { cookies } = await import('next/headers');
   return (await cookies()).get('NEXT_LOCALE')?.value || 'ru';
 }
+
+interface LocalizedRegion {
+  name: string;
+  nameKk?: string | null;
+  nameEn?: string | null;
+}
+
+interface WithRegion {
+  region?: string | null;
+  regionRef?: LocalizedRegion | null;
+}
+
+// Region of an athlete: localized region record first, then the legacy free-text field
+export function getRegionName(item: WithRegion, locale: string): string {
+  if (item.regionRef) {
+    return getLocalizedField(item.regionRef as unknown as Record<string, unknown>, 'name', locale);
+  }
+  return item.region || '—';
+}

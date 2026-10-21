@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Loader2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
@@ -76,8 +77,11 @@ export default function LeadershipPage() {
 
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-16 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="max-w-7xl mx-auto px-4 py-16">
+                <h1 className="text-4xl font-bold mb-8">{t("title")}</h1>
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
             </div>
         );
     }
@@ -172,7 +176,7 @@ export default function LeadershipPage() {
                                     <div className="flex items-center gap-4">
                                         <Avatar className="h-14 w-14">
                                             {coach.image && <AvatarImage src={coach.image} alt="" />}
-                                            <AvatarFallback className="text-lg">{getLocalizedName(coach).charAt(0)}</AvatarFallback>
+                                            <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
                                             <div className="font-bold truncate">{getLocalizedName(coach)}</div>

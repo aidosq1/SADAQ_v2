@@ -32,7 +32,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateRange } from "@/lib/date-format";
 import { toast } from "sonner";
 import { CATEGORIES, BOW_TYPES, GENDERS, getLocalizedLabel } from "@/lib/constants";
 
@@ -109,7 +110,6 @@ export default function TournamentApplyPage() {
     const { data: session, status: sessionStatus } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const format = useFormatter();
     const locale = useLocale();
     const t = useTranslations("Common");
 
@@ -624,10 +624,7 @@ export default function TournamentApplyPage() {
                                                 <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                                                     <span className="flex items-center gap-1">
                                                         <Calendar className="h-4 w-4" />
-                                                        {format.dateTime(startDate, { day: 'numeric', month: 'short' })}
-                                                        {startDate.getTime() !== endDate.getTime() &&
-                                                            ` — ${format.dateTime(endDate, { day: 'numeric', month: 'short' })}`
-                                                        }
+                                                        {formatDateRange(startDate, endDate, locale)}
                                                     </span>
                                                     <span className="flex items-center gap-1">
                                                         <MapPin className="h-4 w-4" />

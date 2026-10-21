@@ -8,8 +8,9 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Loader2 } from "lucide-react";
-import { useTranslations, useLocale, useFormatter } from "next-intl";
+import { FileText, Loader2 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDate } from "@/lib/date-format";
 
 interface Protocol {
     id: number;
@@ -32,7 +33,6 @@ interface GroupedProtocols {
 export default function ResultsPage() {
     const t = useTranslations("ResultsPage");
     const locale = useLocale();
-    const format = useFormatter();
     const [groupedProtocols, setGroupedProtocols] = useState<GroupedProtocols>({});
     const [loading, setLoading] = useState(true);
 
@@ -119,18 +119,18 @@ export default function ResultsPage() {
         return protocol.location;
     };
 
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return format.dateTime(date, { day: 'numeric', month: 'long' });
-    };
+    const formatEventDate = (dateStr: string) => formatDate(dateStr, locale, { withYear: false });
 
     // Get sorted years (descending)
     const years = Object.keys(groupedProtocols).sort((a, b) => parseInt(b) - parseInt(a));
 
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-10 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
             </div>
         );
     }
@@ -154,29 +154,17 @@ export default function ResultsPage() {
                                                 <h3 className="font-bold text-lg">{getLocalizedTitle(protocol)}</h3>
                                                 {protocol.eventDate && protocol.location && (
                                                     <p className="text-sm text-muted-foreground">
-                                                        {formatDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
-                                                    </p>
-                                                )}
-                                                {protocol.source === 'document' && (
-                                                    <p className="text-xs text-muted-foreground italic">
-                                                        {locale === 'kk' ? 'Құжат' : locale === 'en' ? 'Document' : 'Документ'}
+                                                        {formatEventDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
                                                     </p>
                                                 )}
                                             </div>
                                             <div className="flex gap-2">
                                                 {protocol.fileUrl ? (
-                                                    <>
-                                                        <Button size="sm" variant="outline" asChild>
-                                                            <a href={protocol.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                                <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
-                                                            </a>
-                                                        </Button>
-                                                        <Button size="sm" variant="ghost" asChild>
-                                                            <a href={protocol.fileUrl} download>
-                                                                <Download className="h-4 w-4" />
-                                                            </a>
-                                                        </Button>
-                                                    </>
+                                                    <Button size="sm" variant="outline" asChild>
+                                                        <a href={protocol.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                            <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
+                                                        </a>
+                                                    </Button>
                                                 ) : (
                                                     <Button size="sm" variant="outline" disabled>
                                                         <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}

@@ -41,6 +41,20 @@ export const BOW_TYPES = [
 ] as const;
 
 // Helper function to get localized label
+// News categories are stored by their Russian name (see admin/news)
+export const NEWS_CATEGORIES = [
+    { id: "Сборная", ru: "Сборная", kk: "Құрама", en: "National team" },
+    { id: "Регионы", ru: "Регионы", kk: "Өңірлер", en: "Regions" },
+    { id: "World Archery", ru: "World Archery", kk: "World Archery", en: "World Archery" },
+    { id: "Праздники", ru: "Праздники", kk: "Мерекелер", en: "Holidays" },
+    { id: "Другое", ru: "Другое", kk: "Басқа", en: "Other" },
+] as const;
+
+export function getNewsCategoryLabel(category: string, locale: string): string {
+    const item = NEWS_CATEGORIES.find((c) => c.id === category);
+    return item ? getLocalizedLabel(item, locale) : category;
+}
+
 export function getLocalizedLabel(
     item: { ru: string; kk: string; en: string },
     locale: string

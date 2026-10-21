@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarDays, Loader2, ArrowRight, MapPin, ChevronRight } from "lucide-react";
-import { useTranslations, useLocale, useFormatter } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateRange } from "@/lib/date-format";
 import { Badge } from "@/components/ui/badge";
 import { BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 import { getTournamentStatus, TournamentStatus, getStatusLabel as getUtilStatusLabel, getStatusClasses } from "@/lib/tournament-utils";
@@ -33,7 +34,6 @@ interface Tournament {
 export function CalendarWidget() {
     const t = useTranslations("CalendarWidget");
     const locale = useLocale();
-    const format = useFormatter();
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -66,12 +66,6 @@ export function CalendarWidget() {
         if (locale === 'kk' && tournament.locationKk) return tournament.locationKk;
         if (locale === 'en' && tournament.locationEn) return tournament.locationEn;
         return tournament.location;
-    };
-
-    const formatDateRange = (start: Date, end: Date) => {
-        const startStr = format.dateTime(start, { day: 'numeric', month: 'short' });
-        const endStr = format.dateTime(end, { day: 'numeric', month: 'short' });
-        return `${startStr} - ${endStr}`;
     };
 
     const getDisplayStatus = (status: TournamentStatus) => {
@@ -178,7 +172,7 @@ export function CalendarWidget() {
                         <div className="flex flex-wrap gap-3 text-xs opacity-70">
                             <span className="flex items-center gap-1">
                                 <CalendarDays className="w-3 h-3" />
-                                {formatDateRange(new Date(tournament.startDate), new Date(tournament.endDate))}
+                                {formatDateRange(tournament.startDate, tournament.endDate, locale)}
                             </span>
                             <span className="flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
