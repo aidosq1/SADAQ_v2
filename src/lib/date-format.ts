@@ -119,3 +119,18 @@ export function formatMonthYear(date: DateInput, locale: string): string {
     : new Intl.DateTimeFormat(INTL_LOCALES[loc], { timeZone: KZ_TIMEZONE, month: 'long' }).format(new Date(date));
   return `${capitalize(monthName)} ${year}`;
 }
+
+const SHORT_MONTH_LOCALES: Record<Exclude<DateLocale, 'kk'>, string> = {
+  ru: 'ru-RU',
+  en: 'en-GB',
+};
+
+// Плитка даты: число и короткий месяц по времени Казахстана — одинаково на сервере и в браузере
+export function formatDayAndShortMonth(date: DateInput, locale: string): { day: number; month: string } {
+  const loc = toLocale(locale);
+  const { month, day } = getParts(date);
+  const monthName = loc === 'kk'
+    ? KK_MONTHS[month].slice(0, 3)
+    : new Intl.DateTimeFormat(SHORT_MONTH_LOCALES[loc], { timeZone: KZ_TIMEZONE, month: 'short' }).format(new Date(date));
+  return { day, month: monthName.replace('.', '') };
+}

@@ -75,3 +75,7 @@ export const DEFAULT_FILTERS = {
     gender: "M" as GenderId,
     type: "Recurve" as BowTypeId,
 } as const;
+
+// Размер страницы публичных списков: сервер и клиент запрашивают одинаково
+export const NEWS_PAGE_SIZE = 9;
+export const GALLERY_PAGE_SIZE = 12;

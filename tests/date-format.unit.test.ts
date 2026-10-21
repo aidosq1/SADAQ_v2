@@ -4,7 +4,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { formatDate, formatDateRange } from '../src/lib/date-format';
+import { formatDate, formatDateRange, formatDayAndShortMonth } from '../src/lib/date-format';
 
 // 12:00 по Алматы, чтобы граница суток не влияла на результат
 const d = (iso: string) => new Date(`${iso}T12:00:00+05:00`);
@@ -56,4 +56,14 @@ test('ru: диапазон в одном месяце', () => {
 
 test('неизвестная локаль падает в ru', () => {
   assert.equal(formatDate(d('2026-10-21'), 'de'), '21 октября 2026 г.');
+});
+
+test('плитка даты: число и короткий месяц по времени Казахстана', () => {
+  assert.deepEqual(formatDayAndShortMonth(d('2026-07-27'), 'kk'), { day: 27, month: 'шіл' });
+  assert.deepEqual(formatDayAndShortMonth(d('2026-07-27'), 'ru'), { day: 27, month: 'июль' });
+  assert.deepEqual(formatDayAndShortMonth(d('2026-07-27'), 'en'), { day: 27, month: 'Jul' });
+});
+
+test('плитка даты: 00:30 по Алматы — уже новый день, хотя в UTC ещё вчера', () => {
+  assert.deepEqual(formatDayAndShortMonth('2026-08-01T00:30:00+05:00', 'ru'), { day: 1, month: 'авг' });
 });
