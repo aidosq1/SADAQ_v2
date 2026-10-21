@@ -34,11 +34,15 @@ function EmptyState({ title, icon: Icon, action, className }: EmptyStateProps) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed px-6 py-12 text-center",
+        "flex flex-col items-center justify-center gap-4 rounded-lg bg-secondary px-6 py-14 text-center",
         className
       )}
     >
-      {Icon && <Icon className="size-10 text-muted-foreground/60" aria-hidden="true" />}
+      {Icon && (
+        <span className="flex size-12 items-center justify-center rounded-full bg-background text-muted-foreground shadow-card">
+          <Icon className="size-5" aria-hidden="true" />
+        </span>
+      )}
       <p className="type-small text-muted-foreground">{title}</p>
       {action}
     </div>

@@ -7,7 +7,7 @@ const twMerge = extendTailwindMerge<"typography">({
   extend: {
     classGroups: {
       typography: [
-        { type: ["display", "h1", "h2", "h3", "h4", "body", "small", "caption", "eyebrow", "number"] },
+        { type: ["display", "h1", "h2", "h3", "h4", "lead", "body", "small", "caption", "eyebrow", "number"] },
       ],
     },
     conflictingClassGroups: {

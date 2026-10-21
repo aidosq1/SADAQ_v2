@@ -3,9 +3,9 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 // Классы карточки для элементов, которые не могут быть <Card> (например, <Link>)
-const cardSurface = "bg-card text-card-foreground rounded-lg border"
+const cardSurface = "bg-card text-card-foreground rounded-lg border shadow-card"
 const cardInteractive =
-  "transition-[border-color,box-shadow] duration-200 hover:border-primary/30 hover:shadow-md"
+  "transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-raised motion-reduce:hover:translate-y-0"
 
 interface CardProps extends React.ComponentProps<"div"> {
   interactive?: boolean

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { cardSurface } from "@/components/ui/card"
 
 const tones = {
-  default: { value: "text-foreground", icon: "bg-secondary text-primary" },
+  default: { value: "text-foreground", icon: "bg-primary-soft text-primary" },
   warning: { value: "text-warning", icon: "bg-warning-soft text-warning" },
   success: { value: "text-success", icon: "bg-success-soft text-success" },
   destructive: { value: "text-destructive", icon: "bg-destructive/10 text-destructive" },
@@ -23,7 +23,7 @@ function MetricCard({ label, value, icon: Icon, tone = "default", className }: M
   const toneClasses = tones[tone]
 
   return (
-    <div className={cn(cardSurface, "flex items-center gap-4 p-4", className)}>
+    <div className={cn(cardSurface, "flex items-center gap-4 p-5", className)}>
       <span className={cn("flex size-11 shrink-0 items-center justify-center rounded-lg", toneClasses.icon)}>
         <Icon className="size-5" aria-hidden="true" />
       </span>

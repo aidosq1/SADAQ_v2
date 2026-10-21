@@ -14,7 +14,7 @@ function PersonAvatar({ src, alt, shape = "circle", className }: PersonAvatarPro
   const portrait = shape === "portrait"
 
   return (
-    <Avatar className={cn("border bg-secondary", portrait && "rounded-lg", className)}>
+    <Avatar className={cn("bg-secondary ring-1 ring-border", portrait && "rounded-lg", className)}>
       {src && <AvatarImage src={src} alt={alt} className="object-cover" />}
       <AvatarFallback className={cn("bg-secondary", portrait && "rounded-none")}>
         <PersonPlaceholder />

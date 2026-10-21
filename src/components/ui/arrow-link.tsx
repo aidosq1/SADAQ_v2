@@ -15,7 +15,7 @@ function ArrowLink({ className, children, tone = "default", ...props }: ArrowLin
     <Link
       className={cn(
         "group inline-flex items-center gap-1.5 text-sm font-semibold transition-colors",
-        tone === "default" ? "text-primary hover:text-primary-hover" : "text-gold hover:text-white",
+        tone === "default" ? "text-primary hover:text-primary-hover" : "text-white hover:text-gold",
         className
       )}
       {...props}

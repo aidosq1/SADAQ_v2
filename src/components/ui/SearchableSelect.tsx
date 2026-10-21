@@ -91,7 +91,7 @@ export function SearchableSelect({
     const dropdownContent = isOpen && (
         <div
             ref={dropdownRef}
-            className="absolute top-full left-0 right-0 z-50 mt-1 min-w-[200px] overflow-hidden rounded-md border bg-popover shadow-md animate-in fade-in zoom-in-95 duration-100"
+            className="absolute top-full left-0 right-0 z-50 mt-1 min-w-[200px] overflow-hidden rounded-md border bg-popover shadow-raised animate-in fade-in zoom-in-95 duration-100"
         >
             {/* Search Input */}
             <div className="p-2 border-b">
