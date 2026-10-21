@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, GENDERS, BOW_TYPES, DEFAULT_FILTERS, getLocalizedLabel } from "@/lib/constants";
 import { useTranslations, useLocale } from "next-intl";
+import { getRegionName } from "@/lib/localization";
 
 interface Athlete {
   id: number;
@@ -180,7 +181,7 @@ export default function RankingPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{getLocalizedName(ranking.athlete, locale)}</p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {(ranking.athlete as any).regionRef?.name || ranking.athlete.region || '—'}
+                        {getRegionName(ranking.athlete, locale)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -239,7 +240,7 @@ export default function RankingPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{(ranking.athlete as any).regionRef?.name || ranking.athlete.region || '—'}</TableCell>
+                  <TableCell>{getRegionName(ranking.athlete, locale)}</TableCell>
                   <TableCell className="text-right font-mono font-bold text-lg text-primary">
                     {ranking.points}
                   </TableCell>

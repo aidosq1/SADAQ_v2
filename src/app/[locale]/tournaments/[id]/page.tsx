@@ -10,6 +10,7 @@ import { Calendar, MapPin, Download, Users, Trophy, ArrowLeft, Loader2, Building
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDateRange } from "@/lib/date-format";
+import { getRegionName } from "@/lib/localization";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 
 interface TournamentResult {
@@ -381,7 +382,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                                                                 </Link>
                                                             </TableCell>
                                                             <TableCell className="text-muted-foreground">
-                                                                {(result.athlete as any).regionRef?.name || result.athlete.region || '—'}
+                                                                {getRegionName(result.athlete, locale)}
                                                             </TableCell>
                                                             <TableCell className="text-right font-bold">
                                                                 {result.points}
