@@ -145,7 +145,7 @@ export default function ResultsPage() {
                 <Accordion type="single" collapsible className="w-full" defaultValue={years[0]}>
                     {years.map((year) => (
                         <AccordionItem key={year} value={year}>
-                            <AccordionTrigger className="type-h3 text-primary hover:no-underline">
+                            <AccordionTrigger className="type-h3 text-foreground hover:no-underline">
                                 {year}
                             </AccordionTrigger>
                             <AccordionContent>

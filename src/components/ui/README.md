@@ -21,11 +21,13 @@
 
 | Токен | Назначение |
 |---|---|
-| `primary` / `primary-hover` / `primary-deep` | бордовый бренда: кнопки, ссылки, заголовки; наведение; тёмный конец градиента |
-| `gold` | декор: черта под заголовком, точки слайдера, текст на бордовом фоне |
-| `gold-strong` | золотой текст на светлом фоне (eyebrow, год в истории) |
-| `secondary` / `muted` / `accent` | кремовый: фон секций, шапка таблиц, наведение в меню |
-| `foreground` / `muted-foreground` | основной и второстепенный текст (оба проходят WCAG AA на белом и кремовом) |
+| `primary` / `primary-hover` | бордовый бренда: кнопки, ссылки, активные состояния. Не для заголовков и цифр |
+| `primary-deep` | тёмная поверхность бренда: hero, футер, тёмные карточки (`surface-inverse`) |
+| `primary-soft` | мягкая бордовая подложка: иконки, плитка даты, выбранный пункт меню |
+| `gold` | декор: черта надзаголовка, прогресс слайдера, текст и цифры на тёмном |
+| `gold-strong` | золотой текст на светлом фоне (надзаголовок, год в истории) |
+| `secondary` / `muted` / `accent` | тёплый светлый: фон секций, шапка таблиц, наведение |
+| `foreground` / `muted-foreground` | тёплый почти чёрный — текст **и заголовки**; второстепенный текст (оба AA) |
 | `border` / `input` | рамки карточек и полей |
 | `success` `warning` `info` `destructive` (+ `-soft`) | статусы |
 | `medal-gold` `medal-silver` `medal-bronze` | места 1–3 |
@@ -34,11 +36,12 @@
 
 | Класс | Размер | Где |
 |---|---|---|
-| `type-display` | 36 → 48 → 60 | только hero «О федерации» |
-| `type-h1` | 28 → 36 | заголовок страницы (через `PageHeader`) |
-| `type-h2` | 24 → 30 | заголовок секции (через `SectionHeader`) |
+| `type-display` | 40 → 56 → 68 | hero «О федерации», 404 |
+| `type-h1` | 32 → 44 | заголовок страницы (через `PageHeader`), заголовок слайда |
+| `type-h2` | 26 → 36 | заголовок секции (через `SectionHeader`) |
 | `type-h3` | 20 | подзаголовок внутри страницы, заголовок большой карточки |
 | `type-h4` | 16 | заголовок карточки, название турнира в списке |
+| `type-lead` | 17 → 19 | вводный абзац: hero, миссия, описание |
 | `type-body` | 16 | абзацы |
 | `type-small` | 14 | вторичный текст, мета-строки |
 | `type-caption` | 12, muted | подписи, даты, размер файла |
@@ -51,9 +54,9 @@
 
 - Ширина контента — `Container` (`max-w-7xl`, поля 16/24/32px). Узкие страницы (статья, история, форма заявки) — `size="narrow"` (`max-w-4xl`).
 - Страница — `PageContainer`: `py-8 md:py-12`.
-- Блок главной — `Section`: `py-12 md:py-16`, `tone="muted"` для кремового фона. Кремовый и белый чередуются.
-- Радиусы: поля и кнопки `rounded-md` (6px), карточки `rounded-lg` (8px), чипы/бейджи/аватары `rounded-full`.
-- Тени: карточки плоские (только рамка). Тень — на наведении (`Card interactive`) и у всплывающих слоёв.
+- Блок главной — `Section`: `py-14 md:py-20`; `tone="muted"` — тёплый фон, `tone="inverse"` — тёмный бренд.
+- Радиусы: поля и кнопки `rounded-md` (10px), карточки `rounded-lg` (12px), фото и тёмные карточки `rounded-xl`/`rounded-2xl`, чипы/бейджи/аватары `rounded-full`.
+- Тени: `shadow-card` — карточки в покое, `shadow-raised` — наведение (`Card interactive` ещё и приподнимается на 2px), всплывающие слои, плашки поверх hero.
 
 ## Компоненты
 
@@ -61,16 +64,19 @@
 |---|---|---|
 | `Container`, `PageContainer` | `container.tsx` | обёртка любой страницы |
 | `PageHeader`, `BackLink` | `page-header.tsx` | h1 страницы + действия справа; ссылка «назад» |
-| `Section`, `SectionHeader` | `section.tsx` | блоки главной, заголовок секции с золотой чертой и ссылкой «Все …» |
+| `Section`, `SectionHeader` | `section.tsx` | блоки главной (`tone`: default / muted / inverse), заголовок секции с надзаголовком и ссылкой «Все …» |
+| `Eyebrow` | `eyebrow.tsx` | надзаголовок с золотой чертой над h1/h2, роль человека, «Ближайший старт» |
 | `ArrowLink` | `arrow-link.tsx` | «Все новости →», «Подробнее →» |
-| `Button` | `button.tsx` | `default`, `secondary`, `outline`, `ghost`, `link`, `success`, `destructive`; размеры `sm` 36, `default` 40, `lg` 44 |
-| `Badge` | `badge.tsx` | `brand` — плашка на фото; `success/warning/info/neutral/destructive` — статусы |
-| `Chip`, `ChipGroup` | `chip.tsx` | фильтры и переключатели (рейтинг, сборная, календарь, галерея, категории турнира) |
+| `Button` | `button.tsx` | `default`, `secondary`, `outline`, `ghost`, `link`, `success`, `destructive`; на тёмном — `inverse`, `inverse-outline`; размеры `sm` 36, `default` 40, `lg` 48 |
+| `Badge` | `badge.tsx` | `brand` — плашка на фото; `inverse` — на тёмном; `success/warning/info/neutral/destructive` — статусы |
+| `Chip`, `ChipGroup` | `chip.tsx` | фильтр с многими вариантами: возраст, категории турнира, альбомы |
+| `Segmented` | `segmented.tsx` | 2–4 взаимоисключающих варианта: пол, тип лука, предстоящие/прошедшие |
+| `DateTile` | `date-tile.tsx` | дата старта плиткой: календарь, ближайший турнир |
 | `Card` (`interactive`), `cardSurface` | `card.tsx` | карточки; `cardSurface` + `cardInteractive` — для `<Link>` |
-| `MediaCard` | `media-card.tsx` | новость, альбом: фото 16:10, бейдж, дата, заголовок |
+| `MediaCard` | `media-card.tsx` | `stacked` — карточка новости; `overlay` — текст на фото (главная новость, альбомы, `size="sm"` для мелких плиток); `row` — миниатюра + заголовок в списке |
 | `PersonAvatar` | `person-avatar.tsx` | фото человека с единой заглушкой; `shape="portrait"` для президента |
-| `RankBadge` | `rank-badge.tsx` | место в рейтинге и результатах |
-| `Stat`, `IconTile` | `stat.tsx`, `icon-tile.tsx` | цифры федерации, иконка в кремовом круге |
+| `RankBadge` | `rank-badge.tsx` | место: 1–3 медальный круг, дальше просто число |
+| `Stat`, `IconTile` | `stat.tsx`, `icon-tile.tsx` | цифры федерации (`tone="inverse"` на тёмном); иконка на мягкой подложке |
 | `MetricCard` | `metric-card.tsx` | счётчики в админке |
 | `LoadingState`, `EmptyState` | `states.tsx` | загрузка и «нет данных» вместо текста «Loading…» |
 | `AthleteFilters` | `../filters/AthleteFilters.tsx` | фильтры возраст/пол/лук для рейтинга и сборной |
@@ -81,3 +87,9 @@
 
 Только заголовок, сами данные и кнопка действия. Без подзаголовков-пояснений под h1
 и без второстепенных подписей под строкой.
+
+## Цвет и иерархия
+
+- Заголовки, имена, очки и цифры — `foreground`. Бордовый — только то, на что можно нажать, и активное состояние.
+- Акцентная страница или блок — тёмная поверхность `surface-inverse`: hero главной и «О федерации», цифры федерации, президент, профиль спортсмена, шапка турнира, футер, 404.
+- Поверх фото текст кладём на затемнение (`scrim-bottom` или градиент из `primary-deep`).

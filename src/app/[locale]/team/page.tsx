@@ -1,7 +1,8 @@
 import { Users } from "lucide-react";
 import { Link } from "@/navigation";
 import { cardInteractive, cardSurface } from "@/components/ui/card";
-import { PersonAvatar } from "@/components/ui/person-avatar";
+import Image from "next/image";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { PageContainer } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/states";
@@ -74,19 +75,29 @@ export default async function TeamPage({ searchParams }: Props) {
           title={locale === 'kk' ? 'Спортшылар табылмады' : locale === 'en' ? 'No athletes found' : 'Спортсмены не найдены'}
         />
       ) : (
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
           {athletes.map((athlete) => (
             <Link
               key={athlete.id}
               href={`/team/${athlete.slug}`}
-              className={cn(cardSurface, cardInteractive, "group flex h-full flex-col items-center gap-3 p-4 text-center sm:gap-4 sm:p-6")}
+              className={cn(cardSurface, cardInteractive, "group flex h-full flex-col overflow-hidden")}
             >
-              <PersonAvatar
-                src={athlete.image}
-                alt={getLocalizedField(athlete, 'name', locale)}
-                className="size-20 sm:size-28 md:size-32"
-              />
-              <h2 className="type-h4 line-clamp-2 text-foreground transition-colors group-hover:text-primary">
+              <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
+                {athlete.image ? (
+                  <Image
+                    src={athlete.image}
+                    alt={getLocalizedField(athlete, 'name', locale)}
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 20vw"
+                    className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:group-hover:scale-100"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <PersonPlaceholder className="size-1/3" />
+                  </div>
+                )}
+              </div>
+              <h2 className="type-h4 line-clamp-2 p-4 text-foreground transition-colors group-hover:text-primary sm:p-5">
                 {getLocalizedField(athlete, 'name', locale)}
               </h2>
             </Link>

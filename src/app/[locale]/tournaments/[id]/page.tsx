@@ -225,56 +225,55 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
 
     return (
         <PageContainer className="space-y-8 md:space-y-10">
-            {/* Header */}
-            <div className="space-y-4">
+            {/* Header: тёмная карточка с названием, датами и действиями */}
+            <div className="space-y-5">
                 <BackLink href="/calendar" label={t("back_to_calendar")} />
 
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1 space-y-3">
-                        <Badge variant={statusConfig[status].variant}>
-                            {statusConfig[status].label}
-                        </Badge>
-                        <h1 className="type-h1 text-primary">{getLocalizedTitle(tournament)}</h1>
+                <section className="surface-inverse space-y-6 rounded-2xl p-6 md:p-10">
+                    <div className="space-y-4">
+                        <Badge variant="inverse">{statusConfig[status].label}</Badge>
+                        <h1 className="type-h1 max-w-4xl text-white">{getLocalizedTitle(tournament)}</h1>
                     </div>
 
-                    {(status === "planned" || status === "ongoing") && tournament.isActive && (
-                        <Button size="lg" asChild>
-                            <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>
-                                {t("registration")}
-                            </Link>
-                        </Button>
+                    <div className="type-small flex flex-wrap gap-x-6 gap-y-2 text-white/75">
+                        <span className="flex items-center gap-2">
+                            <Calendar className="size-4 text-gold" />
+                            {formatDateRange(startDate, endDate, locale)}
+                        </span>
+                        <span className="flex items-center gap-2">
+                            <MapPin className="size-4 text-gold" />
+                            {getLocalizedLocation()}
+                        </span>
+                        <span className="flex items-center gap-2">
+                            <Users className="size-4 text-gold" />
+                            {tournament.categories?.length || 0} {t("categories_count")}
+                        </span>
+                    </div>
+
+                    {getLocalizedDescription() && (
+                        <p className="type-body max-w-3xl text-white/70">{getLocalizedDescription()}</p>
                     )}
-                </div>
 
-                <div className="type-small flex flex-wrap gap-x-5 gap-y-2 text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                        <Calendar className="size-4" />
-                        {formatDateRange(startDate, endDate, locale)}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                        <MapPin className="size-4" />
-                        {getLocalizedLocation()}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                        <Users className="size-4" />
-                        {tournament.categories?.length || 0} {t("categories_count")}
-                    </span>
-                </div>
-
-                {getLocalizedDescription() && (
-                    <p className="type-body max-w-3xl text-muted-foreground">
-                        {getLocalizedDescription()}
-                    </p>
-                )}
-
-                {tournament.regulationUrl && (
-                    <Button variant="outline" asChild>
-                        <a href={tournament.regulationUrl} target="_blank" rel="noopener noreferrer">
-                            <Download />
-                            {t("regulation")}
-                        </a>
-                    </Button>
-                )}
+                    {(tournament.regulationUrl || ((status === "planned" || status === "ongoing") && tournament.isActive)) && (
+                        <div className="flex flex-wrap gap-3 pt-2">
+                            {(status === "planned" || status === "ongoing") && tournament.isActive && (
+                                <Button variant="inverse" size="lg" asChild>
+                                    <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>
+                                        {t("registration")}
+                                    </Link>
+                                </Button>
+                            )}
+                            {tournament.regulationUrl && (
+                                <Button variant="inverse-outline" size="lg" asChild>
+                                    <a href={tournament.regulationUrl} target="_blank" rel="noopener noreferrer">
+                                        <Download />
+                                        {t("regulation")}
+                                    </a>
+                                </Button>
+                            )}
+                        </div>
+                    )}
+                </section>
             </div>
 
             {/* Organizing Region */}
@@ -370,7 +369,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                                                         <TableCell className="text-muted-foreground">
                                                             {getRegionName(result.athlete, locale)}
                                                         </TableCell>
-                                                        <TableCell className="type-number text-right text-primary">
+                                                        <TableCell className="type-number text-right">
                                                             {result.points}
                                                         </TableCell>
                                                         {hasScore && (

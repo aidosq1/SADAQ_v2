@@ -350,7 +350,7 @@ export default function AdminTeamPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="type-h1 text-primary">{title}</h1>
+          <h1 className="type-h1 text-foreground">{title}</h1>
           {!isAdmin && userRegion && (
             <p className="text-muted-foreground">{userRegion}</p>
           )}

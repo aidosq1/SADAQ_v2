@@ -257,7 +257,7 @@ export default function AdminRegistrationsPage() {
     return (
         <div className="space-y-6">
             <PageHeader
-                className="mb-0 md:mb-0"
+               
                 title="Заявки на турниры"
                 actions={
                     <>

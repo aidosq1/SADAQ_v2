@@ -122,10 +122,10 @@ export default function RankingPage() {
         {/* Search & Meta */}
         <div className="flex items-center justify-between gap-4">
           <div className="relative w-full max-w-sm">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t("search_placeholder")}
-              className="pl-9"
+              className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -162,7 +162,7 @@ export default function RankingPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="type-number text-lg text-primary">{ranking.points}</p>
+                      <p className="type-number text-lg">{ranking.points}</p>
                       <p className="type-caption">{t("th_points")}</p>
                     </div>
                   </Link>
@@ -207,7 +207,7 @@ export default function RankingPage() {
                         </Link>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{getRegionName(ranking.athlete, locale)}</TableCell>
-                      <TableCell className="type-number text-right text-lg text-primary">
+                      <TableCell className="type-number text-right text-lg">
                         {ranking.points}
                       </TableCell>
                       <TableCell>

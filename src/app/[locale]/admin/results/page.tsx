@@ -401,7 +401,7 @@ export default function AdminResultsPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="type-h1 flex items-center gap-2 text-primary">
+            <h1 className="type-h1 flex items-center gap-2 text-foreground">
                 <Trophy className="h-8 w-8" />
                 Результаты турниров
             </h1>

@@ -87,7 +87,7 @@ export default function UiKitPage() {
         title="UI kit"
         eyebrow="SADAQ · дизайн-система"
         back={{ href: "/", label: "Главная" }}
-        className="mb-0 md:mb-0"
+       
       />
 
       <KitBlock title="Цвета">

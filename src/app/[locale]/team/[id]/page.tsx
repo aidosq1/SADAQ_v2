@@ -1,9 +1,9 @@
-import { Badge } from "@/components/ui/badge";
-import { PersonAvatar } from "@/components/ui/person-avatar";
+import Image from "next/image";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { RankBadge } from "@/components/ui/rank-badge";
 import { PageContainer } from "@/components/ui/container";
 import { BackLink } from "@/components/ui/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trophy } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -127,84 +127,88 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         <PageContainer>
             <BackLink href="/team" label={labels.back} className="mb-6" />
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
-                {/* Left Column: Bio */}
-                <div className="md:col-span-1">
-                    <Card className="items-center px-6 text-center">
-                        <PersonAvatar src={athlete.image} alt={getName()} className="size-48 border-4" />
-                        <div className="space-y-3">
-                            <h1 className="type-h2 text-foreground">{getName()}</h1>
-                            <Badge variant="secondary">{regionDisplay}</Badge>
+            {/* Шапка профиля: портрет, имя, регион и главные цифры на тёмной поверхности */}
+            <section className="surface-inverse grid overflow-hidden rounded-2xl md:grid-cols-12">
+                <div className="relative aspect-[4/5] bg-white/5 md:col-span-5 lg:col-span-4">
+                    {athlete.image ? (
+                        <Image
+                            src={athlete.image}
+                            alt={getName()}
+                            fill
+                            priority
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover object-top"
+                        />
+                    ) : (
+                        <div className="flex h-full items-center justify-center">
+                            <PersonPlaceholder className="size-1/3 text-white/25" />
                         </div>
-
-                        {athlete.dob && (
-                            <dl className="type-small w-full border-t pt-4">
-                                <div className="flex justify-between gap-4">
-                                    <dt className="text-muted-foreground">
-                                        {locale === 'kk' ? 'Туған күні' : locale === 'en' ? 'Date of birth' : 'Дата рождения'}
-                                    </dt>
-                                    <dd className="font-medium">{formatDate(athlete.dob, locale)}</dd>
-                                </div>
-                            </dl>
-                        )}
-                    </Card>
-                </div>
-
-                {/* Right Column: Stats & History */}
-                <div className="space-y-6 md:col-span-2">
-                    <div className="grid grid-cols-2 gap-4">
-                        <Card className="items-center gap-2 border-primary/20 bg-secondary px-4 text-center">
-                            <p className="type-eyebrow text-muted-foreground">{labels.bestRank}</p>
-                            <p className="type-number text-4xl text-primary">{bestRanking?.position ? `#${bestRanking.position}` : '—'}</p>
-                            {bestRanking && (
-                                <p className="type-caption">{getCategoryLabel(bestRanking.category)}</p>
-                            )}
-                        </Card>
-                        <Card className="items-center gap-2 px-4 text-center">
-                            <p className="type-eyebrow text-muted-foreground">{labels.points}</p>
-                            <p className="type-number text-4xl text-foreground">{bestRanking?.points || 0}</p>
-                        </Card>
-                    </div>
-
-                    {athlete.rankings && athlete.rankings.length > 0 && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Trophy className="size-5 text-primary" /> {labels.rankings}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="overflow-hidden rounded-md border">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>{labels.category}</TableHead>
-                                                <TableHead>{labels.gender}</TableHead>
-                                                <TableHead>{labels.discipline}</TableHead>
-                                                <TableHead>{labels.place}</TableHead>
-                                                <TableHead className="text-right">{labels.points}</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {athlete.rankings.map((ranking) => (
-                                                <TableRow key={ranking.id}>
-                                                    <TableCell className="font-medium">{getCategoryLabel(ranking.category)}</TableCell>
-                                                    <TableCell>{getGenderLabel(ranking.gender)}</TableCell>
-                                                    <TableCell>{getBowTypeLabel(ranking.type)}</TableCell>
-                                                    <TableCell>
-                                                        {ranking.position ? <RankBadge position={ranking.position} /> : '—'}
-                                                    </TableCell>
-                                                    <TableCell className="type-number text-right text-primary">{ranking.points}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-                            </CardContent>
-                        </Card>
                     )}
                 </div>
-            </div>
+                <div className="flex flex-col justify-end gap-8 p-6 md:col-span-7 md:p-10 lg:col-span-8 lg:p-12">
+                    <div>
+                        <Eyebrow tone="inverse" className="mb-3">{regionDisplay}</Eyebrow>
+                        <h1 className="type-h1 text-white">{getName()}</h1>
+                    </div>
+                    <dl className="grid grid-cols-2 gap-6 border-t border-white/10 pt-6 sm:grid-cols-3">
+                        <div>
+                            <dt className="type-small text-white/60">{labels.bestRank}</dt>
+                            <dd className="type-number mt-1 text-4xl text-gold">
+                                {bestRanking?.position ? `#${bestRanking.position}` : '—'}
+                            </dd>
+                            {bestRanking && (
+                                <dd className="type-caption mt-1 text-white/60">{getCategoryLabel(bestRanking.category)}</dd>
+                            )}
+                        </div>
+                        <div>
+                            <dt className="type-small text-white/60">{labels.points}</dt>
+                            <dd className="type-number mt-1 text-4xl text-white">{bestRanking?.points || 0}</dd>
+                        </div>
+                        {athlete.dob && (
+                            <div>
+                                <dt className="type-small text-white/60">
+                                    {locale === 'kk' ? 'Туған күні' : locale === 'en' ? 'Date of birth' : 'Дата рождения'}
+                                </dt>
+                                <dd className="mt-2 font-medium text-white">{formatDate(athlete.dob, locale)}</dd>
+                            </div>
+                        )}
+                    </dl>
+                </div>
+            </section>
+
+            {athlete.rankings && athlete.rankings.length > 0 && (
+                <section className="mt-10 md:mt-12">
+                    <h2 className="type-h3 mb-4 flex items-center gap-2 text-foreground">
+                        <Trophy className="size-5 text-primary" /> {labels.rankings}
+                    </h2>
+                    <div className="overflow-hidden rounded-lg border shadow-card">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>{labels.category}</TableHead>
+                                    <TableHead>{labels.gender}</TableHead>
+                                    <TableHead>{labels.discipline}</TableHead>
+                                    <TableHead>{labels.place}</TableHead>
+                                    <TableHead className="text-right">{labels.points}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {athlete.rankings.map((ranking) => (
+                                    <TableRow key={ranking.id}>
+                                        <TableCell className="font-medium">{getCategoryLabel(ranking.category)}</TableCell>
+                                        <TableCell>{getGenderLabel(ranking.gender)}</TableCell>
+                                        <TableCell>{getBowTypeLabel(ranking.type)}</TableCell>
+                                        <TableCell>
+                                            {ranking.position ? <RankBadge position={ranking.position} /> : '—'}
+                                        </TableCell>
+                                        <TableCell className="type-number text-right text-base">{ranking.points}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </section>
+            )}
         </PageContainer>
     );
 }

@@ -48,11 +48,11 @@ export default function SignInPage() {
     };
 
     return (
-        <div className="flex min-h-[60vh] w-full items-center justify-center px-4 py-12">
-            <Card className="w-full max-w-sm">
+        <div className="flex min-h-[70vh] w-full items-center justify-center bg-secondary px-4 py-16">
+            <Card className="w-full max-w-sm shadow-raised">
                 <CardHeader className="justify-items-center gap-3 text-center">
                     <IconTile icon={Lock} />
-                    <h1 className="type-h2 text-primary">{labels.title}</h1>
+                    <h1 className="type-h2 text-foreground">{labels.title}</h1>
                 </CardHeader>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <CardContent className="grid gap-4">
@@ -80,7 +80,7 @@ export default function SignInPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" type="submit" disabled={isLoading}>
+                        <Button className="w-full" size="lg" type="submit" disabled={isLoading}>
                             {isLoading ? labels.submitting : labels.submit}
                         </Button>
                     </CardFooter>

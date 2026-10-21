@@ -108,8 +108,22 @@ export default async function NewsArticlePage({ params }: Props) {
       <BackLink href="/media/news" label={t("back_to_news")} className="mb-6" />
 
       <article>
+        <header className="mx-auto max-w-3xl">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="type-small flex items-center gap-3 text-muted-foreground">
+              <Badge variant="brand">{getNewsCategoryLabel(news.category, locale)}</Badge>
+              <span className="flex items-center gap-1.5">
+                <Calendar className="size-4" />
+                <time dateTime={news.publishedAt.toISOString()}>{formattedDate}</time>
+              </span>
+            </div>
+            <ShareButton title={title} label={t("share")} />
+          </div>
+          <h1 className="type-h1 mt-5 text-foreground">{title}</h1>
+        </header>
+
         {news.image && (
-          <div className="relative mb-8 aspect-[2/1] overflow-hidden rounded-lg bg-muted">
+          <div className="relative mt-8 aspect-[2/1] overflow-hidden rounded-xl bg-secondary md:mt-10">
             <Image
               src={news.image}
               alt={title}
@@ -121,26 +135,14 @@ export default async function NewsArticlePage({ params }: Props) {
           </div>
         )}
 
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="type-small flex items-center gap-3 text-muted-foreground">
-            <Badge variant="brand">{getNewsCategoryLabel(news.category, locale)}</Badge>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="size-4" />
-              <time dateTime={news.publishedAt.toISOString()}>{formattedDate}</time>
-            </span>
-          </div>
-          <ShareButton title={title} label={t("share")} />
-        </div>
-
-        <h1 className="type-h1 mb-6 text-primary">{title}</h1>
-
         <div
-          className="prose prose-lg max-w-none
-            prose-headings:font-heading prose-headings:text-primary
-            prose-p:text-foreground/90
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-            prose-img:rounded-lg
-            prose-blockquote:border-l-primary prose-blockquote:bg-muted/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
+          className="prose prose-lg mx-auto mt-8 max-w-3xl md:mt-10
+            prose-headings:font-heading prose-headings:text-foreground
+            prose-p:text-foreground/85
+            prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary-hover
+            prose-strong:text-foreground
+            prose-img:rounded-xl
+            prose-blockquote:border-l-gold prose-blockquote:bg-secondary prose-blockquote:py-1 prose-blockquote:px-5 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
           "
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(toNewsHtml(content), { ADD_ATTR: ["target"] }) }}
         />

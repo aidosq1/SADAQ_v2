@@ -484,7 +484,7 @@ export default function RegistrationDetailPage() {
                         </Link>
                     </Button>
                     <div>
-                        <h1 className="type-h2 text-primary">
+                        <h1 className="type-h2 text-foreground">
                             Заявка {registration.registrationNumber}
                         </h1>
                         <p className="type-small text-muted-foreground">{registration.regionName}</p>

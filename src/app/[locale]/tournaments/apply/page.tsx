@@ -576,7 +576,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <Trophy className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="type-h3 text-primary">{t("choose_tournament")}</h3>
+                                <h3 className="type-h3 text-foreground">{t("choose_tournament")}</h3>
                             </div>
                         </div>
                         <div className="grid gap-3">
@@ -643,7 +643,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <ClipboardList className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="type-h3 text-primary">{t("choose_category")}</h3>
+                                <h3 className="type-h3 text-foreground">{t("choose_category")}</h3>
                             </div>
                         </div>
 
@@ -686,7 +686,7 @@ export default function TournamentApplyPage() {
                             <div className="flex items-center gap-3">
                                 <Shield className="h-5 w-5 text-primary" />
                                 <div>
-                                    <h3 className="type-h3 text-primary">{t("judges_title")}</h3>
+                                    <h3 className="type-h3 text-foreground">{t("judges_title")}</h3>
                                 </div>
                             </div>
                             <Button variant="outline" size="sm" onClick={addJudgeEntry}>
@@ -730,7 +730,7 @@ export default function TournamentApplyPage() {
                             <div className="flex items-center gap-3">
                                 <UserCheck className="h-5 w-5 text-primary" />
                                 <div>
-                                    <h3 className="type-h3 text-primary">{t("athletes_title")}</h3>
+                                    <h3 className="type-h3 text-foreground">{t("athletes_title")}</h3>
                                     <p className="text-sm text-muted-foreground">
                                         {t("available_athletes", { count: filteredAthletes.length })}
                                     </p>
@@ -879,7 +879,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <Paperclip className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="type-h3 text-primary">{t("documents_title")}</h3>
+                                <h3 className="type-h3 text-foreground">{t("documents_title")}</h3>
                             </div>
                         </div>
 
@@ -963,7 +963,7 @@ export default function TournamentApplyPage() {
 
     return (
         <PageContainer size="narrow" className="space-y-6">
-            <PageHeader title={t("title")} className="mb-0 md:mb-0" />
+            <PageHeader title={t("title")} />
 
             {/* Stepper */}
             <Stepper

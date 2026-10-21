@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Download, CalendarX2 } from "lucide-react";
+import { FileText, MapPin, Download, CalendarX2, CalendarDays } from "lucide-react";
 import { Link } from "@/navigation";
 import { PageContainer } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
-import { Chip, ChipGroup } from "@/components/ui/chip";
+import { Segmented } from "@/components/ui/segmented";
+import { DateTile } from "@/components/ui/date-tile";
+import { cn } from "@/lib/utils";
 import { EmptyState, LoadingState } from "@/components/ui/states";
 import { cardSurface } from "@/components/ui/card";
 import { useTranslations, useLocale } from "next-intl";
@@ -142,10 +144,11 @@ export default function CalendarPage() {
         const canApply = isRegistrationAvailable(tournament);
 
         return (
-            <li key={tournament.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-6">
-                <div className="type-small font-semibold text-primary sm:w-44 sm:shrink-0">
-                    {formatDateRange(tournament.startDate, tournament.endDate, locale)}
-                </div>
+            <li
+                key={tournament.id}
+                className={cn(cardSurface, "flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-5 sm:p-5")}
+            >
+                <DateTile date={tournament.startDate} locale={locale} className="hidden sm:flex" />
                 <div className="min-w-0 flex-1">
                     <Link
                         href={`/tournaments/${tournament.id}`}
@@ -153,13 +156,19 @@ export default function CalendarPage() {
                     >
                         {getLocalizedTitle(tournament)}
                     </Link>
-                    <div className="type-small mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-muted-foreground">
-                        <span className="flex items-center gap-1">
+                    <div className="type-small mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground">
+                        <span className="flex items-center gap-1.5 font-medium text-foreground">
+                            <CalendarDays className="size-4 shrink-0 text-primary" />
+                            {formatDateRange(tournament.startDate, tournament.endDate, locale)}
+                        </span>
+                        <span className="flex items-center gap-1.5">
                             <MapPin className="size-4 shrink-0" />
                             {getLocalizedLocation(tournament)}
                         </span>
-                        {tournament.categories?.length > 0 && getCategoryBadges(tournament.categories)}
                     </div>
+                    {tournament.categories?.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">{getCategoryBadges(tournament.categories)}</div>
+                    )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
                     {activeTab === "upcoming" && (
@@ -196,18 +205,21 @@ export default function CalendarPage() {
         <PageContainer>
             <PageHeader title={t("title")} />
 
-            <ChipGroup className="mb-6">
-                {tabs.map(tab => (
-                    <Chip
-                        key={tab.id}
-                        active={activeTab === tab.id}
-                        onClick={() => setSelectedTab(tab.id)}
-                    >
-                        {tab.label}
-                        <span className="opacity-70">{tab.count}</span>
-                    </Chip>
-                ))}
-            </ChipGroup>
+            <Segmented
+                label={t("title")}
+                value={activeTab}
+                onChange={setSelectedTab}
+                className="mb-8"
+                options={tabs.map(tab => ({
+                    value: tab.id,
+                    label: (
+                        <>
+                            {tab.label}
+                            <span className="type-number text-xs opacity-60">{tab.count}</span>
+                        </>
+                    ),
+                }))}
+            />
 
             {groups.length === 0 ? (
                 <EmptyState
@@ -215,13 +227,13 @@ export default function CalendarPage() {
                     title={activeTab === "upcoming" ? t("no_upcoming") : t("no_tournaments")}
                 />
             ) : (
-                <div className="space-y-6">
+                <div className="space-y-10">
                     {groups.map(group => (
-                        <section key={group.key} className={`${cardSurface} overflow-hidden`}>
-                            <h2 className="type-eyebrow border-b bg-muted/60 px-4 py-2.5 text-muted-foreground">
+                        <section key={group.key}>
+                            <h2 className="type-eyebrow mb-3 flex items-center gap-3 text-muted-foreground after:h-px after:flex-1 after:bg-border">
                                 {group.label}
                             </h2>
-                            <ul className="divide-y">
+                            <ul className="space-y-3">
                                 {group.items.map(renderTournament)}
                             </ul>
                         </section>

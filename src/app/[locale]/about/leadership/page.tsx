@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { PersonAvatar } from "@/components/ui/person-avatar";
 import { PageContainer } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -103,21 +106,34 @@ export default function LeadershipPage() {
 
     return (
         <PageContainer className="space-y-12 md:space-y-16">
-            <PageHeader title={t("title")} className="mb-0 md:mb-0" />
+            <PageHeader title={t("title")} />
 
             {president && (
-                <Card className="items-center bg-secondary px-6 py-10 text-center md:py-12">
-                    <PersonAvatar
-                        src={president.image}
-                        alt={getLocalizedName(president)}
-                        shape="portrait"
-                        className="h-60 w-48"
-                    />
-                    <div className="space-y-1">
-                        <h2 className="type-h3 text-foreground">{getLocalizedName(president)}</h2>
-                        <p className="type-body font-medium text-primary">{getLocalizedRole(president)}</p>
+                <section className="surface-inverse grid overflow-hidden rounded-2xl md:grid-cols-12">
+                    <div className="relative aspect-[4/5] bg-white/5 md:col-span-5 md:aspect-auto md:min-h-[420px] lg:col-span-4">
+                        {president.image ? (
+                            <Image
+                                src={president.image}
+                                alt={getLocalizedName(president)}
+                                fill
+                                priority
+                                sizes="(max-width: 768px) 100vw, 33vw"
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-full items-center justify-center">
+                                <PersonPlaceholder className="size-24 text-white/30" />
+                            </div>
+                        )}
                     </div>
-                </Card>
+                    <div className="flex flex-col justify-end gap-3 p-6 md:col-span-7 md:p-10 lg:col-span-8 lg:p-14">
+                        <Eyebrow tone="inverse">{getLocalizedRole(president)}</Eyebrow>
+                        <h2 className="type-h1 text-white">{getLocalizedName(president)}</h2>
+                        {president.description && (
+                            <p className="type-lead max-w-xl text-white/70">{getLocalizedDescription(president)}</p>
+                        )}
+                    </div>
+                </section>
             )}
 
             {committee.length > 0 && (

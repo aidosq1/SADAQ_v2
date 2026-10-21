@@ -1617,7 +1617,7 @@ function TranslationsTab() {
 export default function AdminContentPage() {
   return (
     <div className="space-y-6">
-      <h1 className="type-h1 text-primary">Управление контентом</h1>
+      <h1 className="type-h1 text-foreground">Управление контентом</h1>
 
       <Tabs defaultValue="translations" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
