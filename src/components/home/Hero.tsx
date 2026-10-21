@@ -5,6 +5,7 @@ import { Users, MapPin, Trophy, Calendar, Activity } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { HeroNewsSlider } from "./HeroNewsSlider";
 import { Link } from "@/navigation";
+import { formatDate } from "@/lib/date-format";
 
 interface SiteStat {
     id: number;
@@ -85,14 +86,6 @@ export function Hero() {
         return event.title;
     };
 
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString(locale === 'kk' ? 'kk-KZ' : locale === 'en' ? 'en-US' : 'ru-RU', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
 
     return (
         <section className="bg-[hsl(var(--light-cream))]">
@@ -142,7 +135,7 @@ export function Hero() {
                                     {getLocalizedTitle(upcomingEvent)}
                                 </h3>
                                 <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                                    {formatDate(upcomingEvent.startDate)}
+                                    {formatDate(upcomingEvent.startDate, locale)}
                                 </p>
                                 <Link
                                     href="/calendar"

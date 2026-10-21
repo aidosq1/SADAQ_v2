@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calendar } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 interface NewsItem {
   id: number;
@@ -32,12 +33,6 @@ function getLocalizedTitle(item: NewsItem, locale: string): string {
   return item.title;
 }
 
-function formatDate(date: Date, locale: string): string {
-  return new Intl.DateTimeFormat(
-    locale === 'kk' ? 'kk-KZ' : locale === 'en' ? 'en-US' : 'ru-RU',
-    { day: 'numeric', month: 'long', year: 'numeric' }
-  ).format(new Date(date));
-}
 
 export function NewsBlockClient({ news, locale, translations }: NewsBlockClientProps) {
   if (news.length === 0) return null;

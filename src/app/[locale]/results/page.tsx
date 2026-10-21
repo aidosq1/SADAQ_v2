@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Loader2 } from "lucide-react";
-import { useTranslations, useLocale, useFormatter } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDate } from "@/lib/date-format";
 
 interface Protocol {
     id: number;
@@ -32,7 +33,6 @@ interface GroupedProtocols {
 export default function ResultsPage() {
     const t = useTranslations("ResultsPage");
     const locale = useLocale();
-    const format = useFormatter();
     const [groupedProtocols, setGroupedProtocols] = useState<GroupedProtocols>({});
     const [loading, setLoading] = useState(true);
 
@@ -119,10 +119,7 @@ export default function ResultsPage() {
         return protocol.location;
     };
 
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return format.dateTime(date, { day: 'numeric', month: 'long' });
-    };
+    const formatEventDate = (dateStr: string) => formatDate(dateStr, locale, { withYear: false });
 
     // Get sorted years (descending)
     const years = Object.keys(groupedProtocols).sort((a, b) => parseInt(b) - parseInt(a));
@@ -154,7 +151,7 @@ export default function ResultsPage() {
                                                 <h3 className="font-bold text-lg">{getLocalizedTitle(protocol)}</h3>
                                                 {protocol.eventDate && protocol.location && (
                                                     <p className="text-sm text-muted-foreground">
-                                                        {formatDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
+                                                        {formatEventDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
                                                     </p>
                                                 )}
                                                 {protocol.source === 'document' && (

@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Calendar, MapPin, Download, Users, Trophy, ArrowLeft, Loader2, Building, Phone, Mail } from "lucide-react";
 import Link from "next/link";
-import { useTranslations, useFormatter, useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateRange } from "@/lib/date-format";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 
 interface TournamentResult {
@@ -93,7 +94,6 @@ function getTournamentStatus(startDate: Date, endDate: Date): EventStatus {
 export default function TournamentPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const t = useTranslations("TournamentPage");
-    const format = useFormatter();
     const locale = useLocale();
 
     const [tournament, setTournament] = useState<Tournament | null>(null);
@@ -246,10 +246,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                     <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
                         <span>
-                            {format.dateTime(startDate, { day: 'numeric', month: 'long', year: 'numeric' })}
-                            {startDate.getTime() !== endDate.getTime() &&
-                                ` — ${format.dateTime(endDate, { day: 'numeric', month: 'long', year: 'numeric' })}`
-                            }
+                            {formatDateRange(startDate, endDate, locale)}
                         </span>
                     </div>
                     <div className="flex items-center gap-2">

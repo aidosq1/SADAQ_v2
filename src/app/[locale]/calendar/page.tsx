@@ -8,7 +8,8 @@ import { FileText, MapPin, Loader2, ChevronRight, Download, Calendar } from "luc
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations, useFormatter, useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateRange } from "@/lib/date-format";
 import { CATEGORIES, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 import {
     getTournamentStatus,
@@ -44,7 +45,6 @@ interface Tournament extends TournamentForStatus {
 
 export default function CalendarPage() {
     const t = useTranslations("CalendarPage");
-    const format = useFormatter();
     const locale = useLocale();
     const router = useRouter();
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -142,10 +142,7 @@ export default function CalendarPage() {
                                         </Badge>
                                         <span className="text-sm text-muted-foreground flex items-center gap-1">
                                             <Calendar className="h-4 w-4" />
-                                            {format.dateTime(startDate, { month: 'short', day: 'numeric' })}
-                                            {startDate.getTime() !== endDate.getTime() &&
-                                                ` - ${format.dateTime(endDate, { month: 'short', day: 'numeric' })}`
-                                            }
+                                            {formatDateRange(startDate, endDate, locale)}
                                         </span>
                                     </div>
                                     <Link
@@ -233,10 +230,7 @@ export default function CalendarPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="font-medium whitespace-nowrap">
-                                            {format.dateTime(startDate, { month: 'short', day: 'numeric' })}
-                                            {startDate.getTime() !== endDate.getTime() &&
-                                                ` - ${format.dateTime(endDate, { month: 'short', day: 'numeric', year: 'numeric' })}`
-                                            }
+                                            {formatDateRange(startDate, endDate, locale)}
                                         </TableCell>
                                         <TableCell>
                                             <Link

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Loader2, ArrowRight } from "lucide-react";
+import { formatDate } from "@/lib/date-format";
 
 interface NewsItem {
   id: number;
@@ -102,17 +103,6 @@ export default function NewsPage() {
     }
   }
 
-  function formatDate(dateString: string) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(
-      locale === "kk" ? "kk-KZ" : locale === "en" ? "en-US" : "ru-RU",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    );
-  }
 
   if (loading) {
     return (
@@ -161,7 +151,7 @@ export default function NewsPage() {
                 <CardContent className="p-5 space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>{formatDate(item.publishedAt)}</span>
+                    <span>{formatDate(item.publishedAt, locale)}</span>
                   </div>
                   <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
                     {getLocalizedTitle(item, locale)}
