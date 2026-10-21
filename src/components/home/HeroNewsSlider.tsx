@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { isSlideImageMounted, markSlideSeen, nextSlideIndex, prevSlideIndex } from "@/lib/hero-slider";
 import { cn } from "@/lib/utils";
 
 interface Slide {
@@ -96,6 +97,7 @@ function SlideControls({ count, current, onPrev, onNext, onSelect }: {
 export function HeroNewsSlider({ initialSlides, aside }: HeroNewsSliderProps) {
   const [slides, setSlides] = useState<Slide[]>(initialSlides ?? []);
   const [current, setCurrent] = useState(0);
+  const [seen, setSeen] = useState<readonly number[]>([0]);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(!initialSlides);
   const locale = useLocale();
@@ -122,15 +124,20 @@ export function HeroNewsSlider({ initialSlides, aside }: HeroNewsSliderProps) {
     fetchSlides();
   }, [initialSlides]);
 
-  const nextSlide = useCallback(() => {
-    if (slides.length === 0) return;
-    setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  }, [slides.length]);
+  const goToSlide = useCallback((index: number) => {
+    setCurrent(index);
+    setSeen((prev) => markSlideSeen(prev, index));
+  }, []);
 
-  const prevSlide = useCallback(() => {
-    if (slides.length === 0) return;
-    setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  }, [slides.length]);
+  const nextSlide = useCallback(
+    () => goToSlide(nextSlideIndex(current, slides.length)),
+    [goToSlide, current, slides.length]
+  );
+
+  const prevSlide = useCallback(
+    () => goToSlide(prevSlideIndex(current, slides.length)),
+    [goToSlide, current, slides.length]
+  );
 
   useEffect(() => {
     if (isPaused || slides.length < 2) return;
@@ -139,6 +146,7 @@ export function HeroNewsSlider({ initialSlides, aside }: HeroNewsSliderProps) {
   }, [isPaused, nextSlide, slides.length]);
 
   const slide = slides[current];
+  const hasPhotos = loading || slides.length > 0;
 
   return (
     <div
@@ -146,8 +154,15 @@ export function HeroNewsSlider({ initialSlides, aside }: HeroNewsSliderProps) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Фото слайдов: плавная смена, затемнение слева и снизу под текст */}
-      <div className="absolute inset-0 -z-10" aria-hidden={loading}>
+      {/* Фото слайдов: на телефоне блок 16:9 над текстом, с md — фон под текстом с затемнением слева и снизу.
+          Кадр смещён вверх: на широком экране hero низкий, и при центровке срезаются головы */}
+      <div
+        className={cn(
+          "relative -z-10 aspect-video overflow-hidden md:absolute md:inset-0 md:aspect-auto",
+          !hasPhotos && "hidden md:block"
+        )}
+        aria-hidden={loading}
+      >
         {loading && <div className="h-full w-full animate-pulse bg-white/5" />}
         {slides.map((item, index) => (
           <div
@@ -157,27 +172,40 @@ export function HeroNewsSlider({ initialSlides, aside }: HeroNewsSliderProps) {
               index === current ? "opacity-100" : "opacity-0"
             )}
           >
-            <Image
-              src={item.image}
-              alt=""
-              fill
-              className={cn(item.imageClass || "object-cover", index === current && "motion-safe:animate-hero-zoom")}
-              sizes="100vw"
-              priority={index === 0}
-            />
+            {isSlideImageMounted(index, seen, current, slides.length) && (
+              <Image
+                src={item.image}
+                alt=""
+                fill
+                className={cn(
+                  "object-cover object-[50%_25%]",
+                  item.imageClass,
+                  index === current && "motion-safe:animate-hero-zoom"
+                )}
+                sizes="100vw"
+                priority={index === 0}
+              />
+            )}
           </div>
         ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-deep from-10% via-primary-deep/80 via-50% to-primary-deep/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-deep to-transparent to-30% md:hidden" />
+        <div className="absolute inset-0 hidden bg-gradient-to-r from-primary-deep from-10% via-primary-deep/80 via-50% to-primary-deep/20 md:block" />
+        <div className="absolute inset-0 hidden bg-gradient-to-t from-primary-deep via-primary-deep/20 to-transparent md:block" />
       </div>
 
-      <div className="mx-auto flex min-h-[540px] w-full max-w-7xl flex-col justify-end px-4 pt-16 pb-28 sm:px-6 md:min-h-[620px] md:pb-32 lg:px-8">
+      <div
+        className={cn(
+          "mx-auto flex w-full max-w-7xl flex-col justify-end px-4 pb-28 sm:px-6 md:min-h-[620px] md:pt-16 md:pb-32 lg:px-8",
+          hasPhotos ? "pt-4" : "pt-16"
+        )}
+      >
         <div className="grid items-end gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+          {/* min-w-0: длинное слово в заголовке не растягивает колонку шире экрана */}
+          <div className="min-w-0 lg:col-span-8">
             {slide ? (
               <div key={slide.id} className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-700">
                 <Badge variant="inverse" className="mb-5">{tHeader("news")}</Badge>
-                <h2 className="type-h1 line-clamp-3 max-w-3xl text-white lg:text-[3.25rem] lg:leading-[1.08]">
+                <h2 className="type-h1 line-clamp-3 max-w-3xl break-words text-white max-sm:text-[1.75rem] lg:text-[3.25rem] lg:leading-[1.08]">
                   {getLocalizedField(slide, 'title', locale)}
                 </h2>
                 {getLocalizedField(slide, 'description', locale) && (
@@ -198,7 +226,7 @@ export function HeroNewsSlider({ initialSlides, aside }: HeroNewsSliderProps) {
                       current={current}
                       onPrev={prevSlide}
                       onNext={nextSlide}
-                      onSelect={setCurrent}
+                      onSelect={goToSlide}
                     />
                   )}
                 </div>

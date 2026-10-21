@@ -4,6 +4,7 @@ import { existsSync } from "fs";
 import path from "path";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { shrinkUploadImage } from "@/lib/upload-image";
 
 // Allowed file types and their extensions: the browser-reported type alone can be spoofed
 const ALLOWED_TYPES: Record<string, string[]> = {
@@ -34,6 +35,9 @@ const ALLOWED_FOLDERS = [
   "protocols",
   "registrations",
 ];
+
+// Сканы документов и протоколов не уменьшаем: мелкий текст должен читаться
+const KEEP_ORIGINAL_FOLDERS = ["documents", "protocols", "registrations"];
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -125,7 +129,15 @@ export async function POST(request: NextRequest) {
     const filePath = path.join(uploadDir, filename);
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    let buffer: Buffer = Buffer.from(bytes);
+    if (!KEEP_ORIGINAL_FOLDERS.includes(uploadFolder)) {
+      try {
+        buffer = await shrinkUploadImage(buffer, file.type);
+      } catch (error) {
+        // Не получилось уменьшить: сохраняем оригинал, загрузка важнее веса
+        console.error("Failed to shrink uploaded image:", error);
+      }
+    }
     await writeFile(filePath, buffer);
 
     // Return the public URL
@@ -137,7 +149,7 @@ export async function POST(request: NextRequest) {
         url,
         filename,
         originalName: file.name,
-        size: file.size,
+        size: buffer.length,
         type: file.type,
       },
     });
