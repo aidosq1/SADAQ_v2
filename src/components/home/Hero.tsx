@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Users, MapPin, Trophy, Calendar, Activity } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { HeroNewsSlider } from "./HeroNewsSlider";
+import type { ComponentProps } from "react";
 import { Link } from "@/navigation";
 import { formatDate } from "@/lib/date-format";
 
@@ -34,7 +35,11 @@ const iconMap: Record<string, React.ReactNode> = {
     default: <Activity className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
 };
 
-export function Hero() {
+interface HeroProps {
+    initialSlides?: ComponentProps<typeof HeroNewsSlider>["initialSlides"];
+}
+
+export function Hero({ initialSlides }: HeroProps) {
     const t = useTranslations("Hero");
     const locale = useLocale();
     const [stats, setStats] = useState<SiteStat[]>([]);
@@ -94,7 +99,7 @@ export function Hero() {
                     {/* News Slider - Left Side */}
                     <div className="lg:col-span-7">
                         <div className="relative h-[450px] lg:h-[550px] rounded-lg overflow-hidden shadow-sm">
-                            <HeroNewsSlider />
+                            <HeroNewsSlider initialSlides={initialSlides} />
                         </div>
                     </div>
 

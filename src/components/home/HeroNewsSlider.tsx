@@ -29,15 +29,21 @@ function getLocalizedField(item: Slide, field: 'title' | 'description', locale: 
   return (item[localizedField] as string) || (item[field] as string) || '';
 }
 
-export function HeroNewsSlider() {
-  const [slides, setSlides] = useState<Slide[]>([]);
+interface HeroNewsSliderProps {
+  // Слайды, загруженные на сервере: картинка первого слайда сразу попадает в HTML
+  initialSlides?: Slide[];
+}
+
+export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
+  const [slides, setSlides] = useState<Slide[]>(initialSlides ?? []);
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialSlides);
   const [error, setError] = useState(false);
   const locale = useLocale();
 
   useEffect(() => {
+    if (initialSlides) return;
     async function fetchSlides() {
       try {
         const res = await fetch('/api/slides?isActive=true');
@@ -53,7 +59,7 @@ export function HeroNewsSlider() {
       }
     }
     fetchSlides();
-  }, []);
+  }, [initialSlides]);
 
   const nextSlide = useCallback(() => {
     if (slides.length === 0) return;
@@ -121,6 +127,7 @@ export function HeroNewsSlider() {
               alt={getLocalizedField(slide, 'title', locale)}
               fill
               className={slide.imageClass || "object-cover"}
+              sizes="(min-width: 1024px) 58vw, 100vw"
               priority={index === 0}
             />
             {/* Gradient Overlay */}
