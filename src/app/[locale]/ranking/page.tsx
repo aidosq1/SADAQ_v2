@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -173,7 +174,7 @@ export default function RankingPage() {
                     </div>
                     <Avatar className="h-12 w-12 border">
                       <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
-                      <AvatarFallback>{ranking.athlete.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{getLocalizedName(ranking.athlete, locale)}</p>
@@ -228,7 +229,7 @@ export default function RankingPage() {
                     <div className="flex items-center gap-4">
                       <Avatar className="h-10 w-10 border">
                         <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
-                        <AvatarFallback>{ranking.athlete.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
                         <span className="font-semibold group-hover:text-primary transition-colors">

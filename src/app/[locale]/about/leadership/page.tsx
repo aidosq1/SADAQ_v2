@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Loader2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
@@ -172,7 +173,7 @@ export default function LeadershipPage() {
                                     <div className="flex items-center gap-4">
                                         <Avatar className="h-14 w-14">
                                             {coach.image && <AvatarImage src={coach.image} alt="" />}
-                                            <AvatarFallback className="text-lg">{getLocalizedName(coach).charAt(0)}</AvatarFallback>
+                                            <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
                                             <div className="font-bold truncate">{getLocalizedName(coach)}</div>

@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getLocale } from "next-intl/server";
@@ -65,7 +66,7 @@ export default async function TeamPage({ searchParams }: Props) {
                 <CardContent className="pt-4 sm:pt-6 flex flex-col items-center">
                   <Avatar className="h-20 w-20 sm:h-28 sm:w-28 md:h-32 md:w-32 mb-3 sm:mb-4">
                     <AvatarImage src={athlete.image || undefined} alt={getLocalizedField(athlete, 'name', locale)} />
-                    <AvatarFallback>{athlete.name[0]}</AvatarFallback>
+                    <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                   </Avatar>
                   <h3 className="font-bold text-sm sm:text-base md:text-lg text-center line-clamp-2">{getLocalizedField(athlete, 'name', locale)}</h3>
                 </CardContent>

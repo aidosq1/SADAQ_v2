@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { useLocale } from "next-intl";
 import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -130,8 +131,8 @@ export function RankingWidget() {
                           src={ranking.athlete.image || undefined}
                           alt={getLocalizedName(ranking.athlete, locale)}
                         />
-                        <AvatarFallback className="text-sm bg-[hsl(var(--light-cream))]">
-                          {ranking.athlete.name[0]}
+                        <AvatarFallback className="bg-[hsl(var(--light-cream))]">
+                          <PersonPlaceholder />
                         </AvatarFallback>
                       </Avatar>
                       <span className="font-medium text-[hsl(var(--official-maroon))]">

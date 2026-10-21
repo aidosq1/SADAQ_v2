@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -128,7 +129,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                         <CardContent className="pt-6 flex flex-col items-center">
                             <Avatar className="w-48 h-48 mb-4 border-4 border-muted">
                                 <AvatarImage src={athlete.image || undefined} alt={getName()} />
-                                <AvatarFallback className="text-4xl">{getName().charAt(0)}</AvatarFallback>
+                                <AvatarFallback><PersonPlaceholder /></AvatarFallback>
                             </Avatar>
                             <h1 className="text-2xl font-bold text-center mb-1">{getName()}</h1>
                             <div className="flex gap-2 mb-4 flex-wrap justify-center">
