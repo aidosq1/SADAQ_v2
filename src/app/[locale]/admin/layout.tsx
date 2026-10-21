@@ -18,7 +18,7 @@ export default async function AdminLayout({
   const userRegion = session.user?.region;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-secondary">
       {/* Desktop Sidebar */}
       <AdminSidebar userRole={userRole} userRegion={userRegion} />
 

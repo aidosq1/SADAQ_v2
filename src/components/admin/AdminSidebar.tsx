@@ -105,7 +105,7 @@ function SidebarNav({
       <div className="mb-8">
         <Link href="/" className="flex items-center gap-2" onClick={onItemClick}>
           <Image src="/logo_federation_circular.png" alt="SADAQ" width={40} height={40} className="size-10 object-contain" />
-          <span className="font-heading text-lg font-bold text-primary">SADAQ</span>
+          <span className="font-heading text-lg font-bold text-foreground">SADAQ</span>
         </Link>
         {userRegion && (
           <p className="type-caption mt-2 px-1">{userRegion}</p>
@@ -123,8 +123,8 @@ function SidebarNav({
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ? "bg-primary-soft font-semibold text-primary"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
               )}
             >
               <item.icon className="size-5" />
