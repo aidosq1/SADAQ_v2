@@ -14,9 +14,12 @@ interface MediaCardProps {
   meta?: React.ReactNode
   excerpt?: React.ReactNode
   footer?: React.ReactNode
-  // stacked — фото сверху, текст снизу; overlay — текст поверх фото (альбомы, главная новость)
-  variant?: "stacked" | "overlay"
+  // stacked — фото сверху, текст снизу; overlay — текст поверх фото (альбомы, главная новость);
+  // row — миниатюра слева, текст справа (список новостей рядом с главной)
+  variant?: "stacked" | "overlay" | "row"
   aspect?: string
+  // Для overlay: sm — мелкие плитки в сетке
+  size?: "default" | "sm"
   sizes?: string
   priority?: boolean
   className?: string
@@ -62,6 +65,7 @@ function MediaCard({
   footer,
   variant = "stacked",
   aspect = "aspect-[16/10]",
+  size = "default",
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   priority,
   className,
@@ -81,11 +85,26 @@ function MediaCard({
           <div className="scrim-bottom absolute inset-0" />
         </div>
         {badge && <div className="absolute top-4 left-4">{badge}</div>}
-        <div className="flex flex-col gap-2 p-5 md:p-6">
+        <div className={cn("flex flex-col gap-2", size === "sm" ? "p-4" : "p-5 md:p-6")}>
           {meta && <div className="type-caption flex items-center gap-1.5 text-white/75">{meta}</div>}
-          <h3 className="type-h3 line-clamp-3 text-white">{title}</h3>
+          <h3 className={cn("line-clamp-3 text-white", size === "sm" ? "type-h4" : "type-h3")}>{title}</h3>
           {excerpt && <p className="type-small line-clamp-2 text-white/75">{excerpt}</p>}
           {footer && <div className="pt-1">{footer}</div>}
+        </div>
+      </Link>
+    )
+  }
+
+  if (variant === "row") {
+    return (
+      <Link href={href} className={cn("group flex items-start gap-4", className)}>
+        <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-md bg-secondary sm:w-36">
+          <MediaImage src={image} alt={title} sizes="144px" priority={priority} />
+        </div>
+        <div className="flex min-w-0 flex-col gap-1.5 py-0.5">
+          {badge}
+          <h3 className="type-h4 line-clamp-3 text-foreground transition-colors group-hover:text-primary">{title}</h3>
+          {meta && <div className="type-caption flex items-center gap-1.5">{meta}</div>}
         </div>
       </Link>
     )

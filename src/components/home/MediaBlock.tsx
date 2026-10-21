@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { LoadingState } from "@/components/ui/states";
 import { MediaCard } from "@/components/ui/media-card";
 import { useTranslations, useLocale } from "next-intl";
+import { cn } from "@/lib/utils";
 
 interface GalleryItem {
     id: number;
@@ -20,6 +21,9 @@ interface GalleryItem {
     createdAt?: string;
 }
 
+const GALLERY_LIMIT = 5;
+
+// Медиа на главной: первый альбом крупно, остальные — сеткой справа
 export function MediaBlock() {
     const t = useTranslations("MediaBlock");
     const locale = useLocale();
@@ -30,7 +34,7 @@ export function MediaBlock() {
     useEffect(() => {
         async function fetchGallery() {
             try {
-                const res = await fetch('/api/gallery?limit=4');
+                const res = await fetch(`/api/gallery?limit=${GALLERY_LIMIT}`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 if (data.data) {
@@ -70,19 +74,25 @@ export function MediaBlock() {
                 action={<ArrowLink href="/media/gallery">{t("all_albums")}</ArrowLink>}
             />
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {items.map((item) => (
+            <div className="grid auto-rows-[200px] grid-cols-2 gap-4 md:auto-rows-[220px] lg:grid-cols-4">
+                {items.map((item, index) => (
                     <MediaCard
                         key={item.id}
+                        variant="overlay"
                         href="/media/gallery"
                         title={getLocalizedTitle(item)}
                         image={item.thumbnailUrl || item.url}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        aspect="aspect-auto"
+                        size={index === 0 ? "default" : "sm"}
+                        className={cn("min-h-0", index === 0 && "col-span-2 row-span-2")}
+                        sizes={index === 0 ? "(max-width: 1024px) 100vw, 50vw" : "(max-width: 1024px) 50vw, 25vw"}
                         badge={
-                            <Badge variant="brand">
-                                <ImageIcon />
-                                {t("photo_album")}
-                            </Badge>
+                            index === 0 ? (
+                                <Badge variant="inverse">
+                                    <ImageIcon />
+                                    {t("photo_album")}
+                                </Badge>
+                            ) : undefined
                         }
                     />
                 ))}

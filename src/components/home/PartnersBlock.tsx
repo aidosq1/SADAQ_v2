@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Section, SectionHeader } from "@/components/ui/section";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 interface Partner {
   id: number;
@@ -14,54 +15,59 @@ interface Partner {
   isGeneral?: boolean;
 }
 
-const LOGO_SIZES = {
+const LOGO_TILE = {
   general: {
-    image: "h-auto w-64 sm:w-80 md:w-[420px]",
-    placeholder: "size-56 md:size-80",
-    width: 560,
-    height: 320,
-    caption: "type-small max-w-xs",
+    tile: "col-span-2 row-span-2 flex-col gap-4 px-8 py-6",
+    image: "max-h-28 md:max-h-32 w-auto",
+    width: 480,
+    height: 200,
   },
   regular: {
-    image: "size-16 md:size-20",
-    placeholder: "size-16 md:size-20",
-    width: 80,
+    tile: "px-5",
+    image: "max-h-16 w-auto grayscale opacity-80 transition-[filter,opacity] duration-300 group-hover:grayscale-0 group-hover:opacity-100",
+    width: 160,
     height: 80,
-    caption: "type-caption max-w-[120px]",
   },
 } as const;
 
-function PartnerLogo({ partner, variant }: { partner: Partner; variant: keyof typeof LOGO_SIZES }) {
-  const size = LOGO_SIZES[variant];
-  const content = (
-    <>
-      {partner.logo ? (
-        <Image
-          src={partner.logo}
-          alt={partner.name}
-          width={size.width}
-          height={size.height}
-          className={cn("object-contain", size.image)}
-        />
-      ) : (
-        <div className={cn("flex items-center justify-center rounded-full bg-secondary", size.placeholder)}>
-          <span className="type-small font-medium text-muted-foreground">{partner.name.slice(0, 2)}</span>
-        </div>
-      )}
-      <span className={cn("text-center leading-tight text-muted-foreground", size.caption)}>
-        {partner.name}
-      </span>
-    </>
+// Логотип партнёра на белой плитке; без логотипа — название текстом
+function PartnerLogo({ partner, variant, label }: {
+  partner: Partner;
+  variant: keyof typeof LOGO_TILE;
+  label?: string;
+}) {
+  const size = LOGO_TILE[variant];
+  const className = cn(
+    "group flex items-center justify-center rounded-lg border bg-background shadow-card",
+    size.tile
   );
-
-  const className = "flex flex-col items-center gap-3";
+  const logo = partner.logo ? (
+    <Image
+      src={partner.logo}
+      alt={partner.name}
+      title={partner.name}
+      width={size.width}
+      height={size.height}
+      className={cn("object-contain", size.image)}
+    />
+  ) : (
+    <span className="type-small text-center font-semibold text-muted-foreground">{partner.name}</span>
+  );
+  const content = label ? (
+    <>
+      <Eyebrow className="self-start">{label}</Eyebrow>
+      <div className="flex flex-1 items-center">{logo}</div>
+    </>
+  ) : (
+    logo
+  );
 
   return partner.websiteUrl ? (
     <a
       href={partner.websiteUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(className, "transition-opacity hover:opacity-80")}
+      className={cn(className, "transition-[border-color,box-shadow] hover:border-foreground/15 hover:shadow-raised")}
     >
       {content}
     </a>
@@ -100,10 +106,10 @@ export function PartnersBlock() {
 
   if (loading) {
     return (
-      <Section className="border-t">
-        <div className="flex justify-center gap-8">
+      <Section tone="muted">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="size-20 animate-pulse rounded-full bg-muted" />
+            <div key={i} className="h-28 animate-pulse rounded-lg bg-background" />
           ))}
         </div>
       </Section>
@@ -114,29 +120,18 @@ export function PartnersBlock() {
     return null;
   }
 
+  // Генеральный партнёр — большая плитка 2×2 в общей сетке логотипов
   return (
-    <Section className="border-t">
-      {generalPartners.length > 0 && (
-        <div className={cn(regularPartners.length > 0 && "mb-12 border-b pb-12")}>
-          <SectionHeader title={t("general_title")} align="center" />
-          <div className="flex flex-wrap items-center justify-center gap-12">
-            {generalPartners.map((partner) => (
-              <PartnerLogo key={partner.id} partner={partner} variant="general" />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {regularPartners.length > 0 && (
-        <>
-          <SectionHeader title={t("title")} align="center" />
-          <div className="flex flex-wrap items-start justify-center gap-8 md:gap-12">
-            {regularPartners.map((partner) => (
-              <PartnerLogo key={partner.id} partner={partner} variant="regular" />
-            ))}
-          </div>
-        </>
-      )}
+    <Section tone="muted">
+      <SectionHeader title={t("title")} />
+      <div className="grid auto-rows-[112px] grid-cols-2 gap-4 sm:grid-cols-4 xl:grid-cols-6">
+        {generalPartners.map((partner) => (
+          <PartnerLogo key={partner.id} partner={partner} variant="general" label={t("general_title")} />
+        ))}
+        {regularPartners.map((partner) => (
+          <PartnerLogo key={partner.id} partner={partner} variant="regular" />
+        ))}
+      </div>
     </Section>
   );
 }
