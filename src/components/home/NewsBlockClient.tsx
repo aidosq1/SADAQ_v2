@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calendar } from "lucide-react";
 import { formatDate } from "@/lib/date-format";
+import { getNewsCategoryLabel } from "@/lib/constants";
 
 interface NewsItem {
   id: number;
@@ -79,7 +80,7 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
                 {/* Category Badge */}
                 <div className="absolute top-3 left-3">
                   <span className="official-badge">
-                    {item.category}
+                    {getNewsCategoryLabel(item.category, locale)}
                   </span>
                 </div>
               </div>
