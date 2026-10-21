@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Trophy } from "lucide-react";
 import { notFound } from "next/navigation";
 import { CATEGORIES, BOW_TYPES, GENDERS, getLocalizedLabel } from "@/lib/constants";
+import { formatDate } from "@/lib/date-format";
 
 interface NationalTeamMembership {
     id: number;
@@ -65,8 +66,15 @@ async function getAthlete(id: string): Promise<Athlete | null> {
     }
 }
 
+const LABELS = {
+    ru: { bestRank: "Лучший рейтинг", points: "Очки", rankings: "Рейтинги по категориям", category: "Категория", gender: "Пол", discipline: "Дисциплина", place: "Место" },
+    kk: { bestRank: "Үздік рейтинг", points: "Ұпай", rankings: "Санаттар бойынша рейтинг", category: "Санат", gender: "Жынысы", discipline: "Пән", place: "Орын" },
+    en: { bestRank: "Best ranking", points: "Points", rankings: "Rankings by category", category: "Category", gender: "Gender", discipline: "Discipline", place: "Place" },
+} as const;
+
 export default async function AthleteProfile({ params }: { params: Promise<{ id: string; locale: string }> }) {
     const { id, locale } = await params;
+    const labels = LABELS[locale as keyof typeof LABELS] ?? LABELS.ru;
     const athlete = await getAthlete(id);
 
     if (!athlete) {
@@ -133,7 +141,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                         <span className="text-muted-foreground">
                                             {locale === 'kk' ? 'Туған күні' : locale === 'en' ? 'Date of birth' : 'Дата рождения'}
                                         </span>
-                                        <span className="font-medium">{athlete.dob}</span>
+                                        <span className="font-medium">{formatDate(athlete.dob, locale)}</span>
                                     </div>
                                 )}
                             </div>
@@ -145,9 +153,9 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                 <div className="md:col-span-2 space-y-6">
                     {/* Rank & Points Dashboard */}
                     <div className="grid grid-cols-2 gap-4">
-                        <Card className="bg-primary/5 border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
+                        <Card className="bg-primary/5 border-primary/20">
                             <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Лучший рейтинг</div>
+                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">{labels.bestRank}</div>
                                 <div className="text-4xl font-extrabold text-primary">
                                     #{bestRanking?.rank || '-'}
                                 </div>
@@ -158,9 +166,9 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                 )}
                             </CardContent>
                         </Card>
-                        <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer">
+                        <Card>
                             <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">Очки</div>
+                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">{labels.points}</div>
                                 <div className="text-3xl font-bold">
                                     {bestRanking?.points || 0}
                                 </div>
@@ -172,17 +180,17 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                     {athlete.rankings && athlete.rankings.length > 0 && (
                         <Card>
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><Trophy className="h-5 w-5" /> Рейтинги по категориям</CardTitle>
+                                <CardTitle className="flex items-center gap-2"><Trophy className="h-5 w-5" /> {labels.rankings}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Категория</TableHead>
-                                            <TableHead>Пол</TableHead>
-                                            <TableHead>Дисциплина</TableHead>
-                                            <TableHead>Место</TableHead>
-                                            <TableHead>Очки</TableHead>
+                                            <TableHead>{labels.category}</TableHead>
+                                            <TableHead>{labels.gender}</TableHead>
+                                            <TableHead>{labels.discipline}</TableHead>
+                                            <TableHead>{labels.place}</TableHead>
+                                            <TableHead>{labels.points}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>

@@ -56,9 +56,16 @@ interface GalleryResponse {
   };
 }
 
+const GALLERY_LABELS = {
+  ru: { all: "Все", openCloud: "Открыть в облаке", allInCloud: "Все фото в облаке" },
+  kk: { all: "Барлығы", openCloud: "Бұлтта ашу", allInCloud: "Барлық фото бұлтта" },
+  en: { all: "All", openCloud: "Open in cloud", allInCloud: "All photos in cloud" },
+} as const;
+
 export default function GalleryPage() {
   const t = useTranslations("GalleryPage");
   const locale = useLocale();
+  const labels = GALLERY_LABELS[locale as keyof typeof GALLERY_LABELS] ?? GALLERY_LABELS.ru;
 
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -215,7 +222,7 @@ export default function GalleryPage() {
                 : "bg-muted hover:bg-muted/80 text-muted-foreground"
             )}
           >
-            Все
+            {labels.all}
           </button>
           {albums.map((album) => (
             <button
@@ -236,13 +243,7 @@ export default function GalleryPage() {
 
       {/* Album Cloud Link Banner */}
       {albumFilter !== "all" && items.length > 0 && items[0].cloudUrl && (
-        <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-          <div className="flex items-center gap-3">
-            <ImageIcon className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              Дополнительные фотографии доступны в облаке
-            </span>
-          </div>
+        <div className="flex items-center justify-end p-4 bg-muted rounded-lg">
           <a
             href={items[0].cloudUrl}
             target="_blank"
@@ -250,7 +251,7 @@ export default function GalleryPage() {
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
           >
             <ExternalLink className="h-4 w-4" />
-            Открыть в облаке
+            {labels.openCloud}
           </a>
         </div>
       )}
@@ -389,7 +390,7 @@ export default function GalleryPage() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink className="h-4 w-4" />
-                      Все фото в облаке
+                      {labels.allInCloud}
                     </a>
                   )}
                 </div>
