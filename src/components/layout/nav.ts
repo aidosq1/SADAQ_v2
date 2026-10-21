@@ -16,7 +16,7 @@ export const NAV: NavEntry[] = [
     {
         labelKey: "about",
         items: [
-            { labelKey: "about", href: "/about" },
+            { labelKey: "about_overview", href: "/about" },
             { labelKey: "leadership", href: "/about/leadership" },
             { labelKey: "regions", href: "/about/regions" },
             { labelKey: "history", href: "/about/history" },
