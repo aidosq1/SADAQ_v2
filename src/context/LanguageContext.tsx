@@ -3,6 +3,7 @@
 import { createContext, useContext, ReactNode } from "react";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/navigation";
+import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 
 interface LanguageContextType {
     language: string;
@@ -17,6 +18,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const pathname = usePathname();
 
     const setLanguage = (newLocale: string) => {
+        if (newLocale !== locale) startNavigationProgress();
         router.replace(pathname, { locale: newLocale });
         router.refresh();
     };
