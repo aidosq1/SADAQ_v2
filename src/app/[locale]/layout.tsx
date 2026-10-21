@@ -8,6 +8,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import { Providers } from "@/components/providers";
+import { NavigationProgress } from "@/components/layout/NavigationProgress";
 import { organizationName, pageDescription, SEARCH_VERIFICATION, SITE_URL } from "@/lib/seo";
 
 // Оба шрифта поддерживают казахские буквы (cyrillic-ext): Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І
@@ -75,6 +76,7 @@ export default async function RootLayout({
       <body className="flex min-h-screen flex-col bg-background font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
           <Providers>
+            <NavigationProgress />
             <Header />
             <main className="flex-1 pt-18">{children}</main>
             <Footer />

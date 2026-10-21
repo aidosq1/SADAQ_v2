@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { ChevronRight, Search, Trophy } from "lucide-react";
 import { Link, useRouter } from "@/navigation";
+import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 import { DEFAULT_FILTERS } from "@/lib/constants";
 import { rankingsQuery } from "@/lib/ranking-query";
 import { useTranslations, useLocale } from "next-intl";
@@ -193,7 +194,10 @@ export default function RankingView({ initialRankings }: RankingViewProps) {
                     <TableRow
                       key={ranking.id}
                       className="group cursor-pointer"
-                      onClick={() => router.push(`/team/${ranking.athlete.slug}`)}
+                      onClick={() => {
+                        startNavigationProgress();
+                        router.push(`/team/${ranking.athlete.slug}`);
+                      }}
                     >
                       <TableCell className="text-center">
                         <RankBadge position={ranking.position} />

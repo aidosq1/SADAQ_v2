@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { AthleteFilters, type AthleteFilterKey } from "@/components/filters/AthleteFilters";
+import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 
 interface Props {
   currentCategory: string;
@@ -17,6 +18,7 @@ export default function TeamFilters({ currentCategory, currentGender, currentTyp
   function updateFilter(key: AthleteFilterKey, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     params.set(key, value);
+    startNavigationProgress();
     router.push(`?${params.toString()}`);
   }
 
