@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PersonPlaceholder } from "@/components/ui/person-placeholder";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { Section, SectionHeader } from "@/components/ui/section";
 import { ArrowLink } from "@/components/ui/arrow-link";
@@ -65,9 +65,9 @@ export function RankingWidget() {
     fetchRankings();
   }, []);
 
-  const sectionTitle = locale === 'kk' ? 'Рейтинг көшбасшылары' : locale === 'en' ? 'Ranking Leaders' : 'Лидеры Рейтинга';
-  const viewAllText = locale === 'kk' ? 'Толық рейтинг' : locale === 'en' ? 'Full Rankings' : 'Полный рейтинг';
-  const topAthletesText = locale === 'kk' ? 'Ерлер • Классикалық • Ересектер' : locale === 'en' ? 'Men • Recurve • Adults' : 'Мужчины • Классический лук • Взрослые';
+  const t = useTranslations("RankingPage");
+  // Виджет показывает рейтинг по умолчанию: мужчины, классический лук, взрослые
+  const topAthletesText = [t("gender_male"), t("disc_recurve"), t("age_adults")].join(" • ");
 
   if (loading) {
     return (
@@ -85,8 +85,8 @@ export function RankingWidget() {
     <Section tone="muted">
       <SectionHeader
         eyebrow={topAthletesText}
-        title={sectionTitle}
-        action={<ArrowLink href="/ranking">{viewAllText}</ArrowLink>}
+        title={t("leaders_title")}
+        action={<ArrowLink href="/ranking">{t("full_ranking")}</ArrowLink>}
       />
 
       <div className={`${cardSurface} overflow-hidden`}>
@@ -94,8 +94,8 @@ export function RankingWidget() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-16">№</TableHead>
-              <TableHead>{locale === 'kk' ? 'Атлет' : locale === 'en' ? 'Athlete' : 'Атлет'}</TableHead>
-              <TableHead className="text-right">{locale === 'kk' ? 'Ұпай' : locale === 'en' ? 'Points' : 'Очки'}</TableHead>
+              <TableHead>{t("th_athlete")}</TableHead>
+              <TableHead className="text-right">{t("th_points")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

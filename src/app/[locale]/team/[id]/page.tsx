@@ -25,6 +25,8 @@ interface Ranking {
     type: string;
     points: number;
     rank: number;
+    // Место в группе рейтинга; null — спортсмен неактивен и в рейтинге не показывается
+    position: number | null;
 }
 
 interface Region {
@@ -84,9 +86,9 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         notFound();
     }
 
-    // Find the best ranking (lowest rank number = best position)
+    // Лучшее место среди всех групп рейтинга
     const bestRanking = athlete.rankings?.reduce((best, r) =>
-        !best || r.rank < best.rank ? r : best
+        r.position !== null && (!best || best.position === null || r.position < best.position) ? r : best
     , null as Ranking | null);
 
     // Get region display with localization
@@ -153,7 +155,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                     <div className="grid grid-cols-2 gap-4">
                         <Card className="items-center gap-2 border-primary/20 bg-secondary px-4 text-center">
                             <p className="type-eyebrow text-muted-foreground">{labels.bestRank}</p>
-                            <p className="type-number text-4xl text-primary">#{bestRanking?.rank || '-'}</p>
+                            <p className="type-number text-4xl text-primary">{bestRanking?.position ? `#${bestRanking.position}` : '—'}</p>
                             {bestRanking && (
                                 <p className="type-caption">{getCategoryLabel(bestRanking.category)}</p>
                             )}
@@ -190,7 +192,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
                                                     <TableCell>{getGenderLabel(ranking.gender)}</TableCell>
                                                     <TableCell>{getBowTypeLabel(ranking.type)}</TableCell>
                                                     <TableCell>
-                                                        <RankBadge position={ranking.rank} />
+                                                        {ranking.position ? <RankBadge position={ranking.position} /> : '—'}
                                                     </TableCell>
                                                     <TableCell className="type-number text-right text-primary">{ranking.points}</TableCell>
                                                 </TableRow>

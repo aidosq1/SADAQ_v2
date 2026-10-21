@@ -101,20 +101,16 @@ interface JudgeEntry {
     judgeId: number | null;
 }
 
-const STEPS: Step[] = [
-    { id: "tournament", label: "Турнир" },
-    { id: "category", label: "Категория" },
-    { id: "judges", label: "Судьи" },
-    { id: "athletes", label: "Спортсмены" },
-    { id: "documents", label: "Документы" },
-];
+// Подписи шагов берутся из переводов ApplyPage.step_*
+const STEP_IDS = ["tournament", "category", "judges", "athletes", "documents"] as const;
 
 export default function TournamentApplyPage() {
     const { data: session, status: sessionStatus } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
     const locale = useLocale();
-    const t = useTranslations("Common");
+    const t = useTranslations("ApplyPage");
+    const STEPS: Step[] = STEP_IDS.map((id) => ({ id, label: t(`step_${id}`) }));
 
     // Get tournamentId from URL params (for direct links from calendar/tournament pages)
     const urlTournamentId = searchParams.get('tournamentId');
@@ -259,7 +255,7 @@ export default function TournamentApplyPage() {
     const athleteItems: SearchableSelectItem[] = filteredAthletes.map(a => ({
         id: a.id,
         name: a.name,
-        subtitle: a.iin ? `ИИН: ${a.iin}` : a.region?.name,
+        subtitle: a.iin ? `${t("iin")}: ${a.iin}` : a.region?.name,
     }));
 
     const coachItems: SearchableSelectItem[] = coaches.map(c => ({
@@ -303,7 +299,7 @@ export default function TournamentApplyPage() {
                 );
                 if (existing) {
                     setExistingRegistration({ registrationNumber: existing.registrationNumber });
-                    toast.error(`Вы уже подали заявку на эту категорию (${existing.registrationNumber})`);
+                    toast.error(t("already_applied_toast", { number: existing.registrationNumber }));
                 }
             }
         } catch (error) {
@@ -336,7 +332,7 @@ export default function TournamentApplyPage() {
 
     const addParticipant = () => {
         if (participants.length >= maxParticipants) {
-            toast.error(`Максимум ${maxParticipants} спортсмен${maxParticipants === 6 ? 'ов' : 'а'} на категорию`);
+            toast.error(t("max_participants", { count: maxParticipants }));
             return;
         }
         setParticipants([
@@ -378,7 +374,7 @@ export default function TournamentApplyPage() {
 
         for (const file of Array.from(files)) {
             if (file.size > 10 * 1024 * 1024) {
-                toast.error(`Файл "${file.name}" превышает 10MB`);
+                toast.error(t("file_too_large", { name: file.name }));
                 continue;
             }
             try {
@@ -398,12 +394,12 @@ export default function TournamentApplyPage() {
                         fileName: file.name,
                         fileUrl: data.data.url,
                     }]);
-                    toast.success(`Файл "${file.name}" загружен`);
+                    toast.success(t("file_uploaded", { name: file.name }));
                 } else {
-                    toast.error(data.error || `Ошибка загрузки файла "${file.name}"`);
+                    toast.error(data.error || t("file_upload_error", { name: file.name }));
                 }
             } catch {
-                toast.error(`Ошибка загрузки файла "${file.name}"`);
+                toast.error(t("file_upload_error", { name: file.name }));
             }
         }
 
@@ -450,25 +446,25 @@ export default function TournamentApplyPage() {
     const handleSubmit = async () => {
         // Validation
         if (!selectedCategoryId) {
-            toast.error("Выберите категорию турнира");
+            toast.error(t("error_choose_category"));
             return;
         }
 
         // Validate judges
         const validJudges = judgeEntries.filter(j => j.judgeId);
         if (validJudges.length === 0) {
-            toast.error("Добавьте хотя бы одного судью");
+            toast.error(t("error_add_judge"));
             return;
         }
 
         for (let i = 0; i < participants.length; i++) {
             const p = participants[i];
             if (!p.athleteId) {
-                toast.error(`Участник ${i + 1}: выберите спортсмена`);
+                toast.error(t("error_participant_athlete", { index: i + 1 }));
                 return;
             }
             if (!p.coachId) {
-                toast.error(`Участник ${i + 1}: выберите тренера`);
+                toast.error(t("error_participant_coach", { index: i + 1 }));
                 return;
             }
         }
@@ -496,20 +492,20 @@ export default function TournamentApplyPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                toast.error(data.error || "Ошибка при отправке заявки");
+                toast.error(data.error || t("submit_error"));
                 setIsSubmitting(false);
                 return;
             }
 
             toast.success(
                 <div className="space-y-1">
-                    <p className="font-medium">Заявка успешно отправлена!</p>
-                    <p className="text-sm">Номер заявки: {data.registrationNumber}</p>
+                    <p className="font-medium">{t("submit_success")}</p>
+                    <p className="text-sm">{t("registration_number")}: {data.registrationNumber}</p>
                 </div>
             );
             router.push(`/${locale}/calendar`);
         } catch (error) {
-            toast.error("Произошла ошибка сети");
+            toast.error(t("network_error"));
         } finally {
             setIsSubmitting(false);
         }
@@ -530,10 +526,10 @@ export default function TournamentApplyPage() {
             <PageContainer size="narrow">
                 <EmptyState
                     icon={Lock}
-                    title="Требуется авторизация"
+                    title={t("auth_required")}
                     action={
                         <Button asChild>
-                            <Link href={`/${locale}/auth/signin`}>Войти</Link>
+                            <Link href={`/${locale}/auth/signin`}>{t("login")}</Link>
                         </Button>
                     }
                 />
@@ -546,7 +542,7 @@ export default function TournamentApplyPage() {
     if (userRole !== "RegionalRepresentative") {
         return (
             <PageContainer size="narrow">
-                <EmptyState icon={Lock} title="Подача заявок доступна только региональным представителям" />
+                <EmptyState icon={Lock} title={t("only_regional")} />
             </PageContainer>
         );
     }
@@ -557,12 +553,12 @@ export default function TournamentApplyPage() {
             <PageContainer size="narrow">
                 <EmptyState
                     icon={Trophy}
-                    title="Нет турниров с открытой регистрацией"
+                    title={t("no_tournaments")}
                     action={
                         <Button asChild variant="outline">
                             <Link href={`/${locale}/calendar`}>
                                 <ArrowLeft />
-                                К календарю
+                                {t("back_to_calendar")}
                             </Link>
                         </Button>
                     }
@@ -580,7 +576,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <Trophy className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="type-h3 text-primary">Выберите турнир</h3>
+                                <h3 className="type-h3 text-primary">{t("choose_tournament")}</h3>
                             </div>
                         </div>
                         <div className="grid gap-3">
@@ -647,14 +643,14 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <ClipboardList className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="type-h3 text-primary">Выберите категорию</h3>
+                                <h3 className="type-h3 text-primary">{t("choose_category")}</h3>
                             </div>
                         </div>
 
                         {selectedTournament && (
                             <Select value={selectedCategoryId} onValueChange={handleCategorySelect}>
                                 <SelectTrigger className="max-w-md">
-                                    <SelectValue placeholder="Выберите категорию" />
+                                    <SelectValue placeholder={t("choose_category")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {selectedTournament.categories.map((cat) => (
@@ -672,9 +668,9 @@ export default function TournamentApplyPage() {
                                 <div className="flex items-center gap-3">
                                     <Lock className="h-5 w-5 text-destructive" />
                                     <div>
-                                        <h4 className="font-semibold text-destructive">Заявка уже подана</h4>
+                                        <h4 className="font-semibold text-destructive">{t("already_applied")}</h4>
                                         <p className="text-sm text-muted-foreground">
-                                            Номер заявки: <strong>{existingRegistration.registrationNumber}</strong>
+                                            {t("registration_number")}: <strong>{existingRegistration.registrationNumber}</strong>
                                         </p>
                                     </div>
                                 </div>
@@ -690,11 +686,11 @@ export default function TournamentApplyPage() {
                             <div className="flex items-center gap-3">
                                 <Shield className="h-5 w-5 text-primary" />
                                 <div>
-                                    <h3 className="type-h3 text-primary">Судьи от региона</h3>
+                                    <h3 className="type-h3 text-primary">{t("judges_title")}</h3>
                                 </div>
                             </div>
                             <Button variant="outline" size="sm" onClick={addJudgeEntry}>
-                                <Plus className="mr-2 h-4 w-4" /> Добавить
+                                <Plus className="mr-2 h-4 w-4" /> {t("add")}
                             </Button>
                         </div>
 
@@ -704,11 +700,12 @@ export default function TournamentApplyPage() {
                                     <span className="font-bold text-primary w-6">#{index + 1}</span>
                                     <div className="flex-1">
                                         <SearchableSelect
+                                            emptyMessage={t("nothing_found")}
                                             items={judgeItems}
                                             value={entry.judgeId}
                                             onChange={(id) => updateJudgeEntry(entry.id, id)}
-                                            placeholder="Выберите судью"
-                                            searchPlaceholder="Поиск по имени..."
+                                            placeholder={t("choose_judge")}
+                                            searchPlaceholder={t("search_by_name")}
                                         />
                                     </div>
                                     <Button
@@ -733,9 +730,9 @@ export default function TournamentApplyPage() {
                             <div className="flex items-center gap-3">
                                 <UserCheck className="h-5 w-5 text-primary" />
                                 <div>
-                                    <h3 className="type-h3 text-primary">Список спортсменов</h3>
+                                    <h3 className="type-h3 text-primary">{t("athletes_title")}</h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Доступно: {filteredAthletes.length} спортсменов
+                                        {t("available_athletes", { count: filteredAthletes.length })}
                                     </p>
                                 </div>
                             </div>
@@ -749,7 +746,7 @@ export default function TournamentApplyPage() {
                                     onClick={addParticipant}
                                     disabled={participants.length >= maxParticipants}
                                 >
-                                    <Plus className="mr-2 h-4 w-4" /> Добавить
+                                    <Plus className="mr-2 h-4 w-4" /> {t("add")}
                                 </Button>
                             </div>
                         </div>
@@ -758,13 +755,14 @@ export default function TournamentApplyPage() {
                         <div className="p-4 rounded-lg bg-muted/30 mb-4">
                             <div className="flex flex-col md:flex-row md:items-center gap-4">
                                 <div className="flex-1">
-                                    <label className="text-sm font-medium mb-2 block">Тренер по умолчанию</label>
+                                    <label className="text-sm font-medium mb-2 block">{t("default_coach")}</label>
                                     <SearchableSelect
+                                        emptyMessage={t("nothing_found")}
                                         items={coachItems}
                                         value={defaultCoachId}
                                         onChange={setDefaultCoachId}
-                                        placeholder="Выберите тренера для всех"
-                                        searchPlaceholder="Поиск тренера..."
+                                        placeholder={t("choose_coach_for_all")}
+                                        searchPlaceholder={t("search_coach")}
                                     />
                                 </div>
                                 {defaultCoachId && (
@@ -773,7 +771,7 @@ export default function TournamentApplyPage() {
                                         onClick={applyDefaultCoachToAll}
                                         className="whitespace-nowrap"
                                     >
-                                        Применить ко всем
+                                        {t("apply_to_all")}
                                     </Button>
                                 )}
                             </div>
@@ -785,8 +783,8 @@ export default function TournamentApplyPage() {
                                 <TableHeader className="bg-muted/30">
                                     <TableRow>
                                         <TableHead className="w-[50px]">#</TableHead>
-                                        <TableHead>Спортсмен</TableHead>
-                                        <TableHead>Тренер</TableHead>
+                                        <TableHead>{t("athlete")}</TableHead>
+                                        <TableHead>{t("coach")}</TableHead>
                                         <TableHead className="w-[60px]"></TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -796,20 +794,22 @@ export default function TournamentApplyPage() {
                                             <TableCell className="font-bold text-primary">{index + 1}</TableCell>
                                             <TableCell>
                                                 <SearchableSelect
+                                                    emptyMessage={t("nothing_found")}
                                                     items={athleteItems}
                                                     value={p.athleteId}
                                                     onChange={(id) => updateParticipant(p.id, 'athleteId', id)}
-                                                    placeholder="Выберите спортсмена"
-                                                    searchPlaceholder="Поиск по имени или ИИН..."
+                                                    placeholder={t("choose_athlete")}
+                                                    searchPlaceholder={t("search_athlete")}
                                                 />
                                             </TableCell>
                                             <TableCell>
                                                 <SearchableSelect
+                                                    emptyMessage={t("nothing_found")}
                                                     items={coachItems}
                                                     value={p.coachId}
                                                     onChange={(id) => updateParticipant(p.id, 'coachId', id)}
-                                                    placeholder="Выберите тренера"
-                                                    searchPlaceholder="Поиск по имени..."
+                                                    placeholder={t("choose_coach")}
+                                                    searchPlaceholder={t("search_by_name")}
                                                 />
                                             </TableCell>
                                             <TableCell>
@@ -847,22 +847,24 @@ export default function TournamentApplyPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Спортсмен</label>
+                                        <label className="text-sm font-medium">{t("athlete")}</label>
                                         <SearchableSelect
+                                            emptyMessage={t("nothing_found")}
                                             items={athleteItems}
                                             value={p.athleteId}
                                             onChange={(id) => updateParticipant(p.id, 'athleteId', id)}
-                                            placeholder="Выберите спортсмена"
+                                            placeholder={t("choose_athlete")}
                                         />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Тренер</label>
+                                        <label className="text-sm font-medium">{t("coach")}</label>
                                         <SearchableSelect
+                                            emptyMessage={t("nothing_found")}
                                             items={coachItems}
                                             value={p.coachId}
                                             onChange={(id) => updateParticipant(p.id, 'coachId', id)}
-                                            placeholder="Выберите тренера"
+                                            placeholder={t("choose_coach")}
                                         />
                                     </div>
                                 </div>
@@ -877,7 +879,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <Paperclip className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="type-h3 text-primary">Документы</h3>
+                                <h3 className="type-h3 text-primary">{t("documents_title")}</h3>
                             </div>
                         </div>
 
@@ -915,10 +917,10 @@ export default function TournamentApplyPage() {
                                 <>
                                     <Upload className="h-8 w-8 text-muted-foreground mb-2" />
                                     <p className="text-sm text-muted-foreground">
-                                        Нажмите для выбора файлов
+                                        {t("choose_files")}
                                     </p>
                                     <p className="text-xs text-muted-foreground mt-1">
-                                        PDF до 10MB
+                                        {t("file_limit")}
                                     </p>
                                 </>
                             )}
@@ -935,19 +937,19 @@ export default function TournamentApplyPage() {
 
                         {/* Summary before submit */}
                         <div className="mt-6 p-4 rounded-lg bg-muted/50 space-y-2">
-                            <h4 className="font-medium">Итого:</h4>
+                            <h4 className="font-medium">{t("summary")}:</h4>
                             <p className="text-sm text-muted-foreground">
-                                Турнир: <span className="font-medium text-foreground">{getLocalizedTitle(selectedTournament!)}</span>
+                                {t("summary_tournament")}: <span className="font-medium text-foreground">{getLocalizedTitle(selectedTournament!)}</span>
                             </p>
                             <p className="text-sm text-muted-foreground">
-                                Судей: <span className="font-medium text-foreground">{judgeEntries.filter(j => j.judgeId).length}</span>
+                                {t("summary_judges")}: <span className="font-medium text-foreground">{judgeEntries.filter(j => j.judgeId).length}</span>
                             </p>
                             <p className="text-sm text-muted-foreground">
-                                Спортсменов: <span className="font-medium text-foreground">{participants.length}</span>
+                                {t("summary_athletes")}: <span className="font-medium text-foreground">{participants.length}</span>
                             </p>
                             {uploadedDocuments.length > 0 && (
                                 <p className="text-sm text-muted-foreground">
-                                    Документов: <span className="font-medium text-foreground">{uploadedDocuments.length}</span>
+                                    {t("summary_documents")}: <span className="font-medium text-foreground">{uploadedDocuments.length}</span>
                                 </p>
                             )}
                         </div>
@@ -961,7 +963,7 @@ export default function TournamentApplyPage() {
 
     return (
         <PageContainer size="narrow" className="space-y-6">
-            <PageHeader title="Подать заявку на турнир" className="mb-0 md:mb-0" />
+            <PageHeader title={t("title")} className="mb-0 md:mb-0" />
 
             {/* Stepper */}
             <Stepper
@@ -985,11 +987,11 @@ export default function TournamentApplyPage() {
                     disabled={currentStep === 0}
                 >
                     <ChevronLeft className="mr-2 h-4 w-4" />
-                    Назад
+                    {t("back")}
                 </Button>
 
                 <span className="text-sm text-muted-foreground hidden md:block">
-                    Шаг {currentStep + 1} из {STEPS.length}
+                    {t("step_of", { current: currentStep + 1, total: STEPS.length })}
                 </span>
 
                 {currentStep < 4 ? (
@@ -997,7 +999,7 @@ export default function TournamentApplyPage() {
                         onClick={handleNext}
                         disabled={!canProceedFromStep(currentStep)}
                     >
-                        Далее
+                        {t("next")}
                         <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
                 ) : (
@@ -1009,12 +1011,12 @@ export default function TournamentApplyPage() {
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Отправка...
+                                {t("submitting")}
                             </>
                         ) : (
                             <>
                                 <Send className="mr-2 h-4 w-4" />
-                                Отправить заявку
+                                {t("submit")}
                             </>
                         )}
                     </Button>

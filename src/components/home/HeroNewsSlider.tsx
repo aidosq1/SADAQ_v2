@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLink } from "@/components/ui/arrow-link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface Slide {
   id: number;
@@ -42,6 +42,9 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
   const [loading, setLoading] = useState(!initialSlides);
   const [error, setError] = useState(false);
   const locale = useLocale();
+  const tNews = useTranslations("NewsPage");
+  const tHeader = useTranslations("Header");
+  const tHero = useTranslations("Hero");
 
   useEffect(() => {
     if (initialSlides) return;
@@ -82,8 +85,6 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
     return () => clearInterval(interval);
   }, [isPaused, nextSlide, slides.length]);
 
-  const readMoreText = locale === 'kk' ? 'Толық оқу' : locale === 'en' ? 'Read more' : 'Подробнее';
-
   if (loading) {
     return (
       <div className="relative h-full w-full animate-pulse bg-muted" aria-busy="true" />
@@ -93,9 +94,7 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
   if (slides.length === 0) {
     return (
       <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-b from-primary to-primary-deep px-8 text-center">
-        <h2 className="type-h2 text-white">
-          {locale === 'kk' ? 'Қазақстан Садақ Ату Федерациясы' : locale === 'en' ? 'Kazakhstan Archery Federation' : 'Федерация Стрельбы из Лука Казахстана'}
-        </h2>
+        <h2 className="type-h2 text-white">{tHero("federation_name")}</h2>
       </div>
     );
   }
@@ -132,9 +131,7 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
           <div className="absolute inset-0 flex items-end p-6 md:p-8">
             <div className="w-full max-w-xl">
               {/* Category Badge */}
-              <Badge variant="brand" className="mb-3">
-                {locale === 'kk' ? 'Жаңалықтар' : locale === 'en' ? 'News' : 'Новости'}
-              </Badge>
+              <Badge variant="brand" className="mb-3">{tHeader("news")}</Badge>
 
               <h2 className="type-h2 mb-3 line-clamp-2 text-white">
                 {getLocalizedField(slide, 'title', locale)}
@@ -147,7 +144,7 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
               )}
 
               <ArrowLink href={slide.linkUrl || "/media/news"} tone="inverse">
-                {readMoreText}
+                {tNews("read_more")}
               </ArrowLink>
             </div>
           </div>

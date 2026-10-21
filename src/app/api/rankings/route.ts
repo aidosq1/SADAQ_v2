@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuth, parseQueryParams } from '@/lib/api-utils';
-import { withPositions } from '@/lib/ranking-position';
+import { withPositions, RANKING_ORDER } from '@/lib/ranking-position';
 
 // GET /api/rankings - Public
 export async function GET(request: NextRequest) {
@@ -23,10 +23,7 @@ export async function GET(request: NextRequest) {
     const [rankings, total] = await Promise.all([
       prisma.rankingEntry.findMany({
         where,
-        orderBy: [
-          { rank: 'asc' },
-          { points: 'desc' },
-        ],
+        orderBy: [...RANKING_ORDER],
         take: limit,
         skip,
         include: {

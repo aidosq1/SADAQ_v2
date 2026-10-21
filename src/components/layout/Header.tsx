@@ -150,12 +150,8 @@ export function Header() {
                             className="h-14 w-auto object-contain"
                         />
                         <div className="hidden flex-col leading-tight lg:flex">
-                            <span className="type-eyebrow text-muted-foreground">
-                                {language === 'kk' ? 'Қазақстан Республикасының' : language === 'en' ? 'Republic of Kazakhstan' : 'Республики Казахстан'}
-                            </span>
-                            <span className="font-heading text-sm font-bold text-primary">
-                                {language === 'kk' ? 'Ұлттық Садақ Ату Федерациясы' : language === 'en' ? 'National Archery Federation' : 'Национальная Федерация Стрельбы из Лука'}
-                            </span>
+                            <span className="type-eyebrow text-muted-foreground">{t("logo_country")}</span>
+                            <span className="font-heading text-sm font-bold text-primary">{t("logo_name")}</span>
                         </div>
                     </Link>
 

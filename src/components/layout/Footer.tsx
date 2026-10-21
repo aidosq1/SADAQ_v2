@@ -17,6 +17,7 @@ interface SiteContent {
 
 export function Footer() {
     const t = useTranslations("Footer");
+    const tHeader = useTranslations("Header");
     const locale = useLocale();
     const [content, setContent] = useState<Record<string, SiteContent>>({});
     const [error, setError] = useState(false);
@@ -73,7 +74,7 @@ export function Footer() {
                             </li>
                             <li>
                                 <Link href="/about/regions" className="text-sm text-white/75 transition-colors hover:text-white">
-                                    {t("vacancies")}
+                                    {tHeader("regions")}
                                 </Link>
                             </li>
                         </ul>

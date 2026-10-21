@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Section, SectionHeader } from "@/components/ui/section";
 
@@ -71,7 +71,7 @@ function PartnerLogo({ partner, variant }: { partner: Partner; variant: keyof ty
 }
 
 export function PartnersBlock() {
-  const locale = useLocale();
+  const t = useTranslations("PartnersBlock");
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -94,8 +94,6 @@ export function PartnersBlock() {
     fetchPartners();
   }, []);
 
-  const sectionTitle = locale === 'kk' ? 'Серіктестер' : locale === 'en' ? 'Partners & Affiliations' : 'Партнёры и аффилиации';
-  const generalTitle = locale === 'kk' ? 'Бас серіктес' : locale === 'en' ? 'General Partner' : 'Генеральный партнёр';
 
   const generalPartners = partners.filter((p) => p.isGeneral);
   const regularPartners = partners.filter((p) => !p.isGeneral);
@@ -120,7 +118,7 @@ export function PartnersBlock() {
     <Section className="border-t">
       {generalPartners.length > 0 && (
         <div className={cn(regularPartners.length > 0 && "mb-12 border-b pb-12")}>
-          <SectionHeader title={generalTitle} align="center" />
+          <SectionHeader title={t("general_title")} align="center" />
           <div className="flex flex-wrap items-center justify-center gap-12">
             {generalPartners.map((partner) => (
               <PartnerLogo key={partner.id} partner={partner} variant="general" />
@@ -131,7 +129,7 @@ export function PartnersBlock() {
 
       {regularPartners.length > 0 && (
         <>
-          <SectionHeader title={sectionTitle} align="center" />
+          <SectionHeader title={t("title")} align="center" />
           <div className="flex flex-wrap items-start justify-center gap-8 md:gap-12">
             {regularPartners.map((partner) => (
               <PartnerLogo key={partner.id} partner={partner} variant="regular" />
