@@ -21,7 +21,6 @@ import {
   Unlink,
   type LucideIcon,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -103,12 +102,12 @@ function ToolbarButton({ label, icon: Icon, active, disabled, onClick }: Toolbar
 
 interface RichTextToolbarProps {
   editor: Editor | null;
-  uploadFolder: string;
+  uploading: boolean;
+  onPickImages: (files: File[]) => void;
 }
 
-export function RichTextToolbar({ editor, uploadFolder }: RichTextToolbarProps) {
+export function RichTextToolbar({ editor, uploading, onPickImages }: RichTextToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
 
@@ -147,38 +146,10 @@ export function RichTextToolbar({ editor, uploadFolder }: RichTextToolbarProps) 
     setLinkOpen(false);
   }
 
-  async function uploadImage(file: File) {
-    if (!editor) return;
-    if (!file.type.startsWith("image/")) {
-      toast.error("Только изображения");
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", uploadFolder);
-
-      const response = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        editor.chain().focus().setImage({ src: data.data.url, alt: "" }).run();
-      } else {
-        toast.error(data.error || "Ошибка загрузки");
-      }
-    } catch {
-      toast.error("Ошибка загрузки");
-    } finally {
-      setUploading(false);
-    }
-  }
-
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+    const files = Array.from(e.target.files ?? []);
     e.target.value = "";
-    if (file) uploadImage(file);
+    if (files.length > 0) onPickImages(files);
   }
 
   const disabled = !editor;
@@ -209,7 +180,14 @@ export function RichTextToolbar({ editor, uploadFolder }: RichTextToolbarProps) 
             disabled={disabled || uploading}
             onClick={() => fileInputRef.current?.click()}
           />
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            multiple
+            className="hidden"
+            onChange={handleFileChange}
+          />
         </div>
       </div>
 

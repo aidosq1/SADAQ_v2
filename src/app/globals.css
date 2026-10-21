@@ -328,6 +328,23 @@
   background-image: linear-gradient(to top, hsl(352 48% 8% / 0.92) 0%, hsl(352 48% 8% / 0.55) 45%, transparent 100%);
 }
 
+/* ===== Редактор новостей: фото с подписью ===== */
+.ProseMirror figure img {
+  border-radius: var(--radius-lg);
+}
+
+.ProseMirror figcaption[data-empty]::before {
+  content: attr(data-placeholder);
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+}
+
+/* Фото выделено (Backspace в начале подписи): следующий Backspace удалит его */
+.ProseMirror figure.ProseMirror-selectednode img {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* ===== Print Styles ===== */
 @media print {
   /* Hide navigation, header, footer, sidebar */
