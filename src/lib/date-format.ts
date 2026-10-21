@@ -105,3 +105,17 @@ export function formatDateRange(
   if (loc === 'kk') return formatKkRange(startParts, endParts);
   return normalizeSpaces(intlFormatter(loc, true).formatRange(new Date(start), new Date(end as DateInput)));
 }
+
+function capitalize(value: string): string {
+  return value.charAt(0).toLocaleUpperCase() + value.slice(1);
+}
+
+// Заголовок месяца в календаре: "Шілде 2026", "Июль 2026", "July 2026"
+export function formatMonthYear(date: DateInput, locale: string): string {
+  const loc = toLocale(locale);
+  const { year, month } = getParts(date);
+  const monthName = loc === 'kk'
+    ? KK_MONTHS[month]
+    : new Intl.DateTimeFormat(INTL_LOCALES[loc], { timeZone: KZ_TIMEZONE, month: 'long' }).format(new Date(date));
+  return `${capitalize(monthName)} ${year}`;
+}
