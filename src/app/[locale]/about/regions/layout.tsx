@@ -1,6 +1,6 @@
-import { titleFromTranslations } from "@/lib/page-metadata";
+import { metadataFromTranslations } from "@/lib/page-metadata";
 
-export const generateMetadata = titleFromTranslations("RegionsPage");
+export const generateMetadata = metadataFromTranslations("RegionsPage", "/about/regions");
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return children;

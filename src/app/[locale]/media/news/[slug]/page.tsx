@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Calendar } from "lucide-react";
@@ -12,6 +13,8 @@ import { getTranslations } from "next-intl/server";
 import DOMPurify from "isomorphic-dompurify";
 import { formatDate } from "@/lib/date-format";
 import { toNewsHtml } from "@/lib/news-content";
+import { absoluteUrl, buildPageMetadata, localizedPath, truncateDescription } from "@/lib/seo";
+import { newsArticleJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 interface NewsArticle {
   id: number;
@@ -28,6 +31,7 @@ interface NewsArticle {
   category: string;
   image: string | null;
   publishedAt: Date;
+  updatedAt: Date;
 }
 
 function getLocalizedTitle(news: NewsArticle, locale: string): string {
@@ -48,16 +52,22 @@ function getLocalizedExcerpt(news: NewsArticle, locale: string): string {
   return news.excerpt || "";
 }
 
+// Анонс, а без него — начало текста новости
+function getDescription(news: NewsArticle, locale: string): string {
+  const source = getLocalizedExcerpt(news, locale) || toNewsHtml(getLocalizedContent(news, locale));
+  return truncateDescription(source) || getLocalizedTitle(news, locale);
+}
+
 interface Props {
   params: Promise<{ slug: string; locale: string }>;
 }
 
-async function getNewsBySlug(slug: string): Promise<NewsArticle | null> {
-  const news = await prisma.news.findUnique({
+// cache: generateMetadata и страница делят один запрос к базе
+const getNewsBySlug = cache(async (slug: string): Promise<NewsArticle | null> => {
+  return prisma.news.findUnique({
     where: { slug },
   });
-  return news;
-}
+});
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
@@ -67,26 +77,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Not Found" };
   }
 
-  const title = getLocalizedTitle(news, locale);
-  const description = getLocalizedExcerpt(news, locale) || title;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: news.image ? [news.image] : [],
-      type: "article",
+  return buildPageMetadata({
+    locale,
+    path: `/media/news/${news.slug}`,
+    title: getLocalizedTitle(news, locale),
+    description: getDescription(news, locale),
+    image: news.image,
+    article: {
       publishedTime: news.publishedAt.toISOString(),
+      modifiedTime: news.updatedAt.toISOString(),
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: news.image ? [news.image] : [],
-    },
-  };
+  });
 }
 
 export default async function NewsArticlePage({ params }: Props) {
@@ -102,9 +103,19 @@ export default async function NewsArticlePage({ params }: Props) {
   const content = getLocalizedContent(news, locale);
 
   const formattedDate = formatDate(news.publishedAt, locale);
+  const jsonLd = newsArticleJsonLd({
+    locale,
+    url: absoluteUrl(localizedPath(`/media/news/${news.slug}`, locale)),
+    headline: title,
+    description: getDescription(news, locale),
+    image: news.image,
+    publishedAt: news.publishedAt,
+    updatedAt: news.updatedAt,
+  });
 
   return (
     <PageContainer size="narrow">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
       <BackLink href="/media/news" label={t("back_to_news")} className="mb-6" />
 
       <article>

@@ -8,6 +8,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import { Providers } from "@/components/providers";
+import { organizationName, pageDescription, SEARCH_VERIFICATION, SITE_URL } from "@/lib/seo";
 
 // Оба шрифта поддерживают казахские буквы (cyrillic-ext): Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І
 const inter = Inter({
@@ -23,22 +24,30 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-const SITE_DESCRIPTIONS: Record<string, string> = {
-  kk: "Қазақстан Республикасының Ұлттық садақ ату федерациясының ресми сайты",
-  ru: "Официальный сайт Национальной федерации стрельбы из лука Республики Казахстан",
-  en: "Official website of the National Archery Federation of the Republic of Kazakhstan",
-};
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Hero" });
 
+  // canonical и hreflang здесь не задаём: их наследовали бы все страницы.
+  // Каждый раздел ставит свои через buildPageMetadata
   return {
+    metadataBase: new URL(SITE_URL),
     title: {
       default: t("title"),
       template: "%s | SADAQ",
     },
-    description: SITE_DESCRIPTIONS[locale] ?? SITE_DESCRIPTIONS.kk,
+    description: pageDescription("/", locale),
+    applicationName: "SADAQ",
+    openGraph: {
+      type: "website",
+      siteName: organizationName(locale),
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image" },
+    verification: {
+      google: SEARCH_VERIFICATION.google,
+      yandex: SEARCH_VERIFICATION.yandex,
+    },
     icons: {
       icon: "/logo_federation_circular.png",
       apple: "/logo_federation_circular.png",

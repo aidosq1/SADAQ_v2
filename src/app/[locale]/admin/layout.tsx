@@ -2,6 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { AdminSidebar, AdminMobileMenuTrigger } from "@/components/admin/AdminSidebar";
+import { NO_INDEX_METADATA } from "@/lib/page-metadata";
+
+export const metadata = NO_INDEX_METADATA;
 
 export default async function AdminLayout({
   children,

@@ -12,6 +12,7 @@ import { getLocale } from "next-intl/server";
 import { getLocalizedField } from "@/lib/localization";
 import TeamFilters from "./TeamFilters";
 import type { Metadata } from "next";
+import { buildPageMetadata, pageDescription } from "@/lib/seo";
 
 interface Props {
   searchParams: Promise<{ category?: string; gender?: string; type?: string }>;
@@ -42,8 +43,15 @@ function getPageTitle(locale: string): string {
   return locale === 'kk' ? 'Ұлттық құрама' : locale === 'en' ? 'National Team' : 'Сборная команда';
 }
 
+// Фильтры (?category=…) — варианты одной страницы, canonical у всех — /team
 export async function generateMetadata(): Promise<Metadata> {
-  return { title: getPageTitle(await getLocale()) };
+  const locale = await getLocale();
+  return buildPageMetadata({
+    locale,
+    path: "/team",
+    title: getPageTitle(locale),
+    description: pageDescription("/team", locale),
+  });
 }
 
 export default async function TeamPage({ searchParams }: Props) {
