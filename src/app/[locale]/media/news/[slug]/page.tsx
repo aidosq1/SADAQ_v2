@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
 import DOMPurify from "isomorphic-dompurify";
+import { toNewsHtml } from "@/lib/news-content";
 
 interface NewsArticle {
   id: number;
@@ -151,14 +152,14 @@ export default async function NewsArticlePage({ params }: Props) {
 
         {/* Content */}
         <div
-          className="prose prose-lg dark:prose-invert max-w-none
+          className="prose prose-lg max-w-none
             prose-headings:font-bold
             prose-p:text-foreground/90
             prose-a:text-primary prose-a:no-underline hover:prose-a:underline
             prose-img:rounded-lg
             prose-blockquote:border-l-primary prose-blockquote:bg-muted/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
           "
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(toNewsHtml(content), { ADD_ATTR: ["target"] }) }}
         />
       </article>
 

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-border: hsl(var(--border));

@@ -34,6 +34,8 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLocale } from "next-intl";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface News {
   id: number;
@@ -103,9 +105,7 @@ export default function AdminNewsPage() {
     titleRu: locale === "kk" ? "Тақырып (орысша)" : locale === "en" ? "Title (Russian)" : "Заголовок (рус)",
     titleKk: locale === "kk" ? "Тақырып (қазақша)" : locale === "en" ? "Title (Kazakh)" : "Заголовок (каз)",
     titleEn: locale === "kk" ? "Тақырып (ағылшынша)" : locale === "en" ? "Title (English)" : "Заголовок (англ)",
-    contentRu: locale === "kk" ? "Мазмұны (орысша)" : locale === "en" ? "Content (Russian)" : "Содержание (рус)",
-    contentKk: locale === "kk" ? "Мазмұны (қазақша)" : locale === "en" ? "Content (Kazakh)" : "Содержание (каз)",
-    contentEn: locale === "kk" ? "Мазмұны (ағылшынша)" : locale === "en" ? "Content (English)" : "Содержание (англ)",
+    content: locale === "kk" ? "Мазмұны" : locale === "en" ? "Content" : "Содержание",
     excerpt: locale === "kk" ? "Қысқаша сипаттама" : locale === "en" ? "Excerpt" : "Краткое описание",
     category: locale === "kk" ? "Санат" : locale === "en" ? "Category" : "Категория",
     image: locale === "kk" ? "Сурет URL" : locale === "en" ? "Image URL" : "URL изображения",
@@ -302,7 +302,7 @@ export default function AdminNewsPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingId ? labels.edit : labels.addNew}
@@ -337,32 +337,36 @@ export default function AdminNewsPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label>{labels.contentRu}</Label>
-              <Textarea
-                rows={4}
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                onBlur={() => handleTranslationBlur("content")}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>{labels.contentKk}</Label>
-                <Textarea
-                  rows={3}
-                  value={formData.contentKk}
-                  onChange={(e) => setFormData({ ...formData, contentKk: e.target.value })}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label>{labels.contentEn}</Label>
-                <Textarea
-                  rows={3}
-                  value={formData.contentEn}
-                  onChange={(e) => setFormData({ ...formData, contentEn: e.target.value })}
-                />
-              </div>
+              <Label>{labels.content}</Label>
+              <Tabs defaultValue="ru">
+                <TabsList>
+                  <TabsTrigger value="ru">РУС</TabsTrigger>
+                  <TabsTrigger value="kk">ҚАЗ</TabsTrigger>
+                  <TabsTrigger value="en">ENG</TabsTrigger>
+                </TabsList>
+                <TabsContent value="ru">
+                  <RichTextEditor
+                    value={formData.content}
+                    onChange={(html) => setFormData((prev) => ({ ...prev, content: html }))}
+                    onBlur={() => handleTranslationBlur("content")}
+                    uploadFolder="news"
+                  />
+                </TabsContent>
+                <TabsContent value="kk">
+                  <RichTextEditor
+                    value={formData.contentKk}
+                    onChange={(html) => setFormData((prev) => ({ ...prev, contentKk: html }))}
+                    uploadFolder="news"
+                  />
+                </TabsContent>
+                <TabsContent value="en">
+                  <RichTextEditor
+                    value={formData.contentEn}
+                    onChange={(html) => setFormData((prev) => ({ ...prev, contentEn: html }))}
+                    uploadFolder="news"
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
 
             <div className="grid gap-2">
@@ -428,11 +432,6 @@ export default function AdminNewsPage() {
 
             {formData.showInSlider && (
               <div className="grid gap-4 p-4 border rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground">
-                  {locale === "kk" ? "Слайдерде көрсетілетін мәтін (қысқаша сипаттама қолданылады)" :
-                    locale === "en" ? "Text shown in slider (excerpt will be used)" :
-                      "Текст в слайдере (используется краткое описание)"}
-                </p>
                 <div className="grid gap-2">
                   <Label>{labels.excerptKk}</Label>
                   <Textarea
@@ -459,7 +458,6 @@ export default function AdminNewsPage() {
                 value={formData.publishedAt || ""}
                 onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
               />
-              <p className="text-xs text-muted-foreground">Если оставить пустым, будет использовано текущее время.</p>
             </div>
           </div>
 
