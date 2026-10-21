@@ -8,7 +8,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Loader2 } from "lucide-react";
+import { FileText, Loader2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDate } from "@/lib/date-format";
 
@@ -154,26 +154,14 @@ export default function ResultsPage() {
                                                         {formatEventDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
                                                     </p>
                                                 )}
-                                                {protocol.source === 'document' && (
-                                                    <p className="text-xs text-muted-foreground italic">
-                                                        {locale === 'kk' ? 'Құжат' : locale === 'en' ? 'Document' : 'Документ'}
-                                                    </p>
-                                                )}
                                             </div>
                                             <div className="flex gap-2">
                                                 {protocol.fileUrl ? (
-                                                    <>
-                                                        <Button size="sm" variant="outline" asChild>
-                                                            <a href={protocol.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                                <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
-                                                            </a>
-                                                        </Button>
-                                                        <Button size="sm" variant="ghost" asChild>
-                                                            <a href={protocol.fileUrl} download>
-                                                                <Download className="h-4 w-4" />
-                                                            </a>
-                                                        </Button>
-                                                    </>
+                                                    <Button size="sm" variant="outline" asChild>
+                                                        <a href={protocol.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                            <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
+                                                        </a>
+                                                    </Button>
                                                 ) : (
                                                     <Button size="sm" variant="outline" disabled>
                                                         <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}

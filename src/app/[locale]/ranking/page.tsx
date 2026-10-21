@@ -97,10 +97,7 @@ export default function RankingPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10 space-y-6 lg:space-y-8">
       <div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm lg:text-lg">
-          {t("subtitle")}
-        </p>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{t("title")}</h1>
       </div>
 
       {/* Filters */}

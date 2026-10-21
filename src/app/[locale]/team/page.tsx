@@ -31,25 +31,6 @@ async function getAthletes(category: string, gender: string, type: string) {
   }
 }
 
-function getLocalizedType(type: string, locale: string): string {
-  const typeMap: Record<string, Record<string, string>> = {
-    Recurve: { ru: 'Классический лук', kk: 'Классикалық садақ', en: 'Recurve' },
-    Compound: { ru: 'Блочный лук', kk: 'Блоктық садақ', en: 'Compound' },
-  };
-  return typeMap[type]?.[locale] || type;
-}
-
-function getLocalizedCategory(category: string, locale: string): string {
-  const categoryMap: Record<string, Record<string, string>> = {
-    Adults: { ru: 'Взрослые', kk: 'Ересектер', en: 'Adults' },
-    Youth: { ru: 'Молодёжь', kk: 'Жастар', en: 'Youth' },
-    Juniors: { ru: 'Юниоры', kk: 'Юниорлар', en: 'Juniors' },
-    Cadets: { ru: 'Кадеты', kk: 'Кадеттер', en: 'Cadets' },
-    Cubs: { ru: 'Юноши', kk: 'Жасөспірімдер', en: 'Cubs' },
-  };
-  return categoryMap[category]?.[locale] || category;
-}
-
 export default async function TeamPage({ searchParams }: Props) {
   const params = await searchParams;
   const category = params.category || 'Adults';
@@ -60,15 +41,10 @@ export default async function TeamPage({ searchParams }: Props) {
   const locale = await getLocale();
 
   const pageTitle = locale === 'kk' ? 'Ұлттық құрама' : locale === 'en' ? 'National Team' : 'Сборная Команда';
-  const genderLabel = gender === 'M'
-    ? (locale === 'kk' ? 'Ерлер' : locale === 'en' ? 'Men' : 'Мужчины')
-    : (locale === 'kk' ? 'Әйелдер' : locale === 'en' ? 'Women' : 'Женщины');
-  const subTitle = `${getLocalizedCategory(category, locale)} • ${genderLabel} • ${getLocalizedType(type, locale)}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{pageTitle}</h1>
-      <p className="text-sm sm:text-base text-muted-foreground mb-4 lg:mb-6">{subTitle}</p>
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 lg:mb-6">{pageTitle}</h1>
 
       <TeamFilters
         currentCategory={category}
@@ -92,7 +68,6 @@ export default async function TeamPage({ searchParams }: Props) {
                     <AvatarFallback>{athlete.name[0]}</AvatarFallback>
                   </Avatar>
                   <h3 className="font-bold text-sm sm:text-base md:text-lg text-center line-clamp-2">{getLocalizedField(athlete, 'name', locale)}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{getLocalizedType(athlete.type, locale)}</p>
                 </CardContent>
               </Card>
             </Link>
