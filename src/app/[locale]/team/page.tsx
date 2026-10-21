@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { getLocale } from "next-intl/server";
 import { getLocalizedField } from "@/lib/localization";
 import TeamFilters from "./TeamFilters";
+import type { Metadata } from "next";
 
 interface Props {
   searchParams: Promise<{ category?: string; gender?: string; type?: string }>;
@@ -32,6 +33,14 @@ async function getAthletes(category: string, gender: string, type: string) {
   }
 }
 
+function getPageTitle(locale: string): string {
+  return locale === 'kk' ? 'Ұлттық құрама' : locale === 'en' ? 'National Team' : 'Сборная команда';
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: getPageTitle(await getLocale()) };
+}
+
 export default async function TeamPage({ searchParams }: Props) {
   const params = await searchParams;
   const category = params.category || 'Adults';
@@ -41,7 +50,7 @@ export default async function TeamPage({ searchParams }: Props) {
   const athletes = await getAthletes(category, gender, type);
   const locale = await getLocale();
 
-  const pageTitle = locale === 'kk' ? 'Ұлттық құрама' : locale === 'en' ? 'National Team' : 'Сборная Команда';
+  const pageTitle = getPageTitle(locale);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">

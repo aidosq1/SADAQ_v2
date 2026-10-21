@@ -126,8 +126,11 @@ export default function ResultsPage() {
 
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-10 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
             </div>
         );
     }

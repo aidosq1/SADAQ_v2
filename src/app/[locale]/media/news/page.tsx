@@ -107,6 +107,7 @@ export default function NewsPage() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-10">
+        <h1 className="text-4xl font-bold mb-2">{t("title")}</h1>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>

@@ -113,8 +113,11 @@ export default function CalendarPage() {
 
     if (loading) {
         return (
-            <div className="container mx-auto py-8 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="container mx-auto px-4 py-6 lg:py-8">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">{t("title")}</h1>
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
             </div>
         );
     }
