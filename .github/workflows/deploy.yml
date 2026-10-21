@@ -106,7 +106,9 @@ jobs:
             docker --config \$DOCKER_CONFIG compose pull app
 
             echo "=== Running migrations ==="
-            docker --config \$DOCKER_CONFIG compose run --rm -T app ./node_modules/.bin/prisma migrate deploy || echo "Migration warning (may be ok)"
+            # </dev/null: otherwise compose run reads the rest of this heredoc from stdin
+            # and the steps below never run (container was not restarted)
+            docker --config \$DOCKER_CONFIG compose run --rm -T app ./node_modules/.bin/prisma migrate deploy </dev/null || echo "Migration warning (may be ok)"
 
             echo "=== Stopping old container ==="
             docker --config \$DOCKER_CONFIG compose stop app || true
@@ -120,6 +122,14 @@ jobs:
             echo "=== Container status ==="
             docker --config \$DOCKER_CONFIG compose ps app
 
+            echo "=== Verifying running image ==="
+            RUNNING_IMAGE=\$(docker inspect --format '{{.Image}}' \$(docker --config \$DOCKER_CONFIG compose ps -q app))
+            EXPECTED_IMAGE=\$(docker image inspect --format '{{.Id}}' ghcr.io/\$GITHUB_REPOSITORY:\$IMAGE_TAG)
+            if [ "\$RUNNING_IMAGE" != "\$EXPECTED_IMAGE" ]; then
+              echo "Running container uses \$RUNNING_IMAGE, expected \$EXPECTED_IMAGE"
+              exit 1
+            fi
+
             echo "=== Cleaning old images ==="
             docker image prune -af --filter "until=168h"
 
@@ -130,7 +140,7 @@ jobs:
         run: |
           for i in 1 2 3 4 5; do
             sleep 3
-            if curl -sf https://${{ secrets.DOMAIN }}/api/health; then
+            if curl -sf https://${{ secrets.DOMAIN || 'kazarchery.kz' }}/api/health; then
               echo "Health check passed!"
               exit 0
             fi
