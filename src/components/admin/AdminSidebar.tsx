@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -103,16 +104,11 @@ function SidebarNav({
     <>
       <div className="mb-8">
         <Link href="/" className="flex items-center gap-2" onClick={onItemClick}>
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">S</span>
-          </div>
-          <div>
-            <span className="font-bold text-lg">SADAQ</span>
-            <p className="text-xs text-muted-foreground">Admin Panel</p>
-          </div>
+          <Image src="/logo_federation_circular.png" alt="SADAQ" width={40} height={40} className="size-10 object-contain" />
+          <span className="font-heading text-lg font-bold text-primary">SADAQ</span>
         </Link>
         {userRegion && (
-          <p className="text-xs text-muted-foreground mt-2 px-1">{userRegion}</p>
+          <p className="type-caption mt-2 px-1">{userRegion}</p>
         )}
       </div>
 
@@ -125,13 +121,13 @@ function SidebarNav({
               href={`/${locale}${item.href}`}
               onClick={onItemClick}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               )}
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon className="size-5" />
               {labels[item.labelKey]?.[locale] || labels[item.labelKey]?.ru}
             </Link>
           );

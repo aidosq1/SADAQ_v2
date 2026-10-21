@@ -8,8 +8,12 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2 } from "lucide-react";
+import { FileText, FolderOpen } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState, LoadingState } from "@/components/ui/states";
+import { cardSurface } from "@/components/ui/card";
 import { formatDate } from "@/lib/date-format";
 
 interface Protocol {
@@ -126,63 +130,53 @@ export default function ResultsPage() {
 
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
-                <div className="flex items-center justify-center min-h-[400px]">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-            </div>
+            <PageContainer>
+                <PageHeader title={t("title")} />
+                <LoadingState className="min-h-[400px]" />
+            </PageContainer>
         );
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6 lg:mb-8">{t("title") || "Архив Протоколов"}</h1>
+        <PageContainer>
+            <PageHeader title={t("title")} />
 
             {years.length > 0 ? (
                 <Accordion type="single" collapsible className="w-full" defaultValue={years[0]}>
                     {years.map((year) => (
                         <AccordionItem key={year} value={year}>
-                            <AccordionTrigger className="text-xl font-bold">
+                            <AccordionTrigger className="type-h3 text-primary hover:no-underline">
                                 {year}
                             </AccordionTrigger>
                             <AccordionContent>
-                                <div className="space-y-4 pt-2">
+                                <ul className={`${cardSurface} divide-y`}>
                                     {groupedProtocols[year].map((protocol) => (
-                                        <div key={protocol.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-muted/30 rounded-lg border">
-                                            <div className="mb-2 sm:mb-0">
-                                                <h3 className="font-bold text-lg">{getLocalizedTitle(protocol)}</h3>
+                                        <li key={`${protocol.source}-${protocol.id}`} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                                            <div className="min-w-0">
+                                                <h3 className="type-h4 text-foreground">{getLocalizedTitle(protocol)}</h3>
                                                 {protocol.eventDate && protocol.location && (
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {formatEventDate(protocol.eventDate)} • {getLocalizedLocation(protocol)}
+                                                    <p className="type-small mt-1 text-muted-foreground">
+                                                        {formatEventDate(protocol.eventDate)} · {getLocalizedLocation(protocol)}
                                                     </p>
                                                 )}
                                             </div>
-                                            <div className="flex gap-2">
-                                                {protocol.fileUrl ? (
-                                                    <Button size="sm" variant="outline" asChild>
-                                                        <a href={protocol.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                            <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
-                                                        </a>
-                                                    </Button>
-                                                ) : (
-                                                    <Button size="sm" variant="outline" disabled>
-                                                        <FileText className="h-4 w-4 mr-2" /> {t("btn_protocol")}
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </div>
+                                            {protocol.fileUrl && (
+                                                <Button size="sm" variant="outline" className="shrink-0" asChild>
+                                                    <a href={protocol.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                        <FileText /> {t("btn_protocol")}
+                                                    </a>
+                                                </Button>
+                                            )}
+                                        </li>
                                     ))}
-                                </div>
+                                </ul>
                             </AccordionContent>
                         </AccordionItem>
                     ))}
                 </Accordion>
             ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                    {t("no_protocols")}
-                </div>
+                <EmptyState icon={FolderOpen} title={t("no_protocols")} />
             )}
-        </div>
+        </PageContainer>
     );
 }

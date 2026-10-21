@@ -1,37 +1,74 @@
 "use client";
 
 import Image from "next/image";
-import { Link } from "@/navigation";
+import { Link, usePathname } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSession, signOut } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
+import { cn } from "@/lib/utils";
 import { Menu, ChevronDown, User, LogOut, Instagram, Youtube } from "lucide-react";
 
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface NavItem {
+    name: string;
+    href: string;
+}
+
+const NAV_LINK =
+    "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors outline-none hover:text-primary focus-visible:ring-[3px] focus-visible:ring-ring/40";
+
+function isActive(pathname: string, items: NavItem[]): boolean {
+    return items.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+}
+
+function NavDropdown({ label, items, pathname }: { label: string; items: NavItem[]; pathname: string }) {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger
+                className={cn(NAV_LINK, isActive(pathname, items) ? "text-primary" : "text-foreground")}
+            >
+                {label} <ChevronDown className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[200px]">
+                {items.map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                        <Link href={item.href} className="w-full cursor-pointer">
+                            {item.name}
+                        </Link>
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
 
 export function Header() {
     const { language, setLanguage } = useLanguage();
     const t = useTranslations("Header");
     const { data: session, status } = useSession();
+    const pathname = usePathname();
 
-    const navItems = [
+    const navItems: NavItem[] = [
         { name: t("team"), href: "/team" },
         { name: t("ranking"), href: "/ranking" },
     ];
 
-    const calendarItems = [
+    const calendarItems: NavItem[] = [
         { name: t("competitions"), href: "/calendar" },
         { name: t("protocols"), href: "/results" },
     ];
 
-    const aboutItems = [
+    const aboutItems: NavItem[] = [
         { name: t("about"), href: "/about" },
         { name: t("leadership"), href: "/about/leadership" },
         { name: t("regions"), href: "/about/regions" },
@@ -39,10 +76,12 @@ export function Header() {
         { name: t("documents"), href: "/documents" },
     ];
 
-    const mediaItems = [
+    const mediaItems: NavItem[] = [
         { name: t("news"), href: "/media/news" },
         { name: t("media_gallery"), href: "/media/gallery" },
     ];
+
+    const mobileGroups = [aboutItems, calendarItems, navItems, mediaItems];
 
     const languages = [
         { code: 'kk', label: 'ҚАЗ' },
@@ -52,56 +91,57 @@ export function Header() {
 
     return (
         <header className="fixed top-0 z-50 w-full">
-            {/* Top Bar - Navy */}
-            <div className="bg-[hsl(var(--official-maroon))] text-white">
-                <div className="max-w-7xl mx-auto px-4 h-8 flex items-center justify-between text-xs">
+            {/* Top Bar */}
+            <div className="bg-primary text-primary-foreground">
+                <Container className="flex h-8 items-center justify-between text-xs">
                     {/* Social Links */}
                     <div className="flex items-center gap-3">
                         <a
                             href="https://www.instagram.com/kazarchery_official/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[hsl(var(--official-gold))] transition-colors"
+                            aria-label="Instagram"
+                            className="transition-colors hover:text-gold"
                         >
-                            <Instagram className="h-4 w-4" />
+                            <Instagram className="size-4" />
                         </a>
                         <a
                             href="https://www.youtube.com/watch?v=6xgw-YxIbmw"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[hsl(var(--official-gold))] transition-colors"
+                            aria-label="YouTube"
+                            className="transition-colors hover:text-gold"
                         >
-                            <Youtube className="h-4 w-4" />
+                            <Youtube className="size-4" />
                         </a>
                     </div>
 
                     {/* Language Switcher */}
-                    <div className="flex items-center gap-1">
-                        {languages.map((lang, index) => (
+                    <div className="flex items-center divide-x divide-white/25">
+                        {languages.map((lang) => (
                             <button
                                 key={lang.code}
                                 onClick={() => setLanguage(lang.code)}
-                                className={`px-2 py-1 transition-colors ${
+                                aria-current={language === lang.code ? "true" : undefined}
+                                className={cn(
+                                    "cursor-pointer px-2.5 font-medium transition-colors",
                                     language === lang.code
-                                        ? 'text-[hsl(var(--official-gold))] font-semibold'
-                                        : 'text-white/70 hover:text-white'
-                                }`}
+                                        ? "font-semibold text-gold"
+                                        : "text-white/75 hover:text-white"
+                                )}
                             >
                                 {lang.label}
-                                {index < languages.length - 1 && (
-                                    <span className="ml-2 text-white/30">|</span>
-                                )}
                             </button>
                         ))}
                     </div>
-                </div>
+                </Container>
             </div>
 
-            {/* Main Bar - White */}
-            <div className="bg-white shadow-sm border-b border-[hsl(var(--border-light))]">
-                <div className="max-w-7xl mx-auto px-4 flex h-16 items-center justify-between">
+            {/* Main Bar */}
+            <div className="border-b bg-background shadow-sm">
+                <Container className="flex h-16 items-center justify-between gap-4">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 shrink-0">
+                    <Link href="/" className="flex shrink-0 items-center gap-3">
                         <Image
                             src="/logo_federation_circular.png"
                             alt="SADAQ Logo"
@@ -109,118 +149,59 @@ export function Header() {
                             height={56}
                             className="h-14 w-auto object-contain"
                         />
-                        <div className="hidden lg:flex flex-col leading-tight">
-                            <span className="text-[10px] font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
+                        <div className="hidden flex-col leading-tight lg:flex">
+                            <span className="type-eyebrow text-muted-foreground">
                                 {language === 'kk' ? 'Қазақстан Республикасының' : language === 'en' ? 'Republic of Kazakhstan' : 'Республики Казахстан'}
                             </span>
-                            <span className="text-sm font-semibold text-[hsl(var(--official-maroon))] tracking-tight">
+                            <span className="font-heading text-sm font-bold text-primary">
                                 {language === 'kk' ? 'Ұлттық Садақ Ату Федерациясы' : language === 'en' ? 'National Archery Federation' : 'Национальная Федерация Стрельбы из Лука'}
                             </span>
                         </div>
                     </Link>
 
                     {/* Navigation */}
-                    <nav className="hidden md:flex gap-1 lg:gap-2 items-center">
-                        {/* About Dropdown */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
-                                {t("about")} <ChevronDown className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="min-w-[200px]">
-                                {aboutItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="w-full cursor-pointer">
-                                            {item.name}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <nav className="hidden items-center gap-1 md:flex">
+                        <NavDropdown label={t("about")} items={aboutItems} pathname={pathname} />
+                        <NavDropdown label={t("tournaments")} items={calendarItems} pathname={pathname} />
 
-                        {/* Calendar Dropdown */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
-                                {t("tournaments")} <ChevronDown className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start">
-                                {calendarItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="w-full cursor-pointer">
-                                            {item.name}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        {/* Regular Nav Items */}
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className="px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors"
+                                className={cn(NAV_LINK, isActive(pathname, [item]) ? "text-primary" : "text-foreground")}
                             >
                                 {item.name}
                             </Link>
                         ))}
 
-                        {/* Media Dropdown */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
-                                {t("media")} <ChevronDown className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start">
-                                {mediaItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="w-full cursor-pointer">
-                                            {item.name}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <NavDropdown label={t("media")} items={mediaItems} pathname={pathname} />
                     </nav>
 
                     {/* Right Side */}
                     <div className="flex items-center gap-2">
                         {status === "loading" ? (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                disabled
-                                className="hidden sm:flex opacity-50"
-                            >
+                            <Button variant="outline" size="sm" disabled className="hidden sm:flex">
                                 ...
                             </Button>
                         ) : session ? (
-                            <div className="hidden sm:flex items-center gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-[hsl(var(--official-maroon))] text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--official-maroon))] hover:text-white"
-                                    asChild
-                                >
+                            <div className="hidden items-center gap-2 sm:flex">
+                                <Button variant="outline" size="sm" asChild>
                                     <Link href="/admin/dashboard">
-                                        <User className="h-4 w-4 mr-1" />
+                                        <User />
                                         {t("admin")}
                                     </Link>
                                 </Button>
                                 <Button
                                     variant="ghost"
-                                    size="icon"
-                                    className="text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--light-cream))]"
+                                    size="icon-sm"
+                                    aria-label={t("logout")}
                                     onClick={() => signOut({ callbackUrl: "/" })}
                                 >
-                                    <LogOut className="h-4 w-4" />
+                                    <LogOut />
                                 </Button>
                             </div>
                         ) : (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="hidden sm:flex border-[hsl(var(--official-maroon))] text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--official-maroon))] hover:text-white"
-                                asChild
-                            >
+                            <Button variant="outline" size="sm" className="hidden sm:flex" asChild>
                                 <Link href="/auth/signin">{t("login")}</Link>
                             </Button>
                         )}
@@ -228,57 +209,44 @@ export function Header() {
                         {/* Mobile Menu */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="md:hidden text-[hsl(var(--official-maroon))]"
-                                >
-                                    <Menu className="h-5 w-5" />
+                                <Button variant="ghost" size="icon" className="text-primary md:hidden" aria-label="Menu">
+                                    <Menu className="size-5" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">
-                                {aboutItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
+                                {mobileGroups.map((group, index) => (
+                                    <div key={group[0].href}>
+                                        {index > 0 && <DropdownMenuSeparator />}
+                                        {group.map((item) => (
+                                            <DropdownMenuItem key={item.href} asChild>
+                                                <Link href={item.href}>{item.name}</Link>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </div>
                                 ))}
-                                <div className="h-px bg-border my-1" />
-                                {calendarItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                <div className="h-px bg-border my-1" />
-                                {navItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                <div className="h-px bg-border my-1" />
-                                {mediaItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                {session && (
+                                <DropdownMenuSeparator />
+                                {session ? (
                                     <>
-                                        <div className="h-px bg-border my-1" />
                                         <DropdownMenuItem asChild>
                                             <Link href="/admin/dashboard">
-                                                <User className="h-4 w-4 mr-2" />
+                                                <User />
                                                 {t("admin")}
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-                                            <LogOut className="h-4 w-4 mr-2" />
+                                            <LogOut />
                                             {t("logout")}
                                         </DropdownMenuItem>
                                     </>
+                                ) : (
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/auth/signin">{t("login")}</Link>
+                                    </DropdownMenuItem>
                                 )}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                </div>
+                </Container>
             </div>
         </header>
     );

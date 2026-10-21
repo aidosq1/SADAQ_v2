@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/date-format";
 import { getNewsCategoryLabel } from "@/lib/constants";
+import { Section, SectionHeader } from "@/components/ui/section";
+import { ArrowLink } from "@/components/ui/arrow-link";
+import { Badge } from "@/components/ui/badge";
+import { MediaCard } from "@/components/ui/media-card";
 
 interface NewsItem {
   id: number;
@@ -23,8 +25,6 @@ interface NewsBlockClientProps {
   translations: {
     sectionTitle: string;
     allNewsText: string;
-    pressCenter: string;
-    readMore: string;
   };
 }
 
@@ -39,77 +39,30 @@ export function NewsBlockClient({ news, locale, translations }: NewsBlockClientP
   if (news.length === 0) return null;
 
   return (
-    <section className="py-16 bg-[hsl(var(--light-cream))]">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wider mb-2 block">
-              {translations.pressCenter}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent">
-              {translations.sectionTitle}
-            </h2>
-          </div>
-          <Link
-            href="/media/news"
-            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
-          >
-            {translations.allNewsText}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+    <Section>
+      <SectionHeader
+        title={translations.sectionTitle}
+        action={<ArrowLink href="/media/news">{translations.allNewsText}</ArrowLink>}
+      />
 
-        {/* News Grid - 4 columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {news.map((item) => (
-            <Link
-              key={item.id}
-              href={`/media/news/${item.slug}`}
-              className="group bg-white border border-[hsl(var(--border-light))] rounded-lg overflow-hidden hover-lift"
-            >
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={item.image || '/slides/archer_tokyo.png'}
-                  alt={getLocalizedTitle(item, locale)}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                />
-                {/* Category Badge */}
-                <div className="absolute top-3 left-3">
-                  <span className="official-badge">
-                    {getNewsCategoryLabel(item.category, locale)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-4">
-                <div className="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))] mb-2" suppressHydrationWarning>
-                  <Calendar className="w-3 h-3" />
-                  <span suppressHydrationWarning>{formatDate(item.publishedAt, locale)}</span>
-                </div>
-                <h3 className="font-heading font-semibold text-[hsl(var(--official-maroon))] leading-snug line-clamp-2 group-hover:text-[hsl(var(--official-red))] transition-colors">
-                  {getLocalizedTitle(item, locale)}
-                </h3>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Mobile CTA */}
-        <div className="mt-8 md:hidden text-center">
-          <Link
-            href="/media/news"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[hsl(var(--official-maroon))] text-white font-medium rounded-lg hover:bg-[hsl(var(--official-maroon))]/90 transition-colors"
-          >
-            {translations.allNewsText}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {news.map((item) => (
+          <MediaCard
+            key={item.id}
+            href={`/media/news/${item.slug}`}
+            title={getLocalizedTitle(item, locale)}
+            image={item.image}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            badge={<Badge variant="brand">{getNewsCategoryLabel(item.category, locale)}</Badge>}
+            meta={
+              <>
+                <Calendar className="size-3.5" />
+                <span suppressHydrationWarning>{formatDate(item.publishedAt, locale)}</span>
+              </>
+            }
+          />
+        ))}
       </div>
-    </section>
+    </Section>
   );
 }

@@ -1,7 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PersonPlaceholder } from "@/components/ui/person-placeholder";
-import Link from "next/link";
+import { Users } from "lucide-react";
+import { Link } from "@/navigation";
+import { cardInteractive, cardSurface } from "@/components/ui/card";
+import { PersonAvatar } from "@/components/ui/person-avatar";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/states";
+import { cn } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { getLocale } from "next-intl/server";
 import { getLocalizedField } from "@/lib/localization";
@@ -53,8 +57,8 @@ export default async function TeamPage({ searchParams }: Props) {
   const pageTitle = getPageTitle(locale);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 lg:mb-6">{pageTitle}</h1>
+    <PageContainer>
+      <PageHeader title={pageTitle} />
 
       <TeamFilters
         currentCategory={category}
@@ -64,26 +68,31 @@ export default async function TeamPage({ searchParams }: Props) {
       />
 
       {athletes.length === 0 ? (
-        <p className="text-muted-foreground mt-8">
-          {locale === 'kk' ? 'Спортшылар табылмады' : locale === 'en' ? 'No athletes found' : 'Спортсмены не найдены'}
-        </p>
+        <EmptyState
+          icon={Users}
+          className="mt-8"
+          title={locale === 'kk' ? 'Спортшылар табылмады' : locale === 'en' ? 'No athletes found' : 'Спортсмены не найдены'}
+        />
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-6 lg:mt-8">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
           {athletes.map((athlete) => (
-            <Link key={athlete.id} href={`/team/${athlete.slug}`}>
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
-                <CardContent className="pt-4 sm:pt-6 flex flex-col items-center">
-                  <Avatar className="h-20 w-20 sm:h-28 sm:w-28 md:h-32 md:w-32 mb-3 sm:mb-4">
-                    <AvatarImage src={athlete.image || undefined} alt={getLocalizedField(athlete, 'name', locale)} />
-                    <AvatarFallback><PersonPlaceholder /></AvatarFallback>
-                  </Avatar>
-                  <h3 className="font-bold text-sm sm:text-base md:text-lg text-center line-clamp-2">{getLocalizedField(athlete, 'name', locale)}</h3>
-                </CardContent>
-              </Card>
+            <Link
+              key={athlete.id}
+              href={`/team/${athlete.slug}`}
+              className={cn(cardSurface, cardInteractive, "group flex h-full flex-col items-center gap-3 p-4 text-center sm:gap-4 sm:p-6")}
+            >
+              <PersonAvatar
+                src={athlete.image}
+                alt={getLocalizedField(athlete, 'name', locale)}
+                className="size-20 sm:size-28 md:size-32"
+              />
+              <h2 className="type-h4 line-clamp-2 text-foreground transition-colors group-hover:text-primary">
+                {getLocalizedField(athlete, 'name', locale)}
+              </h2>
             </Link>
           ))}
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -231,7 +231,7 @@ export default function AdminNewsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">{labels.title}</h1>
+        <h1 className="type-h1 text-primary">{labels.title}</h1>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
           {labels.addNew}
@@ -269,7 +269,7 @@ export default function AdminNewsPage() {
                     <div className="flex flex-col">
                       <span className="font-medium">{item.title}</span>
                       {item.showInSlider && (
-                        <span className="text-xs text-amber-600">В слайдере</span>
+                        <span className="text-xs text-warning">В слайдере</span>
                       )}
                     </div>
                   </TableCell>

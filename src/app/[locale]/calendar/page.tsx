@@ -3,8 +3,13 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Loader2, Download } from "lucide-react";
-import Link from "next/link";
+import { FileText, MapPin, Download, CalendarX2 } from "lucide-react";
+import { Link } from "@/navigation";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { Chip, ChipGroup } from "@/components/ui/chip";
+import { EmptyState, LoadingState } from "@/components/ui/states";
+import { cardSurface } from "@/components/ui/card";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDateRange } from "@/lib/date-format";
 import { splitByTime, groupByMonth } from "@/lib/calendar-groups";
@@ -12,7 +17,7 @@ import { CATEGORIES, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
 import {
     getTournamentStatus,
     getStatusLabel,
-    getStatusClasses,
+    getStatusVariant,
     TournamentForStatus,
     isRegistrationAvailable
 } from "@/lib/tournament-utils";
@@ -91,7 +96,7 @@ export default function CalendarPage() {
                 {types.map(type => {
                     const typeItem = BOW_TYPES.find(t => t.id === type);
                     return (
-                        <Badge key={type} variant="outline" className="text-xs font-normal">
+                        <Badge key={type} variant="outline">
                             {typeItem ? getLocalizedLabel(typeItem, locale) : type}
                         </Badge>
                     );
@@ -99,13 +104,13 @@ export default function CalendarPage() {
                 {ages.slice(0, 2).map(age => {
                     const ageItem = CATEGORIES.find(c => c.id === age);
                     return (
-                        <Badge key={age} variant="secondary" className="text-xs font-normal">
+                        <Badge key={age} variant="secondary">
                             {ageItem ? getLocalizedLabel(ageItem, locale) : age}
                         </Badge>
                     );
                 })}
                 {ages.length > 2 && (
-                    <Badge variant="secondary" className="text-xs font-normal">+{ages.length - 2}</Badge>
+                    <Badge variant="secondary">+{ages.length - 2}</Badge>
                 )}
             </>
         );
@@ -113,12 +118,10 @@ export default function CalendarPage() {
 
     if (loading) {
         return (
-            <div className="container mx-auto px-4 py-6 lg:py-8">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">{t("title")}</h1>
-                <div className="flex items-center justify-center min-h-[400px]">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-            </div>
+            <PageContainer>
+                <PageHeader title={t("title")} />
+                <LoadingState className="min-h-[400px]" />
+            </PageContainer>
         );
     }
 
@@ -140,19 +143,19 @@ export default function CalendarPage() {
 
         return (
             <li key={tournament.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-6">
-                <div className="text-sm font-semibold text-[hsl(var(--official-maroon))] sm:w-44 sm:shrink-0">
+                <div className="type-small font-semibold text-primary sm:w-44 sm:shrink-0">
                     {formatDateRange(tournament.startDate, tournament.endDate, locale)}
                 </div>
                 <div className="min-w-0 flex-1">
                     <Link
                         href={`/tournaments/${tournament.id}`}
-                        className="font-semibold leading-snug hover:text-primary hover:underline"
+                        className="type-h4 text-foreground transition-colors hover:text-primary"
                     >
                         {getLocalizedTitle(tournament)}
                     </Link>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
+                    <div className="type-small mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-muted-foreground">
                         <span className="flex items-center gap-1">
-                            <MapPin className="h-4 w-4 shrink-0" />
+                            <MapPin className="size-4 shrink-0" />
                             {getLocalizedLocation(tournament)}
                         </span>
                         {tournament.categories?.length > 0 && getCategoryBadges(tournament.categories)}
@@ -160,14 +163,14 @@ export default function CalendarPage() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
                     {activeTab === "upcoming" && (
-                        <Badge className={`${getStatusClasses(status)} whitespace-nowrap border-0`}>
+                        <Badge variant={getStatusVariant(status)}>
                             {getStatusLabel(status, locale)}
                         </Badge>
                     )}
                     {regulationUrl && (
                         <Button variant="outline" size="sm" asChild>
                             <a href={regulationUrl} target="_blank" rel="noopener noreferrer">
-                                <Download className="h-4 w-4 mr-1" />
+                                <Download />
                                 {t("btn_regulations")}
                             </a>
                         </Button>
@@ -180,7 +183,7 @@ export default function CalendarPage() {
                     {status === "COMPLETED" && (
                         <Button variant="outline" size="sm" asChild>
                             <Link href={`/tournaments/${tournament.id}`}>
-                                <FileText className="h-4 w-4 mr-1" /> {t("btn_protocol")}
+                                <FileText /> {t("btn_protocol")}
                             </Link>
                         </Button>
                     )}
@@ -190,34 +193,32 @@ export default function CalendarPage() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-6 lg:py-8">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">{t("title")}</h1>
+        <PageContainer>
+            <PageHeader title={t("title")} />
 
-            <div className="flex gap-1 mb-6" role="tablist">
+            <ChipGroup className="mb-6">
                 {tabs.map(tab => (
-                    <Button
+                    <Chip
                         key={tab.id}
-                        role="tab"
-                        aria-selected={activeTab === tab.id}
-                        variant={activeTab === tab.id ? "default" : "outline"}
-                        size="sm"
+                        active={activeTab === tab.id}
                         onClick={() => setSelectedTab(tab.id)}
                     >
                         {tab.label}
-                        <span className="ml-1.5 opacity-70">{tab.count}</span>
-                    </Button>
+                        <span className="opacity-70">{tab.count}</span>
+                    </Chip>
                 ))}
-            </div>
+            </ChipGroup>
 
             {groups.length === 0 ? (
-                <p className="py-12 text-center text-muted-foreground">
-                    {activeTab === "upcoming" ? t("no_upcoming") : t("no_tournaments")}
-                </p>
+                <EmptyState
+                    icon={CalendarX2}
+                    title={activeTab === "upcoming" ? t("no_upcoming") : t("no_tournaments")}
+                />
             ) : (
                 <div className="space-y-6">
                     {groups.map(group => (
-                        <section key={group.key} className="overflow-hidden rounded-lg border bg-card">
-                            <h2 className="border-b bg-muted/40 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                        <section key={group.key} className={`${cardSurface} overflow-hidden`}>
+                            <h2 className="type-eyebrow border-b bg-muted/60 px-4 py-2.5 text-muted-foreground">
                                 {group.label}
                             </h2>
                             <ul className="divide-y">
@@ -227,6 +228,6 @@ export default function CalendarPage() {
                     ))}
                 </div>
             )}
-        </div>
+        </PageContainer>
     );
 }

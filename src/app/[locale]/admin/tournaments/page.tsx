@@ -36,7 +36,7 @@ import { toast } from "sonner";
 import { useLocale } from "next-intl";
 import { FileUpload } from "@/components/admin/FileUpload";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
-import { getTournamentStatus, getStatusLabel, getStatusClasses } from "@/lib/tournament-utils";
+import { getTournamentStatus, getStatusLabel, getStatusVariant } from "@/lib/tournament-utils";
 
 interface TournamentCategory {
   id?: number;
@@ -362,7 +362,7 @@ export default function AdminTournamentsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">{title}</h1>
+        <h1 className="type-h1 text-primary">{title}</h1>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить
@@ -405,7 +405,7 @@ export default function AdminTournamentsPage() {
                       <div className="truncate">{item.title}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={`${getStatusClasses(status)} text-xs`}>
+                      <Badge variant={getStatusVariant(status)}>
                         {getStatusLabel(status, locale)}
                       </Badge>
                     </TableCell>
@@ -441,7 +441,7 @@ export default function AdminTournamentsPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleRegistration(item)}
-                        className={item.isRegistrationOpen ? "text-green-600" : "text-gray-400"}
+                        className={item.isRegistrationOpen ? "text-success" : "text-muted-foreground"}
                       >
                         {item.isRegistrationOpen ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </Button>
@@ -451,7 +451,7 @@ export default function AdminTournamentsPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleFeatured(item)}
-                        className={item.isFeatured ? "text-yellow-500" : "text-gray-400"}
+                        className={item.isFeatured ? "text-gold-strong" : "text-muted-foreground"}
                       >
                         {item.isFeatured ? <Star className="h-4 w-4 fill-current" /> : <StarOff className="h-4 w-4" />}
                       </Button>

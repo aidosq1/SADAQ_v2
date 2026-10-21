@@ -4,10 +4,15 @@ import { useState, useEffect, use } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, MapPin, Download, Users, Trophy, ArrowLeft, Loader2, Building, Phone, Mail } from "lucide-react";
-import Link from "next/link";
+import { Calendar, MapPin, Download, Users, Trophy, Building, Phone, Mail, ListX } from "lucide-react";
+import { Link } from "@/navigation";
+import { PageContainer } from "@/components/ui/container";
+import { BackLink } from "@/components/ui/page-header";
+import { SectionHeader } from "@/components/ui/section";
+import { Chip, ChipGroup } from "@/components/ui/chip";
+import { RankBadge } from "@/components/ui/rank-badge";
+import { EmptyState, LoadingState } from "@/components/ui/states";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDateRange } from "@/lib/date-format";
 import { getRegionName } from "@/lib/localization";
@@ -182,23 +187,25 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
 
     if (loading) {
         return (
-            <div className="container mx-auto py-8 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
+            <PageContainer>
+                <LoadingState className="min-h-[400px]" />
+            </PageContainer>
         );
     }
 
     if (error || !tournament) {
         return (
-            <div className="container mx-auto py-8 text-center">
-                <h1 className="text-2xl font-bold mb-4">{t("not_found")}</h1>
-                <Button asChild>
-                    <Link href="/calendar">
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        {t("back_to_calendar")}
-                    </Link>
-                </Button>
-            </div>
+            <PageContainer>
+                <EmptyState
+                    icon={ListX}
+                    title={t("not_found")}
+                    action={
+                        <Button variant="outline" asChild>
+                            <Link href="/calendar">{t("back_to_calendar")}</Link>
+                        </Button>
+                    }
+                />
+            </PageContainer>
         );
     }
 
@@ -207,35 +214,31 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
     const status = getTournamentStatus(startDate, endDate);
 
     const statusConfig = {
-        finished: { label: t("status_finished"), color: "bg-gray-500" },
-        ongoing: { label: t("status_ongoing"), color: "bg-green-500" },
-        planned: { label: t("status_planned"), color: "bg-blue-500" },
-    };
+        finished: { label: t("status_finished"), variant: "neutral" },
+        ongoing: { label: t("status_ongoing"), variant: "info" },
+        planned: { label: t("status_planned"), variant: "secondary" },
+    } as const;
 
     const activeTab = tournament.categories.find(c => String(c.id) === activeCategory);
+    const hasScore = activeTab?.results.some(r => r.score) ?? false;
+    const protocolsWithFile = activeTab?.protocols?.filter(p => p.fileUrl) ?? [];
 
     return (
-        <div className="container mx-auto py-8 space-y-8">
-            {/* Back button */}
-            <Button variant="ghost" size="sm" asChild>
-                <Link href="/calendar">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    {t("back_to_calendar")}
-                </Link>
-            </Button>
-
+        <PageContainer className="space-y-8 md:space-y-10">
             {/* Header */}
             <div className="space-y-4">
-                <div className="flex items-start justify-between gap-4">
-                    <div>
-                        <Badge className={`${statusConfig[status].color} mb-2`}>
+                <BackLink href="/calendar" label={t("back_to_calendar")} />
+
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1 space-y-3">
+                        <Badge variant={statusConfig[status].variant}>
                             {statusConfig[status].label}
                         </Badge>
-                        <h1 className="text-3xl md:text-4xl font-bold">{getLocalizedTitle(tournament)}</h1>
+                        <h1 className="type-h1 text-primary">{getLocalizedTitle(tournament)}</h1>
                     </div>
 
                     {(status === "planned" || status === "ongoing") && tournament.isActive && (
-                        <Button size="lg" className="bg-green-600 hover:bg-green-700" asChild>
+                        <Button size="lg" asChild>
                             <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>
                                 {t("registration")}
                             </Link>
@@ -243,25 +246,23 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                     )}
                 </div>
 
-                <div className="flex flex-wrap gap-4 text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        <span>
-                            {formatDateRange(startDate, endDate, locale)}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <MapPin className="h-5 w-5" />
-                        <span>{getLocalizedLocation()}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Users className="h-5 w-5" />
-                        <span>{tournament.categories?.length || 0} {t("categories_count")}</span>
-                    </div>
+                <div className="type-small flex flex-wrap gap-x-5 gap-y-2 text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                        <Calendar className="size-4" />
+                        {formatDateRange(startDate, endDate, locale)}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <MapPin className="size-4" />
+                        {getLocalizedLocation()}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <Users className="size-4" />
+                        {tournament.categories?.length || 0} {t("categories_count")}
+                    </span>
                 </div>
 
                 {getLocalizedDescription() && (
-                    <p className="text-lg text-muted-foreground max-w-3xl">
+                    <p className="type-body max-w-3xl text-muted-foreground">
                         {getLocalizedDescription()}
                     </p>
                 )}
@@ -269,7 +270,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                 {tournament.regulationUrl && (
                     <Button variant="outline" asChild>
                         <a href={tournament.regulationUrl} target="_blank" rel="noopener noreferrer">
-                            <Download className="h-4 w-4 mr-2" />
+                            <Download />
                             {t("regulation")}
                         </a>
                     </Button>
@@ -280,23 +281,23 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
             {tournament.organizingRegion && (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                            <Building className="h-5 w-5" />
+                        <CardTitle className="flex items-center gap-2">
+                            <Building className="size-5 text-primary" />
                             {t("organizer")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <div>
-                            <h4 className="font-semibold">{getLocalizedRegionName(tournament.organizingRegion)}</h4>
-                            <p className="text-muted-foreground">{getLocalizedRegionAddress(tournament.organizingRegion)}</p>
+                            <p className="font-semibold">{getLocalizedRegionName(tournament.organizingRegion)}</p>
+                            <p className="type-small text-muted-foreground">{getLocalizedRegionAddress(tournament.organizingRegion)}</p>
                         </div>
-                        <div className="flex flex-wrap gap-4 text-sm">
+                        <div className="type-small flex flex-wrap gap-4">
                             {tournament.organizingRegion.phone && (
                                 <a
                                     href={`tel:${tournament.organizingRegion.phone}`}
                                     className="flex items-center gap-2 text-muted-foreground hover:text-primary"
                                 >
-                                    <Phone className="h-4 w-4" />
+                                    <Phone className="size-4" />
                                     {tournament.organizingRegion.phone}
                                 </a>
                             )}
@@ -305,7 +306,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                                     href={`mailto:${tournament.organizingRegion.email}`}
                                     className="flex items-center gap-2 text-muted-foreground hover:text-primary"
                                 >
-                                    <Mail className="h-4 w-4" />
+                                    <Mail className="size-4" />
                                     {tournament.organizingRegion.email}
                                 </a>
                             )}
@@ -316,127 +317,98 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
 
             {/* Categories */}
             {tournament.categories?.length > 0 ? (
-                <div className="space-y-6">
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                        <Trophy className="h-6 w-6" />
-                        {t("categories_title")}
-                    </h2>
+                <section>
+                    <SectionHeader title={t("categories_title")} />
 
-                    <Tabs value={activeCategory} onValueChange={setActiveCategory}>
-                        <TabsList className="flex flex-wrap h-auto gap-1">
-                            {tournament.categories.map((cat) => (
-                                <TabsTrigger
-                                    key={cat.id}
-                                    value={String(cat.id)}
-                                    className="text-xs md:text-sm"
-                                >
-                                    {getShortCategoryLabel(cat)}
-                                </TabsTrigger>
-                            ))}
-                        </TabsList>
-
+                    <ChipGroup className="mb-6">
                         {tournament.categories.map((cat) => (
-                            <TabsContent key={cat.id} value={String(cat.id)} className="space-y-4">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>{getCategoryLabel(cat)}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        {cat.results?.length > 0 ? (
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead className="w-[60px]">{t("place")}</TableHead>
-                                                        <TableHead>{t("athlete")}</TableHead>
-                                                        <TableHead>{t("region")}</TableHead>
-                                                        <TableHead className="text-right">{t("points")}</TableHead>
-                                                        {cat.results.some(r => r.score) && (
-                                                            <TableHead className="text-right">{t("score")}</TableHead>
+                            <Chip
+                                key={cat.id}
+                                active={String(cat.id) === activeCategory}
+                                onClick={() => setActiveCategory(String(cat.id))}
+                            >
+                                {getShortCategoryLabel(cat)}
+                            </Chip>
+                        ))}
+                    </ChipGroup>
+
+                    {activeTab && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Trophy className="size-5 text-primary" />
+                                    {getCategoryLabel(activeTab)}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {activeTab.results?.length > 0 ? (
+                                    <div className="overflow-hidden rounded-md border">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="w-16">{t("place")}</TableHead>
+                                                    <TableHead>{t("athlete")}</TableHead>
+                                                    <TableHead>{t("region")}</TableHead>
+                                                    <TableHead className="text-right">{t("points")}</TableHead>
+                                                    {hasScore && <TableHead className="text-right">{t("score")}</TableHead>}
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {activeTab.results.map((result) => (
+                                                    <TableRow key={result.id}>
+                                                        <TableCell>
+                                                            <RankBadge position={result.place} />
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Link
+                                                                href={`/team/${result.athlete.slug}`}
+                                                                className="font-medium text-foreground hover:text-primary"
+                                                            >
+                                                                {getLocalizedTitle(result.athlete)}
+                                                            </Link>
+                                                        </TableCell>
+                                                        <TableCell className="text-muted-foreground">
+                                                            {getRegionName(result.athlete, locale)}
+                                                        </TableCell>
+                                                        <TableCell className="type-number text-right text-primary">
+                                                            {result.points}
+                                                        </TableCell>
+                                                        {hasScore && (
+                                                            <TableCell className="text-right">
+                                                                {result.score || "—"}
+                                                            </TableCell>
                                                         )}
                                                     </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {cat.results.map((result) => (
-                                                        <TableRow key={result.id}>
-                                                            <TableCell>
-                                                                {result.place <= 3 ? (
-                                                                    <Badge
-                                                                        className={
-                                                                            result.place === 1 ? "bg-yellow-500" :
-                                                                            result.place === 2 ? "bg-gray-400" :
-                                                                            "bg-amber-600"
-                                                                        }
-                                                                    >
-                                                                        {result.place}
-                                                                    </Badge>
-                                                                ) : (
-                                                                    <span className="font-medium">{result.place}</span>
-                                                                )}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <Link
-                                                                    href={`/team/${result.athlete.slug}`}
-                                                                    className="font-medium hover:text-primary hover:underline"
-                                                                >
-                                                                    {getLocalizedTitle(result.athlete)}
-                                                                </Link>
-                                                            </TableCell>
-                                                            <TableCell className="text-muted-foreground">
-                                                                {getRegionName(result.athlete, locale)}
-                                                            </TableCell>
-                                                            <TableCell className="text-right font-bold">
-                                                                {result.points}
-                                                            </TableCell>
-                                                            {cat.results.some(r => r.score) && (
-                                                                <TableCell className="text-right">
-                                                                    {result.score || "—"}
-                                                                </TableCell>
-                                                            )}
-                                                        </TableRow>
-                                                    ))}
-                                                </TableBody>
-                                            </Table>
-                                        ) : (
-                                            <p className="text-muted-foreground text-center py-8">
-                                                {t("results_not_published")}
-                                            </p>
-                                        )}
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                ) : (
+                                    <EmptyState title={t("results_not_published")} />
+                                )}
 
-                                        {/* Protocols */}
-                                        {cat.protocols?.length > 0 && (
-                                            <div className="mt-6 pt-6 border-t">
-                                                <h4 className="font-medium mb-3">{t("protocols")}</h4>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {cat.protocols.map((protocol) => (
-                                                        <Button
-                                                            key={protocol.id}
-                                                            variant="outline"
-                                                            size="sm"
-                                                            asChild
-                                                            disabled={!protocol.fileUrl}
-                                                        >
-                                                            <a href={protocol.fileUrl || "#"} target="_blank">
-                                                                <Download className="h-4 w-4 mr-2" />
-                                                                {getLocalizedTitle(protocol)}
-                                                            </a>
-                                                        </Button>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            </TabsContent>
-                        ))}
-                    </Tabs>
-                </div>
+                                {protocolsWithFile.length > 0 && (
+                                    <div className="mt-6 border-t pt-6">
+                                        <h3 className="type-h4 mb-3 text-foreground">{t("protocols")}</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {protocolsWithFile.map((protocol) => (
+                                                <Button key={protocol.id} variant="outline" size="sm" asChild>
+                                                    <a href={protocol.fileUrl ?? undefined} target="_blank" rel="noopener noreferrer">
+                                                        <Download />
+                                                        {getLocalizedTitle(protocol)}
+                                                    </a>
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
+                </section>
             ) : (
-                <Card>
-                    <CardContent className="py-8 text-center text-muted-foreground">
-                        {t("no_categories")}
-                    </CardContent>
-                </Card>
+                <EmptyState icon={ListX} title={t("no_categories")} />
             )}
-        </div>
+        </PageContainer>
     );
 }

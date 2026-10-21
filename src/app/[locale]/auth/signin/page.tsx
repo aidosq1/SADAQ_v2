@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
+import { IconTile } from "@/components/ui/icon-tile";
 
 const LABELS = {
     ru: { title: "Вход в систему", username: "Логин", password: "Пароль", submit: "Войти", submitting: "Вход...", error: "Неверный логин или пароль", success: "Вход выполнен" },
@@ -47,22 +48,20 @@ export default function SignInPage() {
     };
 
     return (
-        <div className="flex h-[80vh] w-full items-center justify-center p-4">
-            <Card className="w-full max-w-sm shadow-md">
-                <CardHeader className="space-y-1 text-center">
-                    <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <Lock className="h-5 w-5 text-primary" />
-                    </div>
-                    <h1 className="text-2xl font-bold leading-none tracking-tight">{labels.title}</h1>
+        <div className="flex min-h-[60vh] w-full items-center justify-center px-4 py-12">
+            <Card className="w-full max-w-sm">
+                <CardHeader className="justify-items-center gap-3 text-center">
+                    <IconTile icon={Lock} />
+                    <h1 className="type-h2 text-primary">{labels.title}</h1>
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <CardContent className="grid gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="username">{labels.username}</Label>
                             <Input
                                 id="username"
                                 type="text"
-                                placeholder="Astana"
+                                autoComplete="username"
                                 required
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
@@ -73,6 +72,7 @@ export default function SignInPage() {
                             <Input
                                 id="password"
                                 type="password"
+                                autoComplete="current-password"
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}

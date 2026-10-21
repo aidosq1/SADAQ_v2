@@ -1,10 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PersonPlaceholder } from "@/components/ui/person-placeholder";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PersonAvatar } from "@/components/ui/person-avatar";
+import { RankBadge } from "@/components/ui/rank-badge";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState, LoadingState } from "@/components/ui/states";
+import { cardInteractive, cardSurface } from "@/components/ui/card";
+import { AthleteFilters, type AthleteFilterKey } from "@/components/filters/AthleteFilters";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -13,11 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowRight, Search, Trophy } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { CATEGORIES, GENDERS, BOW_TYPES, DEFAULT_FILTERS, getLocalizedLabel } from "@/lib/constants";
+import { ChevronRight, Search, Trophy } from "lucide-react";
+import { Link, useRouter } from "@/navigation";
+import { DEFAULT_FILTERS } from "@/lib/constants";
 import { useTranslations, useLocale } from "next-intl";
 import { getRegionName } from "@/lib/localization";
 
@@ -95,162 +98,129 @@ export default function RankingPage() {
       return true;
     });
 
+  const setters: Record<AthleteFilterKey, (value: string) => void> = {
+    category: setFilterCategory,
+    gender: setFilterGender,
+    type: setFilterType,
+  };
+
+  const emptyState = <EmptyState icon={Trophy} title={t("no_data")} />;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10 space-y-6 lg:space-y-8">
-      <div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{t("title")}</h1>
-      </div>
+    <PageContainer>
+      <PageHeader title={t("title")} />
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4">
-        <div className="flex flex-wrap gap-1">
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat.id}
-              variant={filterCategory === cat.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilterCategory(cat.id)}
-            >
-              {getLocalizedLabel(cat, locale)}
-            </Button>
-          ))}
-        </div>
-        <div className="flex gap-1">
-          {GENDERS.map((g) => (
-            <Button
-              key={g.id}
-              variant={filterGender === g.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilterGender(g.id)}
-            >
-              {getLocalizedLabel(g, locale)}
-            </Button>
-          ))}
-        </div>
-        <div className="flex gap-1">
-          {BOW_TYPES.map((type) => (
-            <Button
-              key={type.id}
-              variant={filterType === type.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilterType(type.id)}
-            >
-              {getLocalizedLabel(type, locale)}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <div className="space-y-6">
+        <AthleteFilters
+          category={filterCategory}
+          gender={filterGender}
+          type={filterType}
+          locale={locale}
+          onChange={(key, value) => setters[key](value)}
+        />
 
-      {/* Search & Meta */}
-      <div className="flex justify-between items-center">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t("search_placeholder")}
-            className="pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        {/* Search & Meta */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="relative w-full max-w-sm">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={t("search_placeholder")}
+              className="pl-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="type-small hidden shrink-0 text-muted-foreground md:block">
+            {t("shown_label")}: {filteredRankings.length}
+          </div>
         </div>
-        <div className="text-sm text-muted-foreground hidden md:block">
-          {t("shown_label")}: {filteredRankings.length}
-        </div>
-      </div>
 
-      {/* Mobile Card View */}
-      <div className="md:hidden space-y-3">
         {loading ? (
-          <p className="text-center py-8">Loading...</p>
+          <LoadingState />
         ) : filteredRankings.length === 0 ? (
-          <p className="text-center py-8 text-muted-foreground">{t("no_data")}</p>
+          emptyState
         ) : (
-          filteredRankings.map((ranking) => (
-            <Link key={ranking.id} href={`/team/${ranking.athlete.slug}`}>
-              <Card className="hover:bg-muted/50 transition-colors">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="font-bold text-primary">{ranking.position}</span>
-                    </div>
-                    <Avatar className="h-12 w-12 border">
-                      <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
-                      <AvatarFallback><PersonPlaceholder /></AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold truncate">{getLocalizedName(ranking.athlete, locale)}</p>
-                      <p className="text-sm text-muted-foreground truncate">
+          <>
+            {/* Mobile Card View */}
+            <ul className="space-y-3 md:hidden">
+              {filteredRankings.map((ranking) => (
+                <li key={ranking.id}>
+                  <Link
+                    href={`/team/${ranking.athlete.slug}`}
+                    className={cn(cardSurface, cardInteractive, "flex items-center gap-3 p-4")}
+                  >
+                    <RankBadge position={ranking.position} />
+                    <PersonAvatar
+                      src={ranking.athlete.image}
+                      alt={getLocalizedName(ranking.athlete, locale)}
+                      className="size-12"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold text-foreground">{getLocalizedName(ranking.athlete, locale)}</p>
+                      <p className="type-small truncate text-muted-foreground">
                         {getRegionName(ranking.athlete, locale)}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-mono font-bold text-lg text-primary">{ranking.points}</p>
-                      <p className="text-xs text-muted-foreground">{t("th_points")}</p>
+                      <p className="type-number text-lg text-primary">{ranking.points}</p>
+                      <p className="type-caption">{t("th_points")}</p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Desktop Table View */}
+            <div className={cn(cardSurface, "hidden overflow-hidden md:block")}>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-20 text-center">{t("th_rank")}</TableHead>
+                    <TableHead>{t("th_athlete")}</TableHead>
+                    <TableHead>{t("th_region")}</TableHead>
+                    <TableHead className="text-right">{t("th_points")}</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredRankings.map((ranking) => (
+                    <TableRow
+                      key={ranking.id}
+                      className="group cursor-pointer"
+                      onClick={() => router.push(`/team/${ranking.athlete.slug}`)}
+                    >
+                      <TableCell className="text-center">
+                        <RankBadge position={ranking.position} />
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          href={`/team/${ranking.athlete.slug}`}
+                          className="flex items-center gap-3 font-semibold text-foreground transition-colors group-hover:text-primary"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <PersonAvatar
+                            src={ranking.athlete.image}
+                            alt={getLocalizedName(ranking.athlete, locale)}
+                            className="size-10"
+                          />
+                          {getLocalizedName(ranking.athlete, locale)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{getRegionName(ranking.athlete, locale)}</TableCell>
+                      <TableCell className="type-number text-right text-lg text-primary">
+                        {ranking.points}
+                      </TableCell>
+                      <TableCell>
+                        <ChevronRight className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </div>
-
-      {/* Desktop Table View */}
-      <div className="hidden md:block rounded-md border overflow-hidden">
-        <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead className="w-[80px] text-center">{t("th_rank")}</TableHead>
-              <TableHead>{t("th_athlete")}</TableHead>
-              <TableHead>{t("th_region")}</TableHead>
-              <TableHead className="text-right">{t("th_points")}</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">Loading...</TableCell>
-              </TableRow>
-            ) : filteredRankings.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">{t("no_data")}</TableCell>
-              </TableRow>
-            ) : (
-              filteredRankings.map((ranking) => (
-                <TableRow
-                  key={ranking.id}
-                  className="group hover:bg-muted/50 cursor-pointer"
-                  onClick={() => router.push(`/${locale}/team/${ranking.athlete.slug}`)}
-                >
-                  <TableCell className="font-bold text-lg text-center">
-                    {ranking.position}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-10 w-10 border">
-                        <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
-                        <AvatarFallback><PersonPlaceholder /></AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-semibold group-hover:text-primary transition-colors">
-                          {getLocalizedName(ranking.athlete, locale)}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getRegionName(ranking.athlete, locale)}</TableCell>
-                  <TableCell className="text-right font-mono font-bold text-lg text-primary">
-                    {ranking.points}
-                  </TableCell>
-                  <TableCell>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    </PageContainer>
   );
 }

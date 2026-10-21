@@ -3,6 +3,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState, LoadingState } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -515,29 +518,26 @@ export default function TournamentApplyPage() {
     // Loading state
     if (loading || sessionStatus === "loading") {
         return (
-            <div className="container mx-auto py-8 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
+            <PageContainer size="narrow">
+                <LoadingState className="min-h-[400px]" />
+            </PageContainer>
         );
     }
 
     // Not authenticated
     if (sessionStatus === "unauthenticated") {
         return (
-            <div className="container mx-auto py-8 px-4">
-                <Card className="max-w-lg mx-auto">
-                    <CardContent className="py-12 text-center space-y-4">
-                        <Lock className="h-12 w-12 mx-auto text-muted-foreground" />
-                        <h2 className="text-2xl font-bold">Требуется авторизация</h2>
-                        <p className="text-muted-foreground">
-                            Для подачи заявки на турнир необходимо войти в систему как региональный представитель.
-                        </p>
+            <PageContainer size="narrow">
+                <EmptyState
+                    icon={Lock}
+                    title="Требуется авторизация"
+                    action={
                         <Button asChild>
-                            <Link href="/api/auth/signin">Войти</Link>
+                            <Link href={`/${locale}/auth/signin`}>Войти</Link>
                         </Button>
-                    </CardContent>
-                </Card>
-            </div>
+                    }
+                />
+            </PageContainer>
         );
     }
 
@@ -545,40 +545,29 @@ export default function TournamentApplyPage() {
     const userRole = session?.user?.role;
     if (userRole !== "RegionalRepresentative") {
         return (
-            <div className="container mx-auto py-8 px-4">
-                <Card className="max-w-lg mx-auto">
-                    <CardContent className="py-12 text-center space-y-4">
-                        <Lock className="h-12 w-12 mx-auto text-muted-foreground" />
-                        <h2 className="text-2xl font-bold">Доступ запрещён</h2>
-                        <p className="text-muted-foreground">
-                            Подача заявок доступна только региональным представителям.
-                        </p>
-                    </CardContent>
-                </Card>
-            </div>
+            <PageContainer size="narrow">
+                <EmptyState icon={Lock} title="Подача заявок доступна только региональным представителям" />
+            </PageContainer>
         );
     }
 
     // No tournaments available
     if (tournaments.length === 0) {
         return (
-            <div className="container mx-auto py-8 px-4">
-                <Card className="max-w-lg mx-auto">
-                    <CardContent className="py-12 text-center space-y-4">
-                        <Trophy className="h-12 w-12 mx-auto text-muted-foreground" />
-                        <h2 className="text-2xl font-bold">Нет доступных турниров</h2>
-                        <p className="text-muted-foreground">
-                            В данный момент нет турниров с открытой регистрацией.
-                        </p>
+            <PageContainer size="narrow">
+                <EmptyState
+                    icon={Trophy}
+                    title="Нет турниров с открытой регистрацией"
+                    action={
                         <Button asChild variant="outline">
                             <Link href={`/${locale}/calendar`}>
-                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <ArrowLeft />
                                 К календарю
                             </Link>
                         </Button>
-                    </CardContent>
-                </Card>
-            </div>
+                    }
+                />
+            </PageContainer>
         );
     }
 
@@ -591,8 +580,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <Trophy className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="font-semibold">Выберите турнир</h3>
-                                <p className="text-sm text-muted-foreground">Доступные турниры с открытой регистрацией</p>
+                                <h3 className="type-h3 text-primary">Выберите турнир</h3>
                             </div>
                         </div>
                         <div className="grid gap-3">
@@ -606,17 +594,17 @@ export default function TournamentApplyPage() {
                                         key={tournament.id}
                                         onClick={() => handleTournamentSelect(tournament.id.toString())}
                                         className={`
-                                            p-4 rounded-lg border-2 cursor-pointer transition-all
+                                            p-4 rounded-lg border-2 cursor-pointer transition-colors
                                             ${isSelected
-                                                ? 'border-primary bg-primary/5'
-                                                : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                                                ? 'border-primary bg-secondary'
+                                                : 'border-border hover:border-primary/40 hover:bg-accent'
                                             }
                                         `}
                                     >
                                         <div className="flex items-start justify-between">
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-2">
-                                                    <h3 className="font-semibold">{getLocalizedTitle(tournament)}</h3>
+                                                    <h4 className="type-h4 text-foreground">{getLocalizedTitle(tournament)}</h4>
                                                     {isSelected && (
                                                         <CheckCircle className="h-4 w-4 text-primary" />
                                                     )}
@@ -659,8 +647,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <ClipboardList className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="font-semibold">Выберите категорию</h3>
-                                <p className="text-sm text-muted-foreground">Категория турнира для участников</p>
+                                <h3 className="type-h3 text-primary">Выберите категорию</h3>
                             </div>
                         </div>
 
@@ -703,8 +690,7 @@ export default function TournamentApplyPage() {
                             <div className="flex items-center gap-3">
                                 <Shield className="h-5 w-5 text-primary" />
                                 <div>
-                                    <h3 className="font-semibold">Судьи от региона</h3>
-                                    <p className="text-sm text-muted-foreground">Можно добавить несколько судей</p>
+                                    <h3 className="type-h3 text-primary">Судьи от региона</h3>
                                 </div>
                             </div>
                             <Button variant="outline" size="sm" onClick={addJudgeEntry}>
@@ -747,7 +733,7 @@ export default function TournamentApplyPage() {
                             <div className="flex items-center gap-3">
                                 <UserCheck className="h-5 w-5 text-primary" />
                                 <div>
-                                    <h3 className="font-semibold">Список спортсменов</h3>
+                                    <h3 className="type-h3 text-primary">Список спортсменов</h3>
                                     <p className="text-sm text-muted-foreground">
                                         Доступно: {filteredAthletes.length} спортсменов
                                     </p>
@@ -891,8 +877,7 @@ export default function TournamentApplyPage() {
                         <div className="flex items-center gap-3 mb-6">
                             <Paperclip className="h-5 w-5 text-primary" />
                             <div>
-                                <h3 className="font-semibold">Документы</h3>
-                                <p className="text-sm text-muted-foreground">Прикрепите файлы (опционально)</p>
+                                <h3 className="type-h3 text-primary">Документы</h3>
                             </div>
                         </div>
 
@@ -975,19 +960,8 @@ export default function TournamentApplyPage() {
     };
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">
-            {/* Header */}
-            <div className="flex items-center gap-3">
-                <div className="p-3 bg-primary/10 rounded-full">
-                    <ClipboardList className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                    <h1 className="text-2xl font-bold">Подать заявку на турнир</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Выберите турнир и заполните данные участников
-                    </p>
-                </div>
-            </div>
+        <PageContainer size="narrow" className="space-y-6">
+            <PageHeader title="Подать заявку на турнир" className="mb-0 md:mb-0" />
 
             {/* Stepper */}
             <Stepper
@@ -1030,7 +1004,7 @@ export default function TournamentApplyPage() {
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting || !(canProceedFromStep(0) && canProceedFromStep(1) && canProceedFromStep(2) && canProceedFromStep(3))}
-                        className="bg-green-600 hover:bg-green-700"
+                        variant="success"
                     >
                         {isSubmitting ? (
                             <>
@@ -1046,6 +1020,6 @@ export default function TournamentApplyPage() {
                     </Button>
                 )}
             </div>
-        </div>
+        </PageContainer>
     );
 }

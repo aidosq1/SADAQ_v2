@@ -216,7 +216,7 @@ export function MultiImageUpload({
                                     </div>
                                 </div>
 
-                                <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-1 truncate text-[10px] text-white text-center">
+                                <div className="absolute bottom-0 left-0 right-0 truncate bg-black/60 p-1 text-center text-xs text-white">
                                     {file.originalName}
                                 </div>
                             </div>

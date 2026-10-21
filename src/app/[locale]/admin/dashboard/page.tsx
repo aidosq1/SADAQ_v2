@@ -1,8 +1,10 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
+import { PageHeader } from "@/components/ui/page-header";
+import { MetricCard } from "@/components/ui/metric-card";
+import { cardInteractive } from "@/components/ui/card";
 import { Newspaper, Users, Trophy, Handshake, FileText, Images, UserCog } from "lucide-react";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
@@ -22,13 +24,14 @@ async function getStats() {
 }
 
 const statCards = [
-  { key: "news", icon: Newspaper, href: "/admin/news", color: "text-blue-500" },
-  { key: "team", icon: Users, href: "/admin/team", color: "text-green-500" },
-  { key: "staff", icon: UserCog, href: "/admin/staff", color: "text-orange-500" },
-  { key: "rankings", icon: Trophy, href: "/admin/rankings", color: "text-yellow-500" },
-  { key: "partners", icon: Handshake, href: "/admin/partners", color: "text-pink-500" },
-  { key: "documents", icon: FileText, href: "/admin/documents", color: "text-cyan-500" },
-  { key: "gallery", icon: Images, href: "/admin/gallery", color: "text-indigo-500" },
+  { key: "news", icon: Newspaper, href: "/admin/news" },
+  { key: "team", icon: Users, href: "/admin/team" },
+  // Персонал редактируется на вкладке «Руководство» страницы контента
+  { key: "staff", icon: UserCog, href: "/admin/content" },
+  { key: "rankings", icon: Trophy, href: "/admin/rankings" },
+  { key: "partners", icon: Handshake, href: "/admin/partners" },
+  { key: "documents", icon: FileText, href: "/admin/documents" },
+  { key: "gallery", icon: Images, href: "/admin/gallery" },
 ];
 
 const labels: Record<string, Record<string, string>> = {
@@ -59,40 +62,34 @@ export default async function AdminDashboardPage() {
   const contentSectionTitle = locale === "kk" ? "Контент статистикасы" : locale === "en" ? "Content Statistics" : "Статистика контента";
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">{pageTitle}</h1>
-        <p className="text-muted-foreground">
-          {regionLabel}: <span className="font-medium text-foreground">{session.user?.name}</span>
-          {userRole && (
-            <>
-              {" • "}
-              {roleLabel}: <span className="font-medium text-foreground">{userRole}</span>
-            </>
-          )}
-        </p>
-      </div>
+    <div>
+      <PageHeader
+        title={pageTitle}
+        actions={
+          <p className="type-small text-muted-foreground">
+            {regionLabel}: <span className="font-medium text-foreground">{session.user?.name}</span>
+            {userRole && (
+              <>
+                {" · "}
+                {roleLabel}: <span className="font-medium text-foreground">{userRole}</span>
+              </>
+            )}
+          </p>
+        }
+      />
 
-      {/* Content Statistics for Admin/Editor */}
       {isContentManager && (
         <section>
-          <h2 className="text-xl font-semibold mb-4">{contentSectionTitle}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <h2 className="type-h3 mb-4 text-foreground">{contentSectionTitle}</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {statCards.map((card) => (
-              <Link key={card.key} href={`/${locale}${card.href}`}>
-                <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className={`p-2 rounded-lg bg-muted ${card.color}`}>
-                      <card.icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{stats[card.key as keyof typeof stats]}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {labels[card.key]?.[locale] || labels[card.key]?.ru}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+              <Link key={card.key} href={`/${locale}${card.href}`} className="rounded-lg">
+                <MetricCard
+                  icon={card.icon}
+                  value={stats[card.key as keyof typeof stats]}
+                  label={labels[card.key]?.[locale] || labels[card.key]?.ru}
+                  className={cardInteractive}
+                />
               </Link>
             ))}
           </div>

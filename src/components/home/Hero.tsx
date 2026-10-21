@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MapPin, Trophy, Calendar, Activity } from "lucide-react";
+import { Users, MapPin, Trophy, Calendar, Activity, type LucideIcon } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { HeroNewsSlider } from "./HeroNewsSlider";
 import type { ComponentProps } from "react";
-import { Link } from "@/navigation";
+import { Container } from "@/components/ui/container";
+import { ArrowLink } from "@/components/ui/arrow-link";
+import { Stat } from "@/components/ui/stat";
+import { cardSurface } from "@/components/ui/card";
 import { formatDate } from "@/lib/date-format";
 
 interface SiteStat {
@@ -27,12 +30,11 @@ interface UpcomingEvent {
     startDate: string;
 }
 
-const iconMap: Record<string, React.ReactNode> = {
-    mapPin: <MapPin className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
-    users: <Users className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
-    badge: <Trophy className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
-    trophy: <Trophy className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
-    default: <Activity className="w-5 h-5 text-[hsl(var(--official-maroon))]" />,
+const iconMap: Record<string, LucideIcon> = {
+    mapPin: MapPin,
+    users: Users,
+    badge: Trophy,
+    trophy: Trophy,
 };
 
 interface HeroProps {
@@ -93,67 +95,54 @@ export function Hero({ initialSlides }: HeroProps) {
 
 
     return (
-        <section className="bg-[hsl(var(--light-cream))]">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section className="bg-secondary">
+            <Container className="py-6 md:py-8">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     {/* News Slider - Left Side */}
                     <div className="lg:col-span-7">
-                        <div className="relative h-[450px] lg:h-[550px] rounded-lg overflow-hidden shadow-sm">
+                        <div className="relative h-[420px] overflow-hidden rounded-lg lg:h-[550px]">
                             <HeroNewsSlider initialSlides={initialSlides} />
                         </div>
                     </div>
 
                     {/* Stats & Info - Right Side */}
-                    <div className="lg:col-span-5 flex flex-col gap-4">
-                        {/* Stats Card */}
-                        <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] p-6 shadow-sm">
-                            <h2 className="text-lg font-heading font-semibold text-[hsl(var(--official-maroon))] mb-4 gold-accent">
+                    <div className="flex flex-col gap-6 lg:col-span-5">
+                        <div className={`${cardSurface} p-6`}>
+                            <h2 className="type-h3 gold-underline mb-6 text-primary">
                                 {t("federation_stats")}
                             </h2>
-                            <div className="grid grid-cols-2 gap-4 mt-6">
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
                                 {stats.map((stat) => (
-                                    <div key={stat.id} className="text-center p-3">
-                                        <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                                            {iconMap[stat.iconType] || iconMap.default}
-                                        </div>
-                                        <div className="text-2xl font-bold font-heading text-[hsl(var(--official-maroon))]">
-                                            {stat.value}
-                                        </div>
-                                        <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1 uppercase tracking-wide">
-                                            {getLocalizedLabel(stat)}
-                                        </div>
-                                    </div>
+                                    <Stat
+                                        key={stat.id}
+                                        icon={iconMap[stat.iconType] ?? Activity}
+                                        value={stat.value}
+                                        label={getLocalizedLabel(stat)}
+                                    />
                                 ))}
                             </div>
                         </div>
 
-                        {/* Upcoming Event Card */}
                         {upcomingEvent && (
-                            <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] p-6 shadow-sm">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Calendar className="w-4 h-4 text-[hsl(var(--official-gold))]" />
-                                    <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wide">
-                                        {t("upcoming_event")}
-                                    </span>
-                                </div>
-                                <h3 className="font-heading font-semibold text-[hsl(var(--official-maroon))] mb-2 line-clamp-2">
+                            <div className={`${cardSurface} p-6`}>
+                                <p className="type-eyebrow mb-3 flex items-center gap-2 text-gold-strong">
+                                    <Calendar className="size-4" />
+                                    {t("upcoming_event")}
+                                </p>
+                                <h3 className="type-h4 mb-2 line-clamp-2 text-primary">
                                     {getLocalizedTitle(upcomingEvent)}
                                 </h3>
-                                <p className="text-sm text-[hsl(var(--muted-foreground))]">
+                                <p className="type-small text-muted-foreground">
                                     {formatDate(upcomingEvent.startDate, locale)}
                                 </p>
-                                <Link
-                                    href="/calendar"
-                                    className="inline-block mt-4 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
-                                >
-                                    {t("view_calendar")} →
-                                </Link>
+                                <ArrowLink href="/calendar" className="mt-4">
+                                    {t("view_calendar")}
+                                </ArrowLink>
                             </div>
                         )}
-
                     </div>
                 </div>
-            </div>
+            </Container>
         </section>
     );
 }

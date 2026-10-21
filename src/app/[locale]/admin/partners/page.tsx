@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
@@ -163,7 +164,7 @@ export default function AdminPartnersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Партнёры</h1>
+        <h1 className="type-h1 text-primary">Партнёры</h1>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить
@@ -201,9 +202,9 @@ export default function AdminPartnersPage() {
                   <TableCell className="font-medium">
                     {item.name}
                     {item.isGeneral && (
-                      <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
-                        ГЕНЕРАЛЬНЫЙ
-                      </span>
+                      <Badge variant="warning" className="ml-2">
+                        Генеральный
+                      </Badge>
                     )}
                   </TableCell>
                   <TableCell>
@@ -219,7 +220,7 @@ export default function AdminPartnersPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleActive(item)}
-                      className={item.isActive ? "text-green-600" : "text-gray-400"}
+                      className={item.isActive ? "text-success" : "text-muted-foreground"}
                     >
                       {item.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                     </Button>

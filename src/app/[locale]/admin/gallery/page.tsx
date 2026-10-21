@@ -119,7 +119,7 @@ export default function AdminGalleryPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Галерея</h1>
+        <h1 className="type-h1 text-primary">Галерея</h1>
         <div className="flex gap-2">
           <BulkUploadDialog onSuccess={fetchItems} />
           {/* Legacy Add Single Item button removed/hidden to encourage Bulk/Album workflow, 

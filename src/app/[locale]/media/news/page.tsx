@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import Link from "next/link";
-import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Loader2, ArrowRight } from "lucide-react";
+import { Calendar, Loader2, Newspaper } from "lucide-react";
 import { formatDate } from "@/lib/date-format";
+import { getNewsCategoryLabel } from "@/lib/constants";
+import { Badge } from "@/components/ui/badge";
+import { MediaCard } from "@/components/ui/media-card";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState, LoadingState } from "@/components/ui/states";
 
 interface NewsItem {
   id: number;
@@ -106,93 +109,48 @@ export default function NewsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-10">
-        <h1 className="text-4xl font-bold mb-2">{t("title")}</h1>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </div>
+      <PageContainer>
+        <PageHeader title={t("title")} />
+        <LoadingState />
+      </PageContainer>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold mb-2">{t("title")}</h1>
-        <p className="text-muted-foreground text-lg">{t("subtitle")}</p>
-      </div>
+    <PageContainer>
+      <PageHeader title={t("title")} />
 
-      {/* News Grid */}
       {news.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground text-lg">{t("no_news")}</p>
-        </div>
+        <EmptyState icon={Newspaper} title={t("no_news")} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {news.map((item) => (
-            <Link key={item.id} href={`/media/news/${item.slug}`}>
-              <Card className="h-full overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  {item.image ? (
-                    <Image
-                      src={item.image}
-                      alt={getLocalizedTitle(item, locale)}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center">
-                      <span className="text-muted-foreground text-4xl font-bold">
-                        {getLocalizedTitle(item, locale).charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-5 space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>{formatDate(item.publishedAt, locale)}</span>
-                  </div>
-                  <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
-                    {getLocalizedTitle(item, locale)}
-                  </h3>
-                  {(item.excerpt || item.excerptKk || item.excerptEn) && (
-                    <p className="text-muted-foreground text-sm line-clamp-3">
-                      {getLocalizedExcerpt(item, locale)}
-                    </p>
-                  )}
-                  <div className="flex items-center text-primary text-sm font-medium pt-2">
-                    {t("read_more")}
-                    <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+            <MediaCard
+              key={item.id}
+              href={`/media/news/${item.slug}`}
+              title={getLocalizedTitle(item, locale)}
+              image={item.image}
+              badge={<Badge variant="brand">{getNewsCategoryLabel(item.category, locale)}</Badge>}
+              meta={
+                <>
+                  <Calendar className="size-3.5" />
+                  {formatDate(item.publishedAt, locale)}
+                </>
+              }
+              excerpt={getLocalizedExcerpt(item, locale) || undefined}
+            />
           ))}
         </div>
       )}
 
-      {/* Load More Button */}
       {page < totalPages && (
-        <div className="flex justify-center pt-4">
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleLoadMore}
-            disabled={loadingMore}
-          >
-            {loadingMore ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {t("load_more")}...
-              </>
-            ) : (
-              t("load_more")
-            )}
+        <div className="mt-10 flex justify-center">
+          <Button variant="outline" size="lg" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore && <Loader2 className="animate-spin" />}
+            {t("load_more")}
           </Button>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

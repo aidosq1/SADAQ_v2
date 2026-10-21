@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
@@ -9,11 +9,17 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import { Providers } from "@/components/providers";
 
-// Noto Sans - полная поддержка казахского языка
-const notoSans = Noto_Sans({
+// Оба шрифта поддерживают казахские буквы (cyrillic-ext): Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І
+const inter = Inter({
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
-  variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  variable: "--font-montserrat",
+  weight: ["600", "700", "800"],
   display: "swap",
 });
 
@@ -56,10 +62,8 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body
-        className={`${notoSans.variable} min-h-screen bg-background font-sans antialiased`}
-      >
+    <html lang={locale} className={`${inter.variable} ${montserrat.variable}`} suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col bg-background font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <Header />

@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLink } from "@/components/ui/arrow-link";
 import { useLocale } from "next-intl";
 
 interface Slide {
@@ -85,23 +86,16 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
 
   if (loading) {
     return (
-      <div className="relative w-full h-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-        <div className="text-[hsl(var(--muted-foreground))]">...</div>
-      </div>
+      <div className="relative h-full w-full animate-pulse bg-muted" aria-busy="true" />
     );
   }
 
   if (slides.length === 0) {
     return (
-      <div className="relative w-full h-full bg-[hsl(var(--official-maroon))] flex items-center justify-center text-white">
-        <div className="text-center px-8">
-          <h2 className="text-2xl font-heading font-bold mb-2">
-            {locale === 'kk' ? 'Қазақстан Садақ Ату Федерациясы' : locale === 'en' ? 'Kazakhstan Archery Federation' : 'Федерация Стрельбы из Лука Казахстана'}
-          </h2>
-          <p className="text-white/70">
-            {locale === 'kk' ? 'Ресми веб-сайт' : locale === 'en' ? 'Official Website' : 'Официальный сайт'}
-          </p>
-        </div>
+      <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-b from-primary to-primary-deep px-8 text-center">
+        <h2 className="type-h2 text-white">
+          {locale === 'kk' ? 'Қазақстан Садақ Ату Федерациясы' : locale === 'en' ? 'Kazakhstan Archery Federation' : 'Федерация Стрельбы из Лука Казахстана'}
+        </h2>
       </div>
     );
   }
@@ -138,27 +132,23 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
           <div className="absolute inset-0 flex items-end p-6 md:p-8">
             <div className="w-full max-w-xl">
               {/* Category Badge */}
-              <span className="official-badge mb-3 inline-block">
+              <Badge variant="brand" className="mb-3">
                 {locale === 'kk' ? 'Жаңалықтар' : locale === 'en' ? 'News' : 'Новости'}
-              </span>
+              </Badge>
 
-              <h2 className="font-heading text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 leading-tight line-clamp-2">
+              <h2 className="type-h2 mb-3 line-clamp-2 text-white">
                 {getLocalizedField(slide, 'title', locale)}
               </h2>
 
               {getLocalizedField(slide, 'description', locale) && (
-                <p className="text-sm md:text-base text-white/80 mb-4 line-clamp-2">
+                <p className="type-small mb-4 line-clamp-2 text-white/80 md:text-base">
                   {getLocalizedField(slide, 'description', locale)}
                 </p>
               )}
 
-              <Link
-                href={slide.linkUrl || "/media/news"}
-                className="inline-flex items-center gap-2 text-[hsl(var(--official-gold))] hover:text-white transition-colors text-sm font-medium"
-              >
+              <ArrowLink href={slide.linkUrl || "/media/news"} tone="inverse">
                 {readMoreText}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              </ArrowLink>
             </div>
           </div>
         </div>
@@ -169,14 +159,14 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
             aria-label="Next slide"
           >
             <ChevronRight className="w-5 h-5" />
@@ -193,7 +183,7 @@ export function HeroNewsSlider({ initialSlides }: HeroNewsSliderProps) {
               onClick={() => goToSlide(index)}
               className={`transition-all duration-300 rounded-full ${
                 index === current
-                  ? "w-6 h-2 bg-[hsl(var(--official-gold))]"
+                  ? "w-6 h-2 bg-gold"
                   : "w-2 h-2 bg-white/40 hover:bg-white/70"
               }`}
               aria-label={`Go to slide ${index + 1}`}

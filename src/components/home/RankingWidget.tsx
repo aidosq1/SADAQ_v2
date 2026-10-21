@@ -4,8 +4,20 @@ import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PersonPlaceholder } from "@/components/ui/person-placeholder";
 import { useLocale } from "next-intl";
-import { ArrowRight, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/navigation";
+import { Section, SectionHeader } from "@/components/ui/section";
+import { ArrowLink } from "@/components/ui/arrow-link";
+import { LoadingState } from "@/components/ui/states";
+import { RankBadge } from "@/components/ui/rank-badge";
+import { cardSurface } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface RankingEntry {
   id: number;
@@ -59,11 +71,9 @@ export function RankingWidget() {
 
   if (loading) {
     return (
-      <section className="py-16 bg-[hsl(var(--light-cream))]">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--official-maroon))] mx-auto" />
-        </div>
-      </section>
+      <Section tone="muted">
+        <LoadingState />
+      </Section>
     );
   }
 
@@ -72,95 +82,53 @@ export function RankingWidget() {
   }
 
   return (
-    <section className="py-16 bg-[hsl(var(--light-cream))]">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Section Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wider mb-2 block">
-              {topAthletesText}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent">
-              {sectionTitle}
-            </h2>
-          </div>
-          <Link
-            href="/ranking"
-            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
-          >
-            {viewAllText} <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+    <Section tone="muted">
+      <SectionHeader
+        eyebrow={topAthletesText}
+        title={sectionTitle}
+        action={<ArrowLink href="/ranking">{viewAllText}</ArrowLink>}
+      />
 
-        {/* Rankings Table */}
-        <div className="bg-white rounded-lg border border-[hsl(var(--border-light))] overflow-hidden mt-8 overflow-x-auto">
-          <table className="w-full min-w-[400px]">
-            <thead>
-              <tr className="border-b border-[hsl(var(--border-light))] bg-[hsl(var(--light-cream))]">
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
-                  №
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
-                  {locale === 'kk' ? 'Атлет' : locale === 'en' ? 'Athlete' : 'Атлет'}
-                </th>
-                <th className="py-3 px-4 text-right text-xs font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
-                  {locale === 'kk' ? 'Ұпай' : locale === 'en' ? 'Points' : 'Очки'}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rankings.map((ranking) => (
-                <tr
-                  key={ranking.id}
-                  className="border-b border-[hsl(var(--border-light))] last:border-b-0 hover:bg-[hsl(var(--light-cream))] transition-colors"
-                >
-                  <td className="py-4 px-4">
-                    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                      ranking.position === 1 ? 'bg-[#FFD700] text-[hsl(var(--official-maroon))]' :
-                      ranking.position === 2 ? 'bg-[#C0C0C0] text-[hsl(var(--official-maroon))]' :
-                      ranking.position === 3 ? 'bg-[#CD7F32] text-white' :
-                      'bg-[hsl(var(--light-cream))] text-[hsl(var(--official-maroon))]'
-                    }`}>
-                      {ranking.position}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4">
-                    <Link href={`/team/${ranking.athlete.slug}`} className="flex items-center gap-3 hover:opacity-80">
-                      <Avatar className="h-10 w-10 border border-[hsl(var(--border-light))]">
-                        <AvatarImage
-                          src={ranking.athlete.image || undefined}
-                          alt={getLocalizedName(ranking.athlete, locale)}
-                        />
-                        <AvatarFallback className="bg-[hsl(var(--light-cream))]">
-                          <PersonPlaceholder />
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-[hsl(var(--official-maroon))]">
-                        {getLocalizedName(ranking.athlete, locale)}
-                      </span>
-                    </Link>
-                  </td>
-                  <td className="py-4 px-4 text-right">
-                    <span className="font-mono text-lg font-bold text-[hsl(var(--official-maroon))]">
-                      {ranking.points}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile View All */}
-        <div className="mt-6 md:hidden text-center">
-          <Link
-            href="/ranking"
-            className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))]"
-          >
-            {viewAllText} <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+      <div className={`${cardSurface} overflow-hidden`}>
+        <Table className="min-w-[360px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-16">№</TableHead>
+              <TableHead>{locale === 'kk' ? 'Атлет' : locale === 'en' ? 'Athlete' : 'Атлет'}</TableHead>
+              <TableHead className="text-right">{locale === 'kk' ? 'Ұпай' : locale === 'en' ? 'Points' : 'Очки'}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rankings.map((ranking) => (
+              <TableRow key={ranking.id}>
+                <TableCell>
+                  <RankBadge position={ranking.position} />
+                </TableCell>
+                <TableCell>
+                  <Link
+                    href={`/team/${ranking.athlete.slug}`}
+                    className="flex items-center gap-3 font-medium text-foreground transition-colors hover:text-primary"
+                  >
+                    <Avatar className="size-10 border">
+                      <AvatarImage
+                        src={ranking.athlete.image || undefined}
+                        alt={getLocalizedName(ranking.athlete, locale)}
+                      />
+                      <AvatarFallback>
+                        <PersonPlaceholder />
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="whitespace-normal">{getLocalizedName(ranking.athlete, locale)}</span>
+                  </Link>
+                </TableCell>
+                <TableCell className="type-number text-right text-lg text-primary">
+                  {ranking.points}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-    </section>
+    </Section>
   );
 }

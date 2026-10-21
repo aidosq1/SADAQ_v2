@@ -3,6 +3,17 @@
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
 
+/*
+ * SADAQ UI kit — design tokens.
+ * Описание и правила использования: src/components/ui/README.md
+ */
+
+@theme inline {
+  /* ===== Fonts: Inter — текст и интерфейс, Montserrat — заголовки и цифры ===== */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-montserrat), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -11,13 +22,29 @@
   --color-foreground: hsl(var(--foreground));
 
   --color-primary: hsl(var(--primary));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-deep: hsl(var(--primary-deep));
   --color-primary-foreground: hsl(var(--primary-foreground));
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
 
+  --color-gold: hsl(var(--gold));
+  --color-gold-strong: hsl(var(--gold-strong));
+
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-success: hsl(var(--success));
+  --color-success-soft: hsl(var(--success-soft));
+  --color-warning: hsl(var(--warning));
+  --color-warning-soft: hsl(var(--warning-soft));
+  --color-info: hsl(var(--info));
+  --color-info-soft: hsl(var(--info-soft));
+
+  --color-medal-gold: hsl(var(--medal-gold));
+  --color-medal-silver: hsl(var(--medal-silver));
+  --color-medal-bronze: hsl(var(--medal-bronze));
 
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
@@ -31,12 +58,10 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
-  --color-primary-bright: hsl(var(--primary-bright));
-  --color-chart-dark: hsl(var(--chart-dark));
-
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -60,59 +85,62 @@
       height: 0
     }
   }
-
-  --font-sans: var(--font-sans);
 }
 
 :root {
-  /* ===== Official SADAQ Color Scheme (based on logo) ===== */
-  --official-maroon: 355 60% 31%;     /* #7D2027 - Primary brand */
-  --official-red: 355 50% 40%;        /* #994040 - Links */
-  --official-gold: 43 45% 55%;        /* #C4A35A - Accent */
-  --pure-white: 0 0% 100%;            /* #FFFFFF - Background */
-  --light-cream: 35 50% 94%;          /* #F5E6C8 - Sections */
-  --text-dark: 0 0% 13%;              /* #222222 - Text */
-  --border-light: 0 0% 85%;           /* #DADADA - Borders */
-  --primary-bright: 355 60% 41%;      /* #A62A33 - CTA buttons */
-  --chart-dark: 220 45% 18%;          /* #1A2744 - Charts/stats */
+  /* ===== Brand (по логотипу федерации) ===== */
+  --primary: 355 60% 31%;             /* #7E2028 бордовый — бренд, ссылки, заголовки */
+  --primary-hover: 355 62% 25%;       /* #67181F наведение на бордовый */
+  --primary-deep: 355 55% 14%;        /* #370F12 тёмный конец градиентов */
+  --primary-foreground: 0 0% 100%;
 
-  /* ===== Theme Variables ===== */
-  --background: 0 0% 100%;            /* Pure White */
-  --foreground: 0 0% 13%;             /* Dark Text */
+  --gold: 43 50% 60%;                 /* #CCAF66 акцент: линии, точки, текст на бордовом */
+  --gold-strong: 40 55% 32%;          /* #7E6125 золотой текст на светлом фоне (AA) */
 
+  /* ===== Surfaces ===== */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 13%;             /* #212121 */
   --card: 0 0% 100%;
   --card-foreground: 0 0% 13%;
-
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 13%;
 
-  --primary: 355 60% 31%;             /* Бордовый */
-  --primary-foreground: 0 0% 100%;
-
-  --secondary: 35 50% 94%;            /* Кремовый */
+  --secondary: 35 50% 94%;            /* #F7F1E8 кремовый — фон секций */
   --secondary-foreground: 0 0% 13%;
-
   --muted: 35 50% 94%;
-  --muted-foreground: 0 0% 45%;
+  --muted-foreground: 0 0% 40%;       /* #666666 — AA на белом и кремовом */
+  --accent: 35 50% 94%;               /* фон наведения в меню и ghost-кнопках */
+  --accent-foreground: 355 60% 31%;
 
-  --accent: 43 45% 55%;               /* Золотой */
-  --accent-foreground: 0 0% 13%;
-
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 0 0% 85%;
-  --input: 0 0% 85%;
+  --border: 30 14% 86%;               /* #E0DBD6 */
+  --input: 30 12% 80%;
   --ring: 355 60% 31%;
 
-  --radius: 0.5rem;
+  /* ===== Status ===== */
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 142 64% 28%;
+  --success-soft: 141 70% 94%;
+  --warning: 26 83% 31%;
+  --warning-soft: 48 96% 89%;
+  --info: 221 70% 42%;
+  --info-soft: 214 95% 93%;
 
-  --font-sans: var(--font-sans);
+  /* ===== Medals (позиции 1–3 в рейтинге) ===== */
+  --medal-gold: 45 85% 60%;
+  --medal-silver: 215 12% 80%;
+  --medal-bronze: 28 60% 40%;
+
+  --radius: 0.5rem;
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -125,74 +153,126 @@
   h4,
   h5,
   h6 {
-    @apply font-sans font-semibold tracking-tight text-primary;
+    @apply font-heading font-semibold tracking-tight text-primary;
   }
 }
 
-@layer utilities {
-  /* ===== Simple Card Hover ===== */
-  .hover-lift {
-    transition: box-shadow 0.3s ease;
+/* ===== Typography scale ===== */
+
+@utility type-display {
+  text-wrap: balance;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+
+  @media (width >= 48rem) {
+    font-size: 3rem;
   }
 
-  .hover-lift:hover {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  @media (width >= 64rem) {
+    font-size: 3.75rem;
   }
+}
 
-  /* ===== Partners Grayscale Hover ===== */
-  .grayscale-hover {
-    filter: grayscale(100%);
-    opacity: 0.6;
-    transition: filter 0.3s ease, opacity 0.3s ease;
+@utility type-h1 {
+  text-wrap: balance;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+
+  @media (width >= 48rem) {
+    font-size: 2.25rem;
   }
+}
 
-  .grayscale-hover:hover {
-    filter: grayscale(0%);
-    opacity: 1;
+@utility type-h2 {
+  text-wrap: balance;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+
+  @media (width >= 48rem) {
+    font-size: 1.875rem;
   }
+}
 
-  /* ===== Gold Accent Line ===== */
-  .gold-accent {
-    position: relative;
-  }
+@utility type-h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
 
-  .gold-accent::after {
+@utility type-h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+@utility type-body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@utility type-small {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+@utility type-caption {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-muted-foreground);
+}
+
+@utility type-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Крупные цифры: очки, статистика */
+@utility type-number {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Золотая черта под заголовком секции */
+@utility gold-underline {
+  position: relative;
+  padding-bottom: 0.75rem;
+
+  &::after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: 0;
     left: 0;
-    width: 60px;
+    width: 3.5rem;
     height: 3px;
-    background: hsl(var(--official-gold));
+    border-radius: 9999px;
+    background: var(--color-gold);
   }
+}
 
-  /* ===== Section Background ===== */
-  .section-cream {
-    background: hsl(var(--light-cream));
-  }
-
-  /* ===== Medal Frames for Ranking (simplified) ===== */
-  .frame-gold {
-    border: 2px solid hsl(var(--official-gold));
-  }
-
-  .frame-silver {
-    border: 2px solid #C0C0C0;
-  }
-
-  .frame-bronze {
-    border: 2px solid #CD7F32;
-  }
-
-  /* ===== Official Badge Style ===== */
-  .official-badge {
-    background: hsl(var(--official-maroon));
-    color: white;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+@utility gold-underline-center {
+  &::after {
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 

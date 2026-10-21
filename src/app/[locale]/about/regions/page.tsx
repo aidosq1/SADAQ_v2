@@ -2,8 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Phone, User, Mail, Loader2 } from "lucide-react";
+import { MapPin, Phone, User, Mail, type LucideIcon } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState, LoadingState } from "@/components/ui/states";
+
+function ContactRow({ icon: Icon, label, children }: { icon: LucideIcon; label: string; children: React.ReactNode }) {
+    return (
+        <div className="flex items-start gap-3">
+            <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <div className="min-w-0">
+                <div className="type-caption">{label}</div>
+                <div className="type-small font-medium break-words">{children}</div>
+            </div>
+        </div>
+    );
+}
 
 interface Region {
     id: number;
@@ -66,73 +81,47 @@ export default function RegionsPage() {
 
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-16 space-y-12">
-            <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold">{t("title")}</h1>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    {t("subtitle")}
-                </p>
-            </div>
+        <PageContainer>
+            <PageHeader title={t("title")} />
 
-            {/* Branches List */}
-            <section>
-                <h2 className="text-2xl font-bold mb-6">{t("contact_info_title")}</h2>
-
-                {loading ? (
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                ) : regions.length === 0 ? (
-                    <div className="text-center py-12 text-muted-foreground">
-                        {t("no_branches") || "Филиалы не найдены"}
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {regions.map((region) => (
-                            <Card key={region.id}>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <MapPin className="w-5 h-5 text-primary" />
-                                        {getLocalizedName(region)}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-start gap-3">
-                                        <User className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
-                                        <div>
-                                            <div className="text-xs text-muted-foreground">{t("director")}</div>
-                                            <div className="font-medium">{getLocalizedDirector(region)}</div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
-                                        <div>
-                                            <div className="text-xs text-muted-foreground">{t("address")}</div>
-                                            <div className="text-sm">{getLocalizedAddress(region)}</div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <Phone className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
-                                        <div>
-                                            <div className="text-xs text-muted-foreground">{t("phone")}</div>
-                                            <div className="text-sm font-medium">{region.phone}</div>
-                                        </div>
-                                    </div>
-                                    {region.email && (
-                                        <div className="flex items-start gap-3">
-                                            <Mail className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
-                                            <div>
-                                                <div className="text-xs text-muted-foreground">{t("email") || "Email"}</div>
-                                                <div className="text-sm font-medium">{region.email}</div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                )}
-            </section>
-        </div>
+            {loading ? (
+                <LoadingState />
+            ) : regions.length === 0 ? (
+                <EmptyState icon={MapPin} title={t("no_branches") || "Филиалы не найдены"} />
+            ) : (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {regions.map((region) => (
+                        <Card key={region.id}>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-primary">
+                                    <MapPin className="size-5 shrink-0" />
+                                    {getLocalizedName(region)}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <ContactRow icon={User} label={t("director")}>
+                                    {getLocalizedDirector(region)}
+                                </ContactRow>
+                                <ContactRow icon={MapPin} label={t("address")}>
+                                    {getLocalizedAddress(region)}
+                                </ContactRow>
+                                <ContactRow icon={Phone} label={t("phone")}>
+                                    <a href={`tel:${region.phone.replace(/[^\d+]/g, "")}`} className="hover:text-primary hover:underline">
+                                        {region.phone}
+                                    </a>
+                                </ContactRow>
+                                {region.email && (
+                                    <ContactRow icon={Mail} label={t("email") || "Email"}>
+                                        <a href={`mailto:${region.email}`} className="hover:text-primary hover:underline">
+                                            {region.email}
+                                        </a>
+                                    </ContactRow>
+                                )}
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
+        </PageContainer>
     );
 }

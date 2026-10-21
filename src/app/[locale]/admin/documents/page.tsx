@@ -192,7 +192,7 @@ export default function AdminDocumentsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Документы</h1>
+        <h1 className="type-h1 text-primary">Документы</h1>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить
@@ -239,7 +239,7 @@ export default function AdminDocumentsPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => togglePublished(item)}
-                      className={item.isPublished ? "text-green-600" : "text-gray-400"}
+                      className={item.isPublished ? "text-success" : "text-muted-foreground"}
                     >
                       {item.isPublished ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                     </Button>

@@ -23,8 +23,6 @@ export async function NewsBlock() {
   const translations = {
     sectionTitle: locale === 'kk' ? 'Жаңалықтар' : locale === 'en' ? 'News' : 'Новости',
     allNewsText: locale === 'kk' ? 'Барлық жаңалықтар' : locale === 'en' ? 'All News' : 'Все новости',
-    pressCenter: locale === 'kk' ? 'Баспасөз орталығы' : locale === 'en' ? 'Press Center' : 'Пресс-центр',
-    readMore: locale === 'kk' ? 'Толығырақ' : locale === 'en' ? 'Read More' : 'Подробнее',
   };
 
   // Serialize the dates for client component
