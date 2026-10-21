@@ -1,6 +1,6 @@
 // News content is stored as HTML (rich text editor) or, for older news, as plain text.
 
-const HTML_TAG_PATTERN = /<\/?(p|br|h[1-6]|ul|ol|li|strong|em|b|i|u|s|a|blockquote|img|hr|div|span)(\s[^>]*)?\/?>/i;
+const HTML_TAG_PATTERN = /<\/?(p|br|h[1-6]|ul|ol|li|strong|em|b|i|u|s|a|blockquote|img|figure|figcaption|hr|div|span)(\s[^>]*)?\/?>/i;
 
 const HTML_ESCAPES: Record<string, string> = {
   '&': '&amp;',

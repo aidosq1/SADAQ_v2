@@ -142,6 +142,7 @@ export default async function NewsArticlePage({ params }: Props) {
             prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary-hover
             prose-strong:text-foreground
             prose-img:rounded-xl
+            prose-figcaption:text-center prose-figcaption:text-muted-foreground [&_figcaption:empty]:hidden
             prose-blockquote:border-l-gold prose-blockquote:bg-secondary prose-blockquote:py-1 prose-blockquote:px-5 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
           "
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(toNewsHtml(content), { ADD_ATTR: ["target"] }) }}
