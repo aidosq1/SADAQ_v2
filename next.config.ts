@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // JSON из API не должен попадать в поиск; robots.txt его не закрывает,
+  // чтобы поисковик мог отрисовать клиентские страницы
+  async headers() {
+    return [
+      { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex' }] },
+    ];
+  },
+
   images: {
     remotePatterns: [
       {

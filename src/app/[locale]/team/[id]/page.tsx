@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { PersonPlaceholder } from "@/components/ui/person-placeholder";
@@ -9,6 +10,7 @@ import { Trophy } from "lucide-react";
 import { notFound } from "next/navigation";
 import { CATEGORIES, BOW_TYPES, GENDERS, getLocalizedLabel } from "@/lib/constants";
 import { formatDate } from "@/lib/date-format";
+import { buildPageMetadata } from "@/lib/seo";
 
 interface NationalTeamMembership {
     id: number;
@@ -77,6 +79,34 @@ const LABELS = {
     en: { back: "National Team", bestRank: "Best ranking", points: "Points", rankings: "Rankings by category", category: "Category", gender: "Gender", discipline: "Discipline", place: "Place" },
 } as const;
 
+const PROFILE_DESCRIPTIONS = {
+    ru: (name: string) => `${name}: профиль спортсмена по стрельбе из лука — регион, места в национальном рейтинге и очки.`,
+    kk: (name: string) => `${name}: садақ ату спортшысының профилі — өңірі, ұлттық рейтингтегі орны және ұпайлары.`,
+    en: (name: string) => `${name}: archer profile — region, national ranking positions and points.`,
+} as const;
+
+function getLocalizedName(athlete: Athlete, locale: string): string {
+    if (locale === 'kk' && athlete.nameKk) return athlete.nameKk;
+    if (locale === 'en' && athlete.nameEn) return athlete.nameEn;
+    return athlete.name;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string; locale: string }> }): Promise<Metadata> {
+    const { id, locale } = await params;
+    const athlete = await getAthlete(id);
+    if (!athlete) return {};
+
+    const name = getLocalizedName(athlete, locale);
+    const describe = PROFILE_DESCRIPTIONS[locale as keyof typeof PROFILE_DESCRIPTIONS] ?? PROFILE_DESCRIPTIONS.ru;
+    return buildPageMetadata({
+        locale,
+        path: `/team/${athlete.slug}`,
+        title: name,
+        description: describe(name),
+        image: athlete.image,
+    });
+}
+
 export default async function AthleteProfile({ params }: { params: Promise<{ id: string; locale: string }> }) {
     const { id, locale } = await params;
     const labels = LABELS[locale as keyof typeof LABELS] ?? LABELS.ru;
@@ -102,11 +132,7 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
     };
     const regionDisplay = getRegionDisplay();
 
-    const getName = () => {
-        if (locale === 'kk' && athlete.nameKk) return athlete.nameKk;
-        if (locale === 'en' && athlete.nameEn) return athlete.nameEn;
-        return athlete.name;
-    };
+    const getName = () => getLocalizedName(athlete, locale);
 
     const getCategoryLabel = (categoryId: string) => {
         const cat = CATEGORIES.find(c => c.id === categoryId);
