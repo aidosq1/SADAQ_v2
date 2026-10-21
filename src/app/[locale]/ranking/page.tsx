@@ -35,6 +35,7 @@ interface Athlete {
 interface RankingEntry {
   id: number;
   rank: number;
+  position: number;
   points: number;
   season: string;
   athlete: Athlete;
@@ -90,8 +91,7 @@ export default function RankingPage() {
     .filter((r) => {
       if (searchQuery && !r.athlete.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
-    })
-    .sort((a, b) => a.rank - b.rank);
+    });
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10 space-y-6 lg:space-y-8">
@@ -165,13 +165,13 @@ export default function RankingPage() {
         ) : filteredRankings.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">{t("no_data")}</p>
         ) : (
-          filteredRankings.map((ranking, index) => (
+          filteredRankings.map((ranking) => (
             <Link key={ranking.id} href={`/team/${ranking.athlete.slug}`}>
               <Card className="hover:bg-muted/50 transition-colors">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="font-bold text-primary">{index + 1}</span>
+                      <span className="font-bold text-primary">{ranking.position}</span>
                     </div>
                     <Avatar className="h-12 w-12 border">
                       <AvatarImage src={ranking.athlete.image || undefined} alt={getLocalizedName(ranking.athlete, locale)} />
@@ -217,14 +217,14 @@ export default function RankingPage() {
                 <TableCell colSpan={5} className="h-24 text-center">{t("no_data")}</TableCell>
               </TableRow>
             ) : (
-              filteredRankings.map((ranking, index) => (
+              filteredRankings.map((ranking) => (
                 <TableRow
                   key={ranking.id}
                   className="group hover:bg-muted/50 cursor-pointer"
                   onClick={() => router.push(`/${locale}/team/${ranking.athlete.slug}`)}
                 >
                   <TableCell className="font-bold text-lg text-center">
-                    {index + 1}
+                    {ranking.position}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-4">

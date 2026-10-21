@@ -10,6 +10,7 @@ interface RankingEntry {
   id: number;
   points: number;
   rank: number;
+  position: number;
   athlete: {
     id: number;
     slug: string;
@@ -114,12 +115,12 @@ export function RankingWidget() {
                 >
                   <td className="py-4 px-4">
                     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                      ranking.rank === 1 ? 'bg-[#FFD700] text-[hsl(var(--official-maroon))]' :
-                      ranking.rank === 2 ? 'bg-[#C0C0C0] text-[hsl(var(--official-maroon))]' :
-                      ranking.rank === 3 ? 'bg-[#CD7F32] text-white' :
+                      ranking.position === 1 ? 'bg-[#FFD700] text-[hsl(var(--official-maroon))]' :
+                      ranking.position === 2 ? 'bg-[#C0C0C0] text-[hsl(var(--official-maroon))]' :
+                      ranking.position === 3 ? 'bg-[#CD7F32] text-white' :
                       'bg-[hsl(var(--light-cream))] text-[hsl(var(--official-maroon))]'
                     }`}>
-                      {ranking.rank}
+                      {ranking.position}
                     </span>
                   </td>
                   <td className="py-4 px-4">
