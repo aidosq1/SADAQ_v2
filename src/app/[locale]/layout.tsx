@@ -67,7 +67,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <Header />
-            <main className="flex-1 pt-24">{children}</main>
+            <main className="flex-1 pt-18">{children}</main>
             <Footer />
           </Providers>
         </NextIntlClientProvider>

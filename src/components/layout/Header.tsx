@@ -1,249 +1,141 @@
 "use client";
 
 import Image from "next/image";
-import { Link, usePathname } from "@/navigation";
 import { useTranslations } from "next-intl";
-import { useLanguage } from "@/context/LanguageContext";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 
+import { Link, usePathname } from "@/navigation";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { cn } from "@/lib/utils";
-import { Menu, ChevronDown, User, LogOut, Instagram, Youtube } from "lucide-react";
-
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { MobileMenu } from "./MobileMenu";
+import { NAV, isActivePath, isEntryActive, isGroup } from "./nav";
 
-interface NavItem {
-    name: string;
-    href: string;
-}
-
+// Пункт меню: активный раздел подчёркнут бордовой чертой по нижнему краю шапки
 const NAV_LINK =
-    "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors outline-none hover:text-primary focus-visible:ring-[3px] focus-visible:ring-ring/40";
+    "relative flex h-18 items-center gap-1 px-3 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:transition-colors";
 
-function isActive(pathname: string, items: NavItem[]): boolean {
-    return items.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+function navLinkClass(active: boolean): string {
+    return cn(
+        NAV_LINK,
+        active
+            ? "text-foreground after:bg-primary"
+            : "text-muted-foreground hover:text-foreground after:bg-transparent"
+    );
 }
 
-function NavDropdown({ label, items, pathname }: { label: string; items: NavItem[]; pathname: string }) {
+function AccountActions() {
+    const t = useTranslations("Header");
+    const { data: session, status } = useSession();
+
+    if (status === "loading") {
+        return <div className="size-9" aria-hidden="true" />;
+    }
+
+    if (session) {
+        return (
+            <div className="flex items-center gap-1">
+                <Button variant="outline" size="icon-sm" asChild>
+                    <Link href="/admin/dashboard" aria-label={t("admin")} title={t("admin")}>
+                        <User />
+                    </Link>
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title={t("logout")}
+                    aria-label={t("logout")}
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                    <LogOut />
+                </Button>
+            </div>
+        );
+    }
+
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger
-                className={cn(NAV_LINK, isActive(pathname, items) ? "text-primary" : "text-foreground")}
-            >
-                {label} <ChevronDown className="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-[200px]">
-                {items.map((item) => (
-                    <DropdownMenuItem key={item.href} asChild>
-                        <Link href={item.href} className="w-full cursor-pointer">
-                            {item.name}
-                        </Link>
-                    </DropdownMenuItem>
-                ))}
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <Button variant="ghost" size="icon-sm" asChild>
+            <Link href="/auth/signin" aria-label={t("login")} title={t("login")}>
+                <User />
+            </Link>
+        </Button>
     );
 }
 
 export function Header() {
-    const { language, setLanguage } = useLanguage();
     const t = useTranslations("Header");
-    const { data: session, status } = useSession();
     const pathname = usePathname();
 
-    const navItems: NavItem[] = [
-        { name: t("team"), href: "/team" },
-        { name: t("ranking"), href: "/ranking" },
-    ];
-
-    const calendarItems: NavItem[] = [
-        { name: t("competitions"), href: "/calendar" },
-        { name: t("protocols"), href: "/results" },
-    ];
-
-    const aboutItems: NavItem[] = [
-        { name: t("about"), href: "/about" },
-        { name: t("leadership"), href: "/about/leadership" },
-        { name: t("regions"), href: "/about/regions" },
-        { name: t("history"), href: "/about/history" },
-        { name: t("documents"), href: "/documents" },
-    ];
-
-    const mediaItems: NavItem[] = [
-        { name: t("news"), href: "/media/news" },
-        { name: t("media_gallery"), href: "/media/gallery" },
-    ];
-
-    const mobileGroups = [aboutItems, calendarItems, navItems, mediaItems];
-
-    const languages = [
-        { code: 'kk', label: 'ҚАЗ' },
-        { code: 'ru', label: 'РУС' },
-        { code: 'en', label: 'ENG' },
-    ];
-
     return (
-        <header className="fixed top-0 z-50 w-full">
-            {/* Top Bar */}
-            <div className="bg-primary text-primary-foreground">
-                <Container className="flex h-8 items-center justify-between text-xs">
-                    {/* Social Links */}
-                    <div className="flex items-center gap-3">
-                        <a
-                            href="https://www.instagram.com/kazarchery_official/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label="Instagram"
-                            className="transition-colors hover:text-gold"
-                        >
-                            <Instagram className="size-4" />
-                        </a>
-                        <a
-                            href="https://www.youtube.com/watch?v=6xgw-YxIbmw"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label="YouTube"
-                            className="transition-colors hover:text-gold"
-                        >
-                            <Youtube className="size-4" />
-                        </a>
-                    </div>
+        <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
+            <Container className="flex h-18 items-center justify-between gap-4">
+                <Link href="/" className="flex min-w-0 items-center gap-3">
+                    <Image
+                        src="/logo_federation_circular.png"
+                        alt="SADAQ"
+                        width={48}
+                        height={48}
+                        priority
+                        className="size-11 shrink-0 object-contain md:size-12"
+                    />
+                    <span className="hidden max-w-[210px] font-heading text-sm leading-snug font-bold text-balance text-foreground sm:block lg:hidden xl:block">
+                        {t("logo_name")}
+                    </span>
+                </Link>
 
-                    {/* Language Switcher */}
-                    <div className="flex items-center divide-x divide-white/25">
-                        {languages.map((lang) => (
-                            <button
-                                key={lang.code}
-                                onClick={() => setLanguage(lang.code)}
-                                aria-current={language === lang.code ? "true" : undefined}
-                                className={cn(
-                                    "cursor-pointer px-2.5 font-medium transition-colors",
-                                    language === lang.code
-                                        ? "font-semibold text-gold"
-                                        : "text-white/75 hover:text-white"
-                                )}
-                            >
-                                {lang.label}
-                            </button>
-                        ))}
-                    </div>
-                </Container>
-            </div>
-
-            {/* Main Bar */}
-            <div className="border-b bg-background shadow-sm">
-                <Container className="flex h-16 items-center justify-between gap-4">
-                    {/* Logo */}
-                    <Link href="/" className="flex shrink-0 items-center gap-3">
-                        <Image
-                            src="/logo_federation_circular.png"
-                            alt="SADAQ Logo"
-                            width={56}
-                            height={56}
-                            className="h-14 w-auto object-contain"
-                        />
-                        <div className="hidden flex-col leading-tight lg:flex">
-                            <span className="type-eyebrow text-muted-foreground">{t("logo_country")}</span>
-                            <span className="font-heading text-sm font-bold text-primary">{t("logo_name")}</span>
-                        </div>
-                    </Link>
-
-                    {/* Navigation */}
-                    <nav className="hidden items-center gap-1 md:flex">
-                        <NavDropdown label={t("about")} items={aboutItems} pathname={pathname} />
-                        <NavDropdown label={t("tournaments")} items={calendarItems} pathname={pathname} />
-
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(NAV_LINK, isActive(pathname, [item]) ? "text-primary" : "text-foreground")}
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-
-                        <NavDropdown label={t("media")} items={mediaItems} pathname={pathname} />
-                    </nav>
-
-                    {/* Right Side */}
-                    <div className="flex items-center gap-2">
-                        {status === "loading" ? (
-                            <Button variant="outline" size="sm" disabled className="hidden sm:flex">
-                                ...
-                            </Button>
-                        ) : session ? (
-                            <div className="hidden items-center gap-2 sm:flex">
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href="/admin/dashboard">
-                                        <User />
-                                        {t("admin")}
-                                    </Link>
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    aria-label={t("logout")}
-                                    onClick={() => signOut({ callbackUrl: "/" })}
-                                >
-                                    <LogOut />
-                                </Button>
-                            </div>
-                        ) : (
-                            <Button variant="outline" size="sm" className="hidden sm:flex" asChild>
-                                <Link href="/auth/signin">{t("login")}</Link>
-                            </Button>
-                        )}
-
-                        {/* Mobile Menu */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="text-primary md:hidden" aria-label="Menu">
-                                    <Menu className="size-5" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
-                                {mobileGroups.map((group, index) => (
-                                    <div key={group[0].href}>
-                                        {index > 0 && <DropdownMenuSeparator />}
-                                        {group.map((item) => (
-                                            <DropdownMenuItem key={item.href} asChild>
-                                                <Link href={item.href}>{item.name}</Link>
-                                            </DropdownMenuItem>
-                                        ))}
-                                    </div>
-                                ))}
-                                <DropdownMenuSeparator />
-                                {session ? (
-                                    <>
-                                        <DropdownMenuItem asChild>
-                                            <Link href="/admin/dashboard">
-                                                <User />
-                                                {t("admin")}
+                <nav className="hidden items-center lg:flex" aria-label="Main">
+                    {NAV.map((entry) =>
+                        isGroup(entry) ? (
+                            <DropdownMenu key={entry.labelKey} modal={false}>
+                                <DropdownMenuTrigger className={navLinkClass(isEntryActive(pathname, entry))}>
+                                    {t(entry.labelKey)}
+                                    <ChevronDown className="size-3.5 opacity-60" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="min-w-[220px]">
+                                    {entry.items.map((item) => (
+                                        <DropdownMenuItem key={item.href} asChild>
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    "w-full",
+                                                    isActivePath(pathname, item.href) && "font-semibold text-primary"
+                                                )}
+                                            >
+                                                {t(item.labelKey)}
                                             </Link>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-                                            <LogOut />
-                                            {t("logout")}
-                                        </DropdownMenuItem>
-                                    </>
-                                ) : (
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/auth/signin">{t("login")}</Link>
-                                    </DropdownMenuItem>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Link
+                                key={entry.href}
+                                href={entry.href}
+                                aria-current={isActivePath(pathname, entry.href) ? "page" : undefined}
+                                className={navLinkClass(isActivePath(pathname, entry.href))}
+                            >
+                                {t(entry.labelKey)}
+                            </Link>
+                        )
+                    )}
+                </nav>
+
+                <div className="flex shrink-0 items-center gap-2">
+                    <LanguageSwitcher className="hidden md:inline-flex" />
+                    <div className="hidden lg:block">
+                        <AccountActions />
                     </div>
-                </Container>
-            </div>
+                    <MobileMenu />
+                </div>
+            </Container>
         </header>
     );
 }
