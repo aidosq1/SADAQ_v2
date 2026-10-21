@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAuthWithRegion, generateSlug } from "@/lib/api-utils";
 import { Prisma } from "@prisma/client";
+import { findDuplicateIds, getAthleteEligibilityError, getMaxAthletes } from "@/lib/registration-rules";
 
 interface NewJudge {
     name: string;
@@ -150,6 +151,13 @@ export async function POST(req: Request) {
             }
         }
 
+        if (findDuplicateIds(judgeEntries.map((j) => j.judgeId)).length > 0) {
+            return NextResponse.json({ error: "Судья указан в заявке дважды" }, { status: 400 });
+        }
+        if (findDuplicateIds(participants.map((p) => p.athleteId)).length > 0) {
+            return NextResponse.json({ error: "Спортсмен указан в заявке дважды" }, { status: 400 });
+        }
+
         // Check if tournament category exists and tournament is open for registration
         const tournamentCategory = await prisma.tournamentCategory.findUnique({
             where: { id: tournamentCategoryId },
@@ -181,12 +189,36 @@ export async function POST(req: Request) {
 
         // Validate participants count based on whether user's region is the host
         const isHostRegion = tournament.organizingRegionId === userRegionId;
-        const maxParticipants = isHostRegion ? 6 : 4;
+        const maxParticipants = getMaxAthletes(isHostRegion);
 
         if (participants.length > maxParticipants) {
             return NextResponse.json({
                 error: `Максимум ${maxParticipants} спортсменов для вашего региона`
             }, { status: 400 });
+        }
+
+        // Athletes must match the category gender and belong to the user's region
+        const athleteIds = participants.map((p) => p.athleteId).filter((id): id is number => !!id);
+        const selectedAthletes = await prisma.athlete.findMany({
+            where: { id: { in: athleteIds } },
+            select: { id: true, name: true, gender: true, regionId: true }
+        });
+        for (const athleteId of athleteIds) {
+            const athlete = selectedAthletes.find((a) => a.id === athleteId);
+            if (!athlete) {
+                return NextResponse.json({ error: `Спортсмен #${athleteId} не найден` }, { status: 400 });
+            }
+            const eligibilityError = getAthleteEligibilityError(athlete, tournamentCategory, userRegionId);
+            if (eligibilityError) {
+                return NextResponse.json({ error: eligibilityError }, { status: 400 });
+            }
+        }
+        for (const p of participants) {
+            if (!p.athleteId && p.newAthlete && p.newAthlete.gender !== tournamentCategory.gender) {
+                return NextResponse.json({
+                    error: `${p.newAthlete.name}: пол спортсмена не совпадает с категорией`
+                }, { status: 400 });
+            }
         }
 
         // Create Registration Transaction
@@ -369,13 +401,18 @@ export async function POST(req: Request) {
             message: "Заявка отправлена на модерацию"
         });
     } catch (error) {
-        console.error('Registration error:', error);
         if (error instanceof Error && error.message === "DUPLICATE_REGISTRATION") {
             return NextResponse.json({
                 error: "Ваш регион уже подал заявку на эту категорию турнира"
             }, { status: 400 });
         }
-        const message = error instanceof Error ? error.message : "Internal Server Error";
-        return NextResponse.json({ error: message }, { status: 500 });
+        // Unique constraints: the same athlete or judge twice, or a parallel duplicate registration
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+            return NextResponse.json({
+                error: "Заявка не сохранена: спортсмен, судья или заявка региона уже есть"
+            }, { status: 400 });
+        }
+        console.error('Registration error:', error);
+        return NextResponse.json({ error: "Не удалось сохранить заявку" }, { status: 500 });
     }
 }

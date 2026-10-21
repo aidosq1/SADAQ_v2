@@ -2,6 +2,15 @@ import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuth } from '@/lib/api-utils';
 import { PUBLIC_REGION_SELECT } from '@/lib/public-selects';
+import { getTournamentDatesError, InvalidDateError } from '@/lib/tournament-input';
+import {
+  pickTournamentFields,
+  parseCategories,
+  deleteCategories,
+  isSameCategory,
+  TournamentInputError,
+  TournamentConflictError,
+} from '@/lib/tournament-write';
 
 // GET /api/tournaments/[id] - Public
 export async function GET(
@@ -82,104 +91,65 @@ export async function PATCH(
 
     const { id } = await params;
     const tournamentId = parseInt(id);
+    if (isNaN(tournamentId)) {
+      return errorResponse('Invalid tournament ID', 400);
+    }
+
     const body = await request.json();
+    const fields = pickTournamentFields(body);
+    const categories = body.categories === undefined ? undefined : parseCategories(body.categories);
 
-    // If setting as featured, unset other featured tournaments
-    if (body.isFeatured === true) {
-      await prisma.tournament.updateMany({
-        where: {
-          isFeatured: true,
-          id: { not: tournamentId }
-        },
-        data: { isFeatured: false },
-      });
-    }
-
-    // Separate categories from other data
-    const { categories, ...tournamentData } = body;
-
-    // Convert date strings to Date objects if present
-    if (tournamentData.startDate) tournamentData.startDate = new Date(tournamentData.startDate);
-    if (tournamentData.endDate) tournamentData.endDate = new Date(tournamentData.endDate);
-    if (tournamentData.registrationDeadline) tournamentData.registrationDeadline = new Date(tournamentData.registrationDeadline);
-    // Convert organizingRegionId to integer or null
-    if (tournamentData.organizingRegionId !== undefined) {
-      tournamentData.organizingRegionId = tournamentData.organizingRegionId ? parseInt(tournamentData.organizingRegionId) : null;
-    }
-
-    // Update tournament
-    const tournament = await prisma.tournament.update({
+    const existing = await prisma.tournament.findUnique({
       where: { id: tournamentId },
-      data: tournamentData,
-      include: { organizingRegion: true, categories: true }
+      include: { categories: true }
     });
+    if (!existing) {
+      return errorResponse('Tournament not found', 404);
+    }
 
-    // If categories provided, update them smartly (preserve IDs for existing categories)
-    if (categories !== undefined) {
-      // Get existing categories with registration counts
-      const existingCategories = await prisma.tournamentCategory.findMany({
-        where: { tournamentId },
-        include: {
-          _count: {
-            select: { registrations: true }
-          }
-        }
-      });
+    const datesError = getTournamentDatesError(
+      fields.startDate ?? existing.startDate,
+      fields.endDate ?? existing.endDate
+    );
+    if (datesError) return errorResponse(datesError);
 
-      const incomingCategories = categories as { category: string; gender: string; type: string }[];
-
-      // Find which categories to keep, create, or delete
-      const categoriesToKeep: number[] = [];
-      const categoriesToCreate: { category: string; gender: string; type: string }[] = [];
-
-      for (const incoming of incomingCategories) {
-        const existing = existingCategories.find(
-          e => e.category === incoming.category &&
-            e.gender === incoming.gender &&
-            e.type === incoming.type
-        );
-
-        if (existing) {
-          categoriesToKeep.push(existing.id);
-        } else {
-          categoriesToCreate.push(incoming);
-        }
-      }
-
-      // Delete only categories that are NOT in the keep list AND have no registrations
-      const categoriesToDelete = existingCategories.filter(
-        e => !categoriesToKeep.includes(e.id) && e._count.registrations === 0
-      );
-
-      if (categoriesToDelete.length > 0) {
-        await prisma.tournamentCategory.deleteMany({
-          where: { id: { in: categoriesToDelete.map(c => c.id) } }
+    const tournament = await prisma.$transaction(async (tx) => {
+      // Only one featured tournament at a time
+      if (fields.isFeatured === true) {
+        await tx.tournament.updateMany({
+          where: { isFeatured: true, id: { not: tournamentId } },
+          data: { isFeatured: false },
         });
       }
 
-      // Create new categories
-      if (categoriesToCreate.length > 0) {
-        await prisma.tournamentCategory.createMany({
-          data: categoriesToCreate.map(cat => ({
-            tournamentId,
-            category: cat.category,
-            gender: cat.gender,
-            type: cat.type,
-          }))
-        });
+      // Keep existing category IDs: registrations and results are linked to them
+      if (categories !== undefined) {
+        const removed = existing.categories.filter((e) => !categories.some((c) => isSameCategory(c, e)));
+        const added = categories.filter((c) => !existing.categories.some((e) => isSameCategory(c, e)));
+
+        await deleteCategories(tx, removed.map((c) => c.id));
+        if (added.length > 0) {
+          await tx.tournamentCategory.createMany({
+            data: added.map((c) => ({ tournamentId, ...c }))
+          });
+        }
       }
 
-      // Fetch updated tournament with categories
-      const updatedTournament = await prisma.tournament.findUnique({
+      return tx.tournament.update({
         where: { id: tournamentId },
+        data: fields,
         include: { organizingRegion: true, categories: true }
       });
-
-      return successResponse(updatedTournament);
-    }
+    });
 
     return successResponse(tournament);
   } catch (error) {
+    if (error instanceof TournamentInputError || error instanceof InvalidDateError) {
+      return errorResponse(error.message);
+    }
+    if (error instanceof TournamentConflictError) {
+      return errorResponse(`Нельзя удалить категорию. ${error.message}`, 409);
+    }
     console.error('Failed to update tournament:', error);
     return errorResponse('Failed to update tournament', 500);
   }
@@ -196,13 +166,29 @@ export async function DELETE(
 
     const { id } = await params;
     const tournamentId = parseInt(id);
+    if (isNaN(tournamentId)) {
+      return errorResponse('Invalid tournament ID', 400);
+    }
 
-    await prisma.tournament.delete({
+    const tournament = await prisma.tournament.findUnique({
       where: { id: tournamentId },
+      select: { categories: { select: { id: true } } }
+    });
+    if (!tournament) {
+      return errorResponse('Tournament not found', 404);
+    }
+
+    // Registrations would otherwise lose their tournament and results would vanish silently
+    await prisma.$transaction(async (tx) => {
+      await deleteCategories(tx, tournament.categories.map((c) => c.id));
+      await tx.tournament.delete({ where: { id: tournamentId } });
     });
 
     return successResponse({ deleted: true });
   } catch (error) {
+    if (error instanceof TournamentConflictError) {
+      return errorResponse(`Нельзя удалить турнир. ${error.message}`, 409);
+    }
     console.error('Failed to delete tournament:', error);
     return errorResponse('Failed to delete tournament', 500);
   }

@@ -145,16 +145,13 @@ export default function AdminRegistrationsPage() {
 
     useEffect(() => {
         fetchRegistrations();
-    }, [filterStatus]);
+    }, []);
 
+    // All registrations are loaded once: the counters must not depend on the status filter
     async function fetchRegistrations() {
         setLoading(true);
         try {
-            const params = new URLSearchParams();
-            if (filterStatus !== "all") {
-                params.set("status", filterStatus);
-            }
-            const res = await fetch(`/api/registrations?${params}`);
+            const res = await fetch("/api/registrations");
             const data = await res.json();
             setRegistrations(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -250,6 +247,10 @@ export default function AdminRegistrationsPage() {
     };
 
     // Stats
+    const visibleRegistrations = filterStatus === "all"
+        ? registrations
+        : registrations.filter(r => r.status === filterStatus);
+
     const pendingCount = registrations.filter(r => r.status === "PENDING").length;
     const approvedCount = registrations.filter(r => r.status === "APPROVED").length;
     const rejectedCount = registrations.filter(r => r.status === "REJECTED").length;
@@ -322,14 +323,14 @@ export default function AdminRegistrationsPage() {
                                     <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                 </TableCell>
                             </TableRow>
-                        ) : registrations.length === 0 ? (
+                        ) : visibleRegistrations.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                     Заявок не найдено
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            registrations.map((reg) => {
+                            visibleRegistrations.map((reg) => {
                                 const StatusIcon = statusConfig[reg.status].icon;
                                 return (
                                     <TableRow

@@ -54,6 +54,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
+import { canOwnerEditRegistration, getMaxAthletes } from "@/lib/registration-rules";
 
 interface Athlete {
     id: number;
@@ -138,6 +139,8 @@ interface Registration {
             endDate: string;
             location: string;
             organizingRegionId?: number;
+            isRegistrationOpen: boolean;
+            registrationDeadline?: string | null;
         };
     };
     athleteRegistrations: AthleteRegistration[];
@@ -183,7 +186,9 @@ export default function RegistrationDetailPage() {
 
     const isAdmin = session?.user?.role === "Admin" || session?.user?.role === "Editor";
     const isOwner = registration?.user?.id === parseInt(session?.user?.id || "0");
-    const canEdit = isAdmin || (isOwner && registration?.status === "PENDING");
+    const tournament = registration?.tournamentCategory?.tournament;
+    const canEdit = isAdmin || (isOwner && !!tournament && canOwnerEditRegistration(registration?.status ?? "", tournament));
+    const canWithdraw = isOwner && registration?.status === "PENDING";
 
     const fetchRegistration = useCallback(async () => {
         try {
@@ -212,9 +217,11 @@ export default function RegistrationDetailPage() {
         }
     }, [registrationId]);
 
-    const fetchAllAthletes = useCallback(async () => {
+    // Athletes of the registration's region only; the default page size (10) would cut the list
+    const fetchAllAthletes = useCallback(async (regionId?: number) => {
         try {
-            const res = await fetch("/api/team?all=true&isActive=true");
+            const regionFilter = regionId ? `&regionId=${regionId}` : "";
+            const res = await fetch(`/api/team?all=true&isActive=true&limit=500${regionFilter}`);
             const data = await res.json();
             setAllAthletes(Array.isArray(data) ? data : (data.data || []));
         } catch (error) {
@@ -224,7 +231,7 @@ export default function RegistrationDetailPage() {
 
     const fetchAllCoaches = useCallback(async () => {
         try {
-            const res = await fetch("/api/coaches?isActive=true");
+            const res = await fetch("/api/coaches?admin=true&isActive=true&limit=500");
             const data = await res.json();
             setAllCoaches(Array.isArray(data) ? data : (data.data || []));
         } catch (error) {
@@ -249,9 +256,14 @@ export default function RegistrationDetailPage() {
 
     useEffect(() => {
         fetchRegistration();
-        fetchAllAthletes();
         fetchAllCoaches();
-    }, [fetchRegistration, fetchAllAthletes, fetchAllCoaches]);
+    }, [fetchRegistration, fetchAllCoaches]);
+
+    useEffect(() => {
+        if (registration) {
+            fetchAllAthletes(registration.regionId);
+        }
+    }, [registration?.regionId, fetchAllAthletes]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (activeTab === "history") {
@@ -297,6 +309,29 @@ export default function RegistrationDetailPage() {
             if (data.success) {
                 toast.success("Заявка отклонена");
                 setRejectDialogOpen(false);
+                fetchRegistration();
+            } else {
+                toast.error(data.error || "Ошибка");
+            }
+        } catch (error) {
+            toast.error("Ошибка при обработке");
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleWithdraw = async () => {
+        if (!confirm("Отозвать заявку?")) return;
+        setProcessing(true);
+        try {
+            const res = await fetch(`/api/registrations/${registrationId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "WITHDRAWN" }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success("Заявка отозвана");
                 fetchRegistration();
             } else {
                 toast.error(data.error || "Ошибка");
@@ -443,17 +478,18 @@ export default function RegistrationDetailPage() {
         return item ? getLocalizedLabel(item, locale) : gender;
     };
 
-    // Filter out already added athletes and filter by region
+    // Filter out already added athletes, other regions and the other gender
     const availableAthletes = allAthletes.filter((a) => {
         const isNotAdded = !athletes.some((ar) => ar.athlete.id === a.id);
         const matchesRegion = !registration?.regionId || a.regionId === registration.regionId;
-        return isNotAdded && matchesRegion;
+        const matchesGender = !registration?.tournamentCategory || a.gender === registration.tournamentCategory.gender;
+        return isNotAdded && matchesRegion && matchesGender;
     });
 
     // Calculate max athletes
     const isHostRegion =
         registration?.tournamentCategory?.tournament.organizingRegionId === registration?.regionId;
-    const maxAthletes = isHostRegion ? 6 : 4;
+    const maxAthletes = getMaxAthletes(isHostRegion);
 
     if (loading) {
         return (
@@ -508,6 +544,18 @@ export default function RegistrationDetailPage() {
                         <Download className="h-4 w-4 mr-2" />
                         DOC
                     </Button>
+
+                    {canWithdraw && !isAdmin && (
+                        <Button
+                            variant="outline"
+                            className="text-destructive hover:text-destructive"
+                            onClick={handleWithdraw}
+                            disabled={processing}
+                        >
+                            <XCircle className="h-4 w-4 mr-2" />
+                            Отозвать
+                        </Button>
+                    )}
 
                     {registration.status === "PENDING" && isAdmin && (
                         <>

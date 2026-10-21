@@ -39,6 +39,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatDateRange } from "@/lib/date-format";
 import { toast } from "sonner";
 import { CATEGORIES, BOW_TYPES, GENDERS, getLocalizedLabel } from "@/lib/constants";
+import { getMaxAthletes, isActiveRegistrationStatus } from "@/lib/registration-rules";
 
 interface TournamentCategory {
     id: number;
@@ -157,10 +158,14 @@ export default function TournamentApplyPage() {
     useEffect(() => {
         async function fetchTournaments() {
             try {
-                const res = await fetch("/api/tournaments?status=REGISTRATION_OPEN");
+                const res = await fetch("/api/tournaments?status=REGISTRATION_OPEN&limit=100");
                 if (res.ok) {
                     const data = await res.json();
-                    setTournaments(data.data || []);
+                    // Nearest tournaments first
+                    const sorted = [...(data.data || [])].sort((a: Tournament, b: Tournament) =>
+                        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+                    );
+                    setTournaments(sorted);
                 }
             } catch (error) {
                 console.error("Failed to fetch tournaments:", error);
@@ -221,11 +226,13 @@ export default function TournamentApplyPage() {
 
     // Max participants: 6 for host region, 4 for others
     const maxParticipants = useMemo(() => {
-        if (!userRegionId) return 4;
+        if (!userRegionId) return getMaxAthletes(false);
         const orgRegionId = selectedTournament?.organizingRegion?.id
             ?? selectedTournament?.organizingRegionId;
-        return orgRegionId === userRegionId ? 6 : 4;
+        return getMaxAthletes(orgRegionId === userRegionId);
     }, [selectedTournament, userRegionId]);
+
+    const selectedCategory = selectedTournament?.categories.find(c => c.id.toString() === selectedCategoryId);
 
     // Helper functions
     const getLocalizedTitle = (item: { title?: string; titleKk?: string; titleEn?: string }) => {
@@ -248,8 +255,10 @@ export default function TournamentApplyPage() {
         return `${categoryItem ? getLocalizedLabel(categoryItem, locale) : cat.category} ${genderItem ? getLocalizedLabel(genderItem, locale) : cat.gender} - ${typeItem ? getLocalizedLabel(typeItem, locale) : cat.type}`;
     };
 
-    // No filtering - show all athletes
-    const filteredAthletes = athletes;
+    // The API returns only the user's region; the category decides the gender
+    const filteredAthletes = selectedCategory
+        ? athletes.filter(a => a.gender === selectedCategory.gender)
+        : athletes;
 
     // Convert to SearchableSelectItem format
     const athleteItems: SearchableSelectItem[] = filteredAthletes.map(a => ({
@@ -257,6 +266,12 @@ export default function TournamentApplyPage() {
         name: a.name,
         subtitle: a.iin ? `${t("iin")}: ${a.iin}` : a.region?.name,
     }));
+
+    // A person can be picked only once: hide those already chosen in other rows
+    const athleteItemsFor = (rowId: number) => {
+        const taken = participants.filter(p => p.id !== rowId).map(p => p.athleteId);
+        return athleteItems.filter(item => !taken.includes(item.id));
+    };
 
     const coachItems: SearchableSelectItem[] = coaches.map(c => ({
         id: c.id,
@@ -269,6 +284,11 @@ export default function TournamentApplyPage() {
         name: j.name,
         subtitle: j.category,
     }));
+
+    const judgeItemsFor = (rowId: number) => {
+        const taken = judgeEntries.filter(j => j.id !== rowId).map(j => j.judgeId);
+        return judgeItems.filter(item => !taken.includes(item.id));
+    };
 
     // Handlers
     const handleTournamentSelect = (tournamentId: string) => {
@@ -285,6 +305,15 @@ export default function TournamentApplyPage() {
         setSelectedCategoryId(categoryId);
         setExistingRegistration(null);
 
+        // Drop athletes whose gender does not fit the new category
+        const category = selectedTournament?.categories.find(c => c.id.toString() === categoryId);
+        if (category) {
+            setParticipants(prev => prev.map(p => {
+                const athlete = athletes.find(a => a.id === p.athleteId);
+                return athlete && athlete.gender !== category.gender ? { ...p, athleteId: null } : p;
+            }));
+        }
+
         if (!categoryId) return;
 
         setCheckingRegistration(true);
@@ -292,10 +321,10 @@ export default function TournamentApplyPage() {
             const res = await fetch(`/api/registrations?my=true`);
             if (res.ok) {
                 const registrations = await res.json();
-                // Only block if there's a PENDING or APPROVED registration (not REJECTED)
+                // Only PENDING or APPROVED block a new registration; REJECTED and WITHDRAWN can be resubmitted
                 const existing = registrations.find(
-                    (r: any) => r.tournamentCategoryId === parseInt(categoryId) &&
-                               r.status !== 'REJECTED'
+                    (r: { tournamentCategoryId: number; status: string }) =>
+                        r.tournamentCategoryId === parseInt(categoryId) && isActiveRegistrationStatus(r.status)
                 );
                 if (existing) {
                     setExistingRegistration({ registrationNumber: existing.registrationNumber });
@@ -701,7 +730,7 @@ export default function TournamentApplyPage() {
                                     <div className="flex-1">
                                         <SearchableSelect
                                             emptyMessage={t("nothing_found")}
-                                            items={judgeItems}
+                                            items={judgeItemsFor(entry.id)}
                                             value={entry.judgeId}
                                             onChange={(id) => updateJudgeEntry(entry.id, id)}
                                             placeholder={t("choose_judge")}
@@ -795,7 +824,7 @@ export default function TournamentApplyPage() {
                                             <TableCell>
                                                 <SearchableSelect
                                                     emptyMessage={t("nothing_found")}
-                                                    items={athleteItems}
+                                                    items={athleteItemsFor(p.id)}
                                                     value={p.athleteId}
                                                     onChange={(id) => updateParticipant(p.id, 'athleteId', id)}
                                                     placeholder={t("choose_athlete")}
@@ -850,7 +879,7 @@ export default function TournamentApplyPage() {
                                         <label className="text-sm font-medium">{t("athlete")}</label>
                                         <SearchableSelect
                                             emptyMessage={t("nothing_found")}
-                                            items={athleteItems}
+                                            items={athleteItemsFor(p.id)}
                                             value={p.athleteId}
                                             onChange={(id) => updateParticipant(p.id, 'athleteId', id)}
                                             placeholder={t("choose_athlete")}
