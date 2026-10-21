@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { STAFF_ROLES } from '@/lib/public-selects';
 
 export function successResponse<T>(data: T, meta?: Record<string, unknown>) {
   return NextResponse.json({ success: true, data, meta });
@@ -51,6 +52,13 @@ export async function requireAuthWithRegion(allowedRoles?: string[]) {
     userRegionId: isAdmin ? null : (user.regionId || null), // null for admins means no filtering
     userRegion: user.region,
   };
+}
+
+// Есть ли вход под ролью админки: от этого зависит, отдавать ли персональные данные
+export async function hasStaffSession(): Promise<boolean> {
+  const session = await getServerSession(authOptions);
+  const role = session?.user?.role;
+  return Boolean(role && (STAFF_ROLES as readonly string[]).includes(role));
 }
 
 export function generateSlug(title: string): string {

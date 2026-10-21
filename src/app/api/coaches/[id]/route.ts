@@ -7,6 +7,10 @@ type RouteParams = { params: Promise<{ id: string }> };
 // GET /api/coaches/[id] - Public
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    // Карточка с ИИН и датой рождения — только для админки, представителю региона — только свои
+    const auth = await requireAuthWithRegion(['Admin', 'Editor', 'RegionalRepresentative']);
+    if (!auth.authorized) return auth.error;
+
     const { id } = await params;
     const coachId = parseInt(id);
 
@@ -17,7 +21,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       },
     });
 
-    if (!coach) {
+    if (!coach || (auth.userRegionId && coach.regionId !== auth.userRegionId)) {
       return errorResponse('Coach not found', 404);
     }
 

@@ -8,6 +8,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // В ответе логины и почта пользователей региона
+    const auth = await requireAuth(['Admin']);
+    if (!auth.authorized) return auth.error;
+
     const { id } = await params;
     const region = await prisma.region.findUnique({
       where: { id: parseInt(id) },

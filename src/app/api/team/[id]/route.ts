@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { successResponse, errorResponse, requireAuthWithRegion } from '@/lib/api-utils';
+import { successResponse, errorResponse, requireAuthWithRegion, hasStaffSession } from '@/lib/api-utils';
+import { PUBLIC_ATHLETE_PROFILE_SELECT } from '@/lib/public-selects';
 import { positionsById } from '@/lib/ranking-position';
 
 interface AthleteRanking {
@@ -49,11 +50,12 @@ export async function GET(
       coach: true,
     };
 
-    const athlete = await prisma.athlete.findUnique({
-      // Нечисловой id — это slug
-      where: isNaN(athleteId) ? { slug: id } : { id: athleteId },
-      include,
-    });
+    // Нечисловой id — это slug
+    const where = isNaN(athleteId) ? { slug: id } : { id: athleteId };
+    // Полная карточка (ИИН, медицина, допинг, тренер) — только после входа в админку
+    const athlete = (await hasStaffSession())
+      ? await prisma.athlete.findUnique({ where, include })
+      : await prisma.athlete.findUnique({ where, select: PUBLIC_ATHLETE_PROFILE_SELECT });
 
     if (!athlete) {
       return errorResponse('Athlete not found', 404);

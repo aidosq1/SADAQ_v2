@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuth } from '@/lib/api-utils';
+import { PUBLIC_ATHLETE_SELECT } from '@/lib/public-selects';
 
 // GET /api/rankings/[id] - Public
 export async function GET(
@@ -14,7 +15,7 @@ export async function GET(
     const ranking = await prisma.rankingEntry.findUnique({
       where: { id: rankingId },
       include: {
-        athlete: true,
+        athlete: { select: PUBLIC_ATHLETE_SELECT },
       },
     });
 

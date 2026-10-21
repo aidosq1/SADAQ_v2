@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuth } from '@/lib/api-utils';
+import { PUBLIC_REGION_SELECT } from '@/lib/public-selects';
 
 // GET /api/tournaments/[id] - Public
 export async function GET(
@@ -43,7 +44,7 @@ export async function GET(
                     nameKk: true,
                     nameEn: true,
                     slug: true,
-                    regionRef: true
+                    regionRef: { select: PUBLIC_REGION_SELECT }
                   }
                 }
               },

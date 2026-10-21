@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuthWithRegion, generateSlug, parseQueryParams } from '@/lib/api-utils';
+import { PUBLIC_ATHLETE_SELECT } from '@/lib/public-selects';
 
 // GET /api/team - Public (returns national team members by category/gender/type)
 export async function GET(request: NextRequest) {
@@ -58,7 +59,8 @@ export async function GET(request: NextRequest) {
       },
       include: {
         athlete: {
-          include: {
+          select: {
+            ...PUBLIC_ATHLETE_SELECT,
             rankings: {
               where: { category, gender, type },
               take: 1,

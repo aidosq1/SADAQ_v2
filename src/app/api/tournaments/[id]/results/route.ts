@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { PUBLIC_ATHLETE_SELECT } from "@/lib/public-selects";
 
 // Points tables based on category
 const SENIOR_POINTS = [100, 90, 80, 70, 60, 50, 40, 30]; // Adults
@@ -23,6 +24,15 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        // Список одобренных заявок нужен только экрану результатов в админке
+        const session = await getServerSession(authOptions);
+        if (!session?.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        if (session.user.role !== 'Admin' && session.user.role !== 'Editor') {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+
         const { id } = await params;
         const tournamentId = parseInt(id);
 
@@ -37,16 +47,7 @@ export async function GET(
                     include: {
                         results: {
                             include: {
-                                athlete: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        nameKk: true,
-                                        nameEn: true,
-                                        regionRef: true,
-                                        gender: true
-                                    }
-                                }
+                                athlete: { select: PUBLIC_ATHLETE_SELECT }
                             },
                             orderBy: {
                                 place: 'asc'
@@ -56,18 +57,11 @@ export async function GET(
                             where: {
                                 status: 'APPROVED'
                             },
-                            include: {
+                            select: {
+                                id: true,
                                 athleteRegistrations: {
-                                    include: {
-                                        athlete: {
-                                            select: {
-                                                id: true,
-                                                name: true,
-                                                nameKk: true,
-                                                nameEn: true,
-                                                regionRef: true
-                                            }
-                                        }
+                                    select: {
+                                        athlete: { select: PUBLIC_ATHLETE_SELECT }
                                     }
                                 }
                             }
