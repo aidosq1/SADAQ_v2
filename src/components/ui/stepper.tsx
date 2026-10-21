@@ -33,8 +33,8 @@ export function Stepper({ steps, currentStep, onStepClick, className }: StepperP
                         >
                             <div className={cn(
                                 "flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all",
-                                index < currentStep && "bg-green-600 border-green-600 text-white",
-                                index === currentStep && "border-primary bg-primary/10 text-primary",
+                                index < currentStep && "bg-success border-success text-white",
+                                index === currentStep && "border-primary bg-secondary text-primary",
                                 index > currentStep && "border-muted-foreground/30 text-muted-foreground"
                             )}>
                                 {index < currentStep ? (
@@ -55,7 +55,7 @@ export function Stepper({ steps, currentStep, onStepClick, className }: StepperP
                         {index < steps.length - 1 && (
                             <div className={cn(
                                 "flex-1 h-0.5 mx-3 transition-colors",
-                                index < currentStep ? "bg-green-600" : "bg-muted"
+                                index < currentStep ? "bg-success" : "bg-border"
                             )} />
                         )}
                     </React.Fragment>

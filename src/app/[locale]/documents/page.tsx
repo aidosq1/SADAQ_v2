@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Download, Scale, Shield, PenTool, Calendar } from "lucide-react";
+import { FileText, Download, Scale, Shield, PenTool, Calendar, FolderOpen, type LucideIcon } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { IconTile } from "@/components/ui/icon-tile";
+import { EmptyState, LoadingState } from "@/components/ui/states";
 
 interface Document {
   id: number;
@@ -21,11 +24,11 @@ interface Document {
 
 type SectionKey = "statute" | "rules" | "antidoping" | "calendar";
 
-const sectionConfig: Record<SectionKey, { icon: React.ReactNode; translationKey: string; groupByYear: boolean }> = {
-  statute: { icon: <Scale className="h-5 w-5" />, translationKey: "sec_statute", groupByYear: false },
-  rules: { icon: <PenTool className="h-5 w-5" />, translationKey: "sec_rules", groupByYear: false },
-  antidoping: { icon: <Shield className="h-5 w-5" />, translationKey: "sec_antidoping", groupByYear: false },
-  calendar: { icon: <Calendar className="h-5 w-5" />, translationKey: "sec_calendar", groupByYear: false },
+const sectionConfig: Record<SectionKey, { icon: LucideIcon; translationKey: string }> = {
+  statute: { icon: Scale, translationKey: "sec_statute" },
+  rules: { icon: PenTool, translationKey: "sec_rules" },
+  antidoping: { icon: Shield, translationKey: "sec_antidoping" },
+  calendar: { icon: Calendar, translationKey: "sec_calendar" },
 };
 
 const sectionOrder: SectionKey[] = ["statute", "rules", "antidoping", "calendar"];
@@ -80,25 +83,10 @@ export default function DocumentsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-muted rounded w-1/2"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="h-4 bg-muted rounded"></div>
-                  <div className="h-4 bg-muted rounded"></div>
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <PageContainer>
+        <PageHeader title={t("title")} />
+        <LoadingState />
+      </PageContainer>
     );
   }
 
@@ -107,73 +95,60 @@ export default function DocumentsPage() {
     (section) => groupedDocuments[section] && groupedDocuments[section].length > 0
   );
 
-  if (sectionsWithDocs.length === 0) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("no_documents")}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 lg:mb-8">{t("title")}</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        {sectionsWithDocs.map((section) => {
-          const config = sectionConfig[section];
-          const docs = groupedDocuments[section];
+    <PageContainer>
+      <PageHeader title={t("title")} />
+      {sectionsWithDocs.length === 0 ? (
+        <EmptyState icon={FolderOpen} title={t("no_documents")} />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {sectionsWithDocs.map((section) => {
+            const config = sectionConfig[section];
+            const docs = groupedDocuments[section];
 
-          return (
-            <Card key={section}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {config.icon}
-                  {t(config.translationKey)}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {docs.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">{t("no_documents")}</p>
-                  ) : docs.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="flex items-center justify-between p-2 rounded hover:bg-muted border border-transparent hover:border-gray-200 transition-colors"
-                    >
-                      <div className="flex items-center gap-3 overflow-hidden">
-                        <FileText className="h-4 w-4 text-primary shrink-0" />
-                        <div className="overflow-hidden">
-                          <span className="truncate text-sm font-medium block">
-                            {getLocalizedTitle(doc)}
+            return (
+              <Card key={section}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <IconTile icon={config.icon} size="sm" />
+                    {t(config.translationKey)}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="-mx-2 space-y-1">
+                    {docs.map((doc) => (
+                      <li key={doc.id}>
+                        <a
+                          href={doc.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          className="group flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-accent"
+                        >
+                          <FileText className="size-4 shrink-0 text-primary" />
+                          <span className="min-w-0 flex-1">
+                            <span className="type-small block truncate font-medium text-foreground group-hover:text-primary">
+                              {getLocalizedTitle(doc)}
+                            </span>
+                            <span className="type-caption">
+                              {doc.year && <span>{doc.year}</span>}
+                              {doc.year && (doc.fileType || doc.fileSize) && " · "}
+                              {doc.fileType?.toUpperCase()}
+                              {doc.fileType && doc.fileSize && " · "}
+                              {formatFileSize(doc.fileSize)}
+                            </span>
                           </span>
-                          <span className="text-xs text-muted-foreground">
-                            {doc.year && <span>{doc.year}</span>}
-                            {doc.year && (doc.fileType || doc.fileSize) && " · "}
-                            {doc.fileType?.toUpperCase()}
-                            {doc.fileType && doc.fileSize && " · "}
-                            {formatFileSize(doc.fileSize)}
-                          </span>
-                        </div>
-                      </div>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 shrink-0"
-                        asChild
-                      >
-                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" download>
-                          <Download className="h-4 w-4" />
+                          <Download className="size-4 shrink-0 text-muted-foreground group-hover:text-primary" />
                         </a>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-    </div>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </PageContainer>
   );
 }

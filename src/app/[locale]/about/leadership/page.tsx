@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { PersonPlaceholder } from "@/components/ui/person-placeholder";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Loader2 } from "lucide-react";
+import { PersonAvatar } from "@/components/ui/person-avatar";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionHeader } from "@/components/ui/section";
+import { EmptyState, LoadingState } from "@/components/ui/states";
+import { Users } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
 interface Staff {
@@ -77,118 +83,95 @@ export default function LeadershipPage() {
 
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-16">
-                <h1 className="text-4xl font-bold mb-8">{t("title")}</h1>
-                <div className="flex items-center justify-center min-h-[400px]">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-            </div>
+            <PageContainer>
+                <PageHeader title={t("title")} />
+                <LoadingState className="min-h-[400px]" />
+            </PageContainer>
         );
     }
 
     if (staff.length === 0) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-16">
-                <h1 className="text-4xl font-bold mb-8">{t("title")}</h1>
-                <div className="text-center py-12 text-muted-foreground">
-                    {locale === 'kk' ? 'Деректер жоқ' : locale === 'en' ? 'No data available' : 'Данные не найдены'}
-                </div>
-            </div>
+            <PageContainer>
+                <PageHeader title={t("title")} />
+                <EmptyState
+                    icon={Users}
+                    title={locale === 'kk' ? 'Деректер жоқ' : locale === 'en' ? 'No data available' : 'Данные не найдены'}
+                />
+            </PageContainer>
         );
     }
 
-    return (
-        <div className="max-w-7xl mx-auto px-4 py-16 space-y-16">
-            <h1 className="text-4xl font-bold mb-8">{t("title")}</h1>
+    const committee = [...otherLeadership, ...committeeStaff];
 
-            {/* President Section */}
+    return (
+        <PageContainer className="space-y-12 md:space-y-16">
+            <PageHeader title={t("title")} />
+
             {president && (
-                <section className="bg-muted/30 rounded-3xl p-8 md:p-12 border">
-                    <div className="flex flex-col items-center text-center">
-                        <div className="relative w-48 h-60 rounded-2xl overflow-hidden bg-gray-200 shadow-xl mb-6">
-                            {president.image ? (
-                                <img
-                                    src={president.image}
-                                    alt=""
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                                    }}
-                                />
-                            ) : null}
-                            <div className={`absolute inset-0 flex items-center justify-center text-muted-foreground ${president.image ? 'hidden' : ''}`}>
-                                <User className="w-16 h-16 opacity-30" />
+                <section className="surface-inverse grid overflow-hidden rounded-2xl md:grid-cols-12">
+                    <div className="relative aspect-[4/5] bg-white/5 md:col-span-5 md:aspect-auto md:min-h-[420px] lg:col-span-4">
+                        {president.image ? (
+                            <Image
+                                src={president.image}
+                                alt={getLocalizedName(president)}
+                                fill
+                                priority
+                                sizes="(max-width: 768px) 100vw, 33vw"
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-full items-center justify-center">
+                                <PersonPlaceholder className="size-24 text-white/30" />
                             </div>
-                        </div>
-                        <h3 className="text-2xl font-bold">{getLocalizedName(president)}</h3>
-                        <p className="text-primary font-medium text-lg">{getLocalizedRole(president)}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col justify-end gap-3 p-6 md:col-span-7 md:p-10 lg:col-span-8 lg:p-14">
+                        <Eyebrow tone="inverse">{getLocalizedRole(president)}</Eyebrow>
+                        <h2 className="type-h1 text-white">{getLocalizedName(president)}</h2>
+                        {president.description && (
+                            <p className="type-lead max-w-xl text-white/70">{getLocalizedDescription(president)}</p>
+                        )}
                     </div>
                 </section>
             )}
 
-            {/* Executive Committee */}
-            {(otherLeadership.length > 0 || committeeStaff.length > 0) && (
+            {committee.length > 0 && (
                 <section>
-                    <h2 className="text-3xl font-bold mb-8">{t("committee_title")}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[...otherLeadership, ...committeeStaff].map((person) => (
-                            <Card key={person.id} className="hover:shadow-md transition-shadow">
-                                <CardContent className="pt-6 flex flex-col items-center text-center space-y-4">
-                                    <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100 shrink-0">
-                                        {person.image ? (
-                                            <img
-                                                src={person.image}
-                                                alt=""
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                                                }}
-                                            />
-                                        ) : null}
-                                        <div className={`absolute inset-0 flex items-center justify-center text-muted-foreground ${person.image ? 'hidden' : ''}`}>
-                                            <User className="w-12 h-12 opacity-30" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-lg">{getLocalizedName(person)}</h4>
-                                        <p className="text-sm font-medium text-primary">{getLocalizedRole(person)}</p>
-                                        {person.description && (
-                                            <p className="text-xs text-muted-foreground mt-1">{getLocalizedDescription(person)}</p>
-                                        )}
-                                    </div>
-                                </CardContent>
+                    <SectionHeader title={t("committee_title")} />
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        {committee.map((person) => (
+                            <Card key={person.id} className="items-center gap-4 px-6 text-center">
+                                <PersonAvatar src={person.image} alt={getLocalizedName(person)} className="size-28" />
+                                <div className="space-y-1">
+                                    <h3 className="type-h4 text-foreground">{getLocalizedName(person)}</h3>
+                                    <p className="type-small font-medium text-primary">{getLocalizedRole(person)}</p>
+                                    {person.description && (
+                                        <p className="type-caption">{getLocalizedDescription(person)}</p>
+                                    )}
+                                </div>
                             </Card>
                         ))}
                     </div>
                 </section>
             )}
 
-            {/* Штатный тренер национальной команды */}
             {coachingStaff.length > 0 && (
                 <section>
-                    <h2 className="text-3xl font-bold mb-8">{t("national_coach_title")}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <SectionHeader title={t("national_coach_title")} />
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {coachingStaff.map((coach) => (
-                            <Card key={coach.id} className="hover:shadow-md transition-shadow">
-                                <CardContent className="pt-6">
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="h-14 w-14">
-                                            {coach.image && <AvatarImage src={coach.image} alt="" />}
-                                            <AvatarFallback><PersonPlaceholder /></AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="font-bold truncate">{getLocalizedName(coach)}</div>
-                                            <div className="text-sm font-medium text-primary">{getLocalizedRole(coach)}</div>
-                                        </div>
-                                    </div>
-                                </CardContent>
+                            <Card key={coach.id} className="flex-row items-center gap-4 px-6">
+                                <PersonAvatar src={coach.image} alt={getLocalizedName(coach)} className="size-14" />
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="type-h4 truncate text-foreground">{getLocalizedName(coach)}</h3>
+                                    <p className="type-small font-medium text-primary">{getLocalizedRole(coach)}</p>
+                                </div>
                             </Card>
                         ))}
                     </div>
                 </section>
             )}
-        </div>
+        </PageContainer>
     );
 }

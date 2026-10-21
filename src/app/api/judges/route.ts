@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { successResponse, errorResponse, requireAuthWithRegion, parseQueryParams } from '@/lib/api-utils';
+import { successResponse, errorResponse, requireAuthWithRegion, parseQueryParams, hasStaffSession } from '@/lib/api-utils';
+import { PUBLIC_PERSON_SELECT } from '@/lib/public-selects';
 
 // GET /api/judges - Public or filtered for admin
 export async function GET(request: NextRequest) {
@@ -28,16 +29,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ИИН и дата рождения — только после входа в админку
+    const isStaff = forAdmin || (await hasStaffSession());
     const [judges, total] = await Promise.all([
-      prisma.judge.findMany({
-        where,
-        orderBy: { sortOrder: 'asc' },
-        take: limit,
-        skip,
-        include: {
-          region: true,
-        },
-      }),
+      isStaff
+        ? prisma.judge.findMany({ where, orderBy: { sortOrder: 'asc' }, take: limit, skip, include: { region: true } })
+        : prisma.judge.findMany({ where, orderBy: { sortOrder: 'asc' }, take: limit, skip, select: PUBLIC_PERSON_SELECT }),
       prisma.judge.count({ where }),
     ]);
 

@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { REGISTRATION_STATUS } from "@/lib/registration-status";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -145,10 +146,10 @@ interface Registration {
 }
 
 const statusConfig = {
-    PENDING: { label: "На проверке", color: "bg-yellow-500", icon: Clock },
-    APPROVED: { label: "Одобрено", color: "bg-green-500", icon: CheckCircle },
-    REJECTED: { label: "Отклонено", color: "bg-red-500", icon: XCircle },
-    WITHDRAWN: { label: "Отозвано", color: "bg-gray-500", icon: XCircle },
+    PENDING: { ...REGISTRATION_STATUS.PENDING, icon: Clock },
+    APPROVED: { ...REGISTRATION_STATUS.APPROVED, icon: CheckCircle },
+    REJECTED: { ...REGISTRATION_STATUS.REJECTED, icon: XCircle },
+    WITHDRAWN: { ...REGISTRATION_STATUS.WITHDRAWN, icon: XCircle },
 };
 
 export default function RegistrationDetailPage() {
@@ -475,20 +476,20 @@ export default function RegistrationDetailPage() {
     return (
         <div className="space-y-6 print:space-y-4">
             {/* Header */}
-            <div className="flex items-center justify-between print:hidden">
+            <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" asChild>
+                    <Button variant="ghost" size="icon" aria-label="Назад" asChild>
                         <Link href={`/${locale}/admin/registrations`}>
-                            <ArrowLeft className="h-5 w-5" />
+                            <ArrowLeft className="size-5" />
                         </Link>
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold">
+                        <h1 className="type-h2 text-foreground">
                             Заявка {registration.registrationNumber}
                         </h1>
-                        <p className="text-muted-foreground">{registration.regionName}</p>
+                        <p className="type-small text-muted-foreground">{registration.regionName}</p>
                     </div>
-                    <Badge className={statusConfig[registration.status].color}>
+                    <Badge variant={statusConfig[registration.status].variant}>
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {statusConfig[registration.status].label}
                     </Badge>
@@ -512,14 +513,14 @@ export default function RegistrationDetailPage() {
                         <>
                             <Button
                                 variant="outline"
-                                className="text-red-600"
+                                className="text-destructive hover:text-destructive"
                                 onClick={() => setRejectDialogOpen(true)}
                             >
                                 <XCircle className="h-4 w-4 mr-2" />
                                 Отклонить
                             </Button>
                             <Button
-                                className="bg-green-600 hover:bg-green-700"
+                                variant="success"
                                 onClick={handleApprove}
                                 disabled={processing}
                             >
@@ -568,12 +569,12 @@ export default function RegistrationDetailPage() {
 
             {/* Approval info */}
             {registration.status === "APPROVED" && registration.approvedAt && (
-                <div className="text-sm text-green-600 bg-green-50 p-3 rounded-md print:bg-transparent">
+                <div className="type-small rounded-md bg-success-soft p-3 text-success print:bg-transparent">
                     Одобрено {formatDate(registration.approvedAt)}
                 </div>
             )}
             {registration.status === "REJECTED" && registration.rejectionReason && (
-                <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md print:bg-transparent">
+                <div className="type-small rounded-md bg-destructive/10 p-3 text-destructive print:bg-transparent">
                     Отклонено. Причина: {registration.rejectionReason}
                 </div>
             )}
@@ -664,7 +665,7 @@ export default function RegistrationDetailPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="text-red-600"
+                                                            className="text-destructive hover:text-destructive"
                                                             onClick={() =>
                                                                 handleRemoveAthlete(ar.id)
                                                             }

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
+import { EmptyState } from "@/components/ui/states";
 
 export default function AdminError({
   error,
@@ -16,13 +17,11 @@ export default function AdminError({
   }, [error]);
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center px-4">
-      <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
-      <h2 className="text-xl font-semibold mb-2">Ошибка в панели управления</h2>
-      <p className="text-muted-foreground mb-6 text-center max-w-md">
-        Произошла ошибка при загрузке. Попробуйте обновить страницу.
-      </p>
-      <Button onClick={reset}>Попробовать снова</Button>
-    </div>
+    <EmptyState
+      icon={AlertTriangle}
+      title="Ошибка в панели управления"
+      className="min-h-[50vh] border-none"
+      action={<Button onClick={reset}>Попробовать снова</Button>}
+    />
   );
 }

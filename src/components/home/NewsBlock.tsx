@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { NewsBlockClient } from "./NewsBlockClient";
 
 async function getNews() {
@@ -17,14 +17,14 @@ async function getNews() {
 export async function NewsBlock() {
   const news = await getNews();
   const locale = await getLocale();
+  const tHeader = await getTranslations("Header");
+  const tNews = await getTranslations("NewsPage");
 
   if (news.length === 0) return null;
 
   const translations = {
-    sectionTitle: locale === 'kk' ? 'Жаңалықтар' : locale === 'en' ? 'News' : 'Новости',
-    allNewsText: locale === 'kk' ? 'Барлық жаңалықтар' : locale === 'en' ? 'All News' : 'Все новости',
-    pressCenter: locale === 'kk' ? 'Баспасөз орталығы' : locale === 'en' ? 'Press Center' : 'Пресс-центр',
-    readMore: locale === 'kk' ? 'Толығырақ' : locale === 'en' ? 'Read More' : 'Подробнее',
+    sectionTitle: tHeader("news"),
+    allNewsText: tNews("all_news"),
   };
 
   // Serialize the dates for client component

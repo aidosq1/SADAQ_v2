@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { successResponse, errorResponse, requireAuthWithRegion, parseQueryParams } from '@/lib/api-utils';
+import { successResponse, errorResponse, requireAuthWithRegion, parseQueryParams, hasStaffSession } from '@/lib/api-utils';
+import { PUBLIC_PERSON_SELECT } from '@/lib/public-selects';
 
 // GET /api/coaches - Public or filtered for admin
 export async function GET(request: NextRequest) {
@@ -26,16 +27,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ИИН и дата рождения — только после входа в админку
+    const isStaff = forAdmin || (await hasStaffSession());
     const [coaches, total] = await Promise.all([
-      prisma.coach.findMany({
-        where,
-        orderBy: { sortOrder: 'asc' },
-        take: limit,
-        skip,
-        include: {
-          region: true,
-        },
-      }),
+      isStaff
+        ? prisma.coach.findMany({ where, orderBy: { sortOrder: 'asc' }, take: limit, skip, include: { region: true } })
+        : prisma.coach.findMany({ where, orderBy: { sortOrder: 'asc' }, take: limit, skip, select: PUBLIC_PERSON_SELECT }),
       prisma.coach.count({ where }),
     ]);
 

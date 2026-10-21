@@ -1,9 +1,5 @@
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/states";
 
 export default function Loading() {
-  return (
-    <div className="flex min-h-[50vh] items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-    </div>
-  );
+  return <LoadingState className="min-h-[50vh]" />;
 }

@@ -401,7 +401,7 @@ export default function AdminResultsPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
+            <h1 className="type-h1 flex items-center gap-2 text-foreground">
                 <Trophy className="h-8 w-8" />
                 Результаты турниров
             </h1>
@@ -466,7 +466,7 @@ export default function AdminResultsPage() {
             <Card className="bg-muted/50">
                 <CardContent className="pt-6">
                     <div className="flex items-center gap-4">
-                        <Trophy className="h-6 w-6 text-yellow-500" />
+                        <Trophy className="size-6 text-gold-strong" />
                         <div>
                             <p className="font-medium">Формула начисления очков:</p>
                             <p className="text-sm text-muted-foreground">
@@ -556,7 +556,6 @@ export default function AdminResultsPage() {
                                             <TableCell>
                                                 <Badge
                                                     variant={result.points > 0 ? "default" : "secondary"}
-                                                    className={result.place <= 3 ? "bg-yellow-500" : ""}
                                                 >
                                                     {result.points}
                                                 </Badge>
@@ -589,7 +588,7 @@ export default function AdminResultsPage() {
                         {results.length > 0 && (
                             <div className="flex items-center justify-end gap-4 mt-6">
                                 {hasUnsavedChanges && (
-                                    <span className="text-sm text-amber-600 font-medium">
+                                    <span className="text-sm font-medium text-warning">
                                         Есть несохранённые изменения
                                     </span>
                                 )}

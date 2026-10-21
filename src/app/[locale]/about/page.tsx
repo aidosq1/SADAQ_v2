@@ -1,11 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Users, Trophy, MapPin, Globe, Medal, Activity, Loader2 } from "lucide-react";
+import { cardInteractive, cardSurface } from "@/components/ui/card";
+import { Users, Trophy, MapPin, Globe, Medal, Activity, FileText, ArrowRight, type LucideIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useTranslations, useLocale } from "next-intl";
+import { Container } from "@/components/ui/container";
+import { Section, SectionHeader } from "@/components/ui/section";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { IconTile } from "@/components/ui/icon-tile";
+import { Stat } from "@/components/ui/stat";
+import { LoadingState } from "@/components/ui/states";
+import { cn } from "@/lib/utils";
 
 interface SiteStat {
     id: number;
@@ -36,12 +43,11 @@ interface SiteContent {
     valueEn?: string;
 }
 
-const iconMap: Record<string, React.ReactNode> = {
-    mapPin: <MapPin className="w-6 h-6" />,
-    users: <Users className="w-6 h-6" />,
-    badge: <BadgeIcon className="w-6 h-6" />,
-    trophy: <Trophy className="w-6 h-6" />,
-    default: <Activity className="w-6 h-6" />,
+const iconMap: Record<string, LucideIcon> = {
+    mapPin: MapPin,
+    users: Users,
+    badge: Medal,
+    trophy: Trophy,
 };
 
 export default function Page() {
@@ -104,135 +110,134 @@ export default function Page() {
         bold: (chunks: React.ReactNode) => <strong className="font-bold">{chunks}</strong>
     };
 
+    const quickLinks: { title: string; icon: LucideIcon; href: string }[] = [
+        { title: tFooter("leadership"), icon: Users, href: "/about/leadership" },
+        { title: t("stat_regions"), icon: MapPin, href: "/about/regions" },
+        { title: tFooter("history"), icon: Trophy, href: "/about/history" },
+        { title: t("sec_statute") || "Documents", icon: FileText, href: "/documents" },
+    ];
+
+    const fallbackOrganizations: { name: string; icon: LucideIcon }[] = [
+        { name: "World Archery", icon: Globe },
+        { name: "Asian Archery", icon: Medal },
+        { name: "NOC KZ", icon: Trophy },
+    ];
+
     return (
-        <div className="flex flex-col min-h-screen">
-            {/* Hero Section */}
-            <section className="relative min-h-[480px] sm:min-h-[540px] md:h-[640px] w-full flex items-center justify-center bg-gradient-to-b from-[#7B1B1B] to-black text-white overflow-hidden">
-                <div className="absolute inset-0 bg-black/20 z-10" />
-
-                <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center py-8 md:py-0">
-                    <div className="mb-6 md:mb-8 animate-fade-in-up">
-                        <Image src="/logo_federation_circular.png" alt="Logo" width={280} height={280} className="w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 object-contain drop-shadow-2xl" />
-                    </div>
-
-                    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-[#D4AF37] drop-shadow-lg">
-                        {getContent("about_hero_title_1", t("hero_title_1"))} <br />
-                        <span className="text-white">{getContent("about_hero_title_2", t("hero_title_2"))}</span>
+        <>
+            {/* Hero: название федерации слева, герб справа */}
+            <section className="surface-inverse overflow-hidden">
+                <Container className="grid items-center gap-10 pt-14 pb-28 md:pt-20 md:pb-36 lg:grid-cols-12">
+                    <h1 className="type-display text-white lg:col-span-8">
+                        <span className="text-gold">{getContent("about_hero_title_1", t("hero_title_1"))}</span>{" "}
+                        {getContent("about_hero_title_2", t("hero_title_2"))}
                     </h1>
-                </div>
+                    <div className="relative hidden justify-self-center lg:col-span-4 lg:block">
+                        <div aria-hidden="true" className="absolute inset-0 rounded-full bg-gold/20 blur-3xl" />
+                        <Image
+                            src="/logo_federation_circular.png"
+                            alt=""
+                            width={320}
+                            height={320}
+                            priority
+                            className="relative size-72 object-contain drop-shadow-2xl xl:size-80"
+                        />
+                    </div>
+                </Container>
             </section>
 
-            {/* Navigation Grid */}
-            <div className="max-w-7xl mx-auto px-4 -mt-12 md:-mt-16 relative z-30">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-                    {[
-                        { title: tFooter("leadership"), icon: <Users className="w-6 h-6" />, href: "/about/leadership" },
-                        { title: t("stat_regions"), icon: <MapPin className="w-6 h-6" />, href: "/about/regions" },
-                        { title: tFooter("history"), icon: <Trophy className="w-6 h-6" />, href: "/about/history" },
-                        { title: t("sec_statute") || "Documents", icon: <Activity className="w-6 h-6" />, href: "/documents" },
-                    ].map((item, index) => (
-                        <Link key={index} href={item.href} className="block group">
-                            <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white text-foreground">
-                                <CardContent className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 p-4 sm:p-6">
-                                    <div className="bg-primary/5 text-primary p-3 sm:p-4 rounded-full group-hover:bg-[#B54B35]/10 group-hover:text-[#B54B35] transition-colors duration-300">
-                                        {item.icon}
-                                    </div>
-                                    <div className="font-bold text-sm sm:text-lg text-center sm:text-left group-hover:text-[#B54B35] transition-colors">{item.title}</div>
-                                </CardContent>
-                            </Card>
+            {/* Быстрые ссылки на разделы, заходят на нижний край hero */}
+            <Container className="relative z-10 -mt-16 md:-mt-20">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+                    {quickLinks.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(cardSurface, cardInteractive, "group flex items-center gap-4 p-5 shadow-raised")}
+                        >
+                            <IconTile icon={item.icon} />
+                            <span className="type-h4 min-w-0 flex-1 text-foreground transition-colors group-hover:text-primary">
+                                {item.title}
+                            </span>
+                            <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                         </Link>
                     ))}
                 </div>
-            </div>
+            </Container>
 
-            <div className="max-w-7xl mx-auto px-4 py-10 md:py-16 space-y-12 md:space-y-20">
-                {/* Mission Section */}
-                <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-                    <div className="space-y-4 md:space-y-6">
-                        <div className="inline-block px-3 py-1 md:px-4 md:py-1.5 bg-primary/10 text-primary rounded-full font-medium text-xs md:text-sm">
-                            {getContent("mission_badge", t("mission_badge"))}
-                        </div>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
-                            {getContent("mission_title", t("mission_title"))}
-                        </h2>
-                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                            {getContent("mission_desc", t("mission_desc"))}
-                        </p>
+            {/* Mission */}
+            <Section>
+                <div className="grid gap-6 lg:grid-cols-12 lg:gap-12">
+                    <div className="lg:col-span-5">
+                        <Eyebrow className="mb-3">{getContent("mission_badge", t("mission_badge"))}</Eyebrow>
+                        <h2 className="type-h2 text-foreground">{getContent("mission_title", t("mission_title"))}</h2>
                     </div>
-                    <div className="bg-muted rounded-2xl h-[250px] md:h-[400px] relative overflow-hidden group">
-                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-secondary/50">
-                            <Activity className="w-12 h-12 md:w-16 md:h-16 opacity-20" />
-                        </div>
+                    <p className="type-lead text-muted-foreground lg:col-span-7 lg:pt-8">
+                        {getContent("mission_desc", t("mission_desc"))}
+                    </p>
+                </div>
+            </Section>
+
+            {/* Statistics */}
+            <Section tone="inverse">
+                <SectionHeader title={t("stats_title")} tone="inverse" />
+                {loading ? (
+                    <LoadingState className="min-h-[120px] [&_svg]:text-gold" />
+                ) : (
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+                        {stats.map((stat) => (
+                            <Stat
+                                key={stat.id}
+                                tone="inverse"
+                                icon={iconMap[stat.iconType] ?? Activity}
+                                value={stat.value}
+                                label={getLocalizedLabel(stat)}
+                                className="border-white/10 md:border-l md:pl-6 md:first:border-l-0 md:first:pl-0"
+                            />
+                        ))}
                     </div>
-                </section>
+                )}
+            </Section>
 
-                {/* Statistics Section */}
-                <section>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12">{t("stats_title")}</h2>
-
-                    {loading ? (
-                        <div className="flex justify-center py-12">
-                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-                            {stats.map((stat) => (
-                                <Card key={stat.id} className="border-none shadow-lg bg-card text-card-foreground">
-                                    <CardContent className="pt-4 md:pt-6 text-center space-y-2 md:space-y-4">
-                                        <div className="inline-flex items-center justify-center p-2 md:p-3 rounded-full bg-primary/10 text-primary mb-1 md:mb-2">
-                                            {iconMap[stat.iconType] || iconMap.default}
-                                        </div>
-                                        <div className="text-2xl md:text-4xl font-bold text-primary">{stat.value}</div>
-                                        <div className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                                            {getLocalizedLabel(stat)}
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* International Recognition */}
-                <section className="bg-secondary/30 rounded-2xl md:rounded-3xl p-6 md:p-12">
-                    <div className="text-center max-w-3xl mx-auto space-y-6 md:space-y-8">
-                        <Globe className="w-10 h-10 md:w-12 md:h-12 text-primary mx-auto mb-2 md:mb-4" />
-                        <h2 className="text-2xl sm:text-3xl font-bold">{getContent("recognition_title", t("recognition_title"))}</h2>
-                        <p className="text-base md:text-lg text-muted-foreground">
+            {/* International Recognition */}
+            <Section tone="muted">
+                <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+                    <div className="lg:col-span-5">
+                        <IconTile icon={Globe} size="lg" className="mb-6 bg-background" />
+                        <h2 className="type-h2 text-foreground">{getContent("recognition_title", t("recognition_title"))}</h2>
+                        <p className="type-body mt-4 text-muted-foreground">
                             {getContent("recognition_desc", t.rich("recognition_desc", richTextComponents))}
                         </p>
-
-                        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 md:gap-16 pt-6 md:pt-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-                            {partners.length > 0 ? (
-                                partners.map((partner) => (
-                                    <div key={partner.id} className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2">
-                                        {partner.logo ? (
-                                            <img src={partner.logo} alt={partner.name} className="h-6 md:h-8 w-auto object-contain" />
-                                        ) : (
-                                            <Globe className="w-5 h-5 md:w-6 md:h-6" />
-                                        )}
-                                        <span className="hidden sm:inline">{partner.name}</span>
-                                    </div>
-                                ))
-                            ) : (
-                                <>
-                                    <div className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2"><Globe className="w-5 h-5 md:w-6 md:h-6" /> <span className="hidden sm:inline">World Archery</span></div>
-                                    <div className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2"><Medal className="w-5 h-5 md:w-6 md:h-6" /> <span className="hidden sm:inline">Asian Archery</span></div>
-                                    <div className="font-bold text-sm sm:text-lg md:text-xl flex items-center gap-2"><Trophy className="w-5 h-5 md:w-6 md:h-6" /> <span className="hidden sm:inline">NOC KZ</span></div>
-                                </>
-                            )}
-                        </div>
                     </div>
-                </section>
-            </div>
-        </div>
-    );
-}
 
-function BadgeIcon({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78 4 4 0 0 1 0-6.74Z" />
-        </svg>
-    )
+                    <div className="grid auto-rows-[96px] grid-cols-2 gap-3 sm:grid-cols-3 lg:col-span-7">
+                        {partners.length > 0
+                            ? partners.map((partner) => (
+                                <div
+                                    key={partner.id}
+                                    title={partner.name}
+                                    className="flex items-center justify-center rounded-lg border bg-background px-4 shadow-card"
+                                >
+                                    {partner.logo ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={partner.logo} alt={partner.name} className="max-h-12 w-auto object-contain" />
+                                    ) : (
+                                        <span className="type-small text-center font-semibold text-muted-foreground">{partner.name}</span>
+                                    )}
+                                </div>
+                            ))
+                            : fallbackOrganizations.map(({ name, icon: Icon }) => (
+                                <div
+                                    key={name}
+                                    className="flex items-center justify-center gap-2 rounded-lg border bg-background px-4 font-heading font-semibold shadow-card"
+                                >
+                                    <Icon className="size-5 text-primary" />
+                                    {name}
+                                </div>
+                            ))}
+                    </div>
+                </div>
+            </Section>
+        </>
+    );
 }

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+import { Section, SectionHeader } from "@/components/ui/section";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 interface Partner {
   id: number;
@@ -13,8 +15,69 @@ interface Partner {
   isGeneral?: boolean;
 }
 
+const LOGO_TILE = {
+  general: {
+    tile: "col-span-2 row-span-2 flex-col gap-4 px-8 py-6",
+    image: "max-h-28 md:max-h-32 w-auto",
+    width: 480,
+    height: 200,
+  },
+  regular: {
+    tile: "px-5",
+    image: "max-h-16 w-auto grayscale opacity-80 transition-[filter,opacity] duration-300 group-hover:grayscale-0 group-hover:opacity-100",
+    width: 160,
+    height: 80,
+  },
+} as const;
+
+// Логотип партнёра на белой плитке; без логотипа — название текстом
+function PartnerLogo({ partner, variant, label }: {
+  partner: Partner;
+  variant: keyof typeof LOGO_TILE;
+  label?: string;
+}) {
+  const size = LOGO_TILE[variant];
+  const className = cn(
+    "group flex items-center justify-center rounded-lg border bg-background shadow-card",
+    size.tile
+  );
+  const logo = partner.logo ? (
+    <Image
+      src={partner.logo}
+      alt={partner.name}
+      title={partner.name}
+      width={size.width}
+      height={size.height}
+      className={cn("object-contain", size.image)}
+    />
+  ) : (
+    <span className="type-small text-center font-semibold text-muted-foreground">{partner.name}</span>
+  );
+  const content = label ? (
+    <>
+      <Eyebrow className="self-start">{label}</Eyebrow>
+      <div className="flex flex-1 items-center">{logo}</div>
+    </>
+  ) : (
+    logo
+  );
+
+  return partner.websiteUrl ? (
+    <a
+      href={partner.websiteUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(className, "transition-[border-color,box-shadow] hover:border-foreground/15 hover:shadow-raised")}
+    >
+      {content}
+    </a>
+  ) : (
+    <div className={className}>{content}</div>
+  );
+}
+
 export function PartnersBlock() {
-  const locale = useLocale();
+  const t = useTranslations("PartnersBlock");
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -37,23 +100,19 @@ export function PartnersBlock() {
     fetchPartners();
   }, []);
 
-  const sectionTitle = locale === 'kk' ? 'Серіктестер' : locale === 'en' ? 'Partners & Affiliations' : 'Партнёры и аффилиации';
-  const generalTitle = locale === 'kk' ? 'Бас серіктес' : locale === 'en' ? 'General Partner' : 'Генеральный партнёр';
 
   const generalPartners = partners.filter((p) => p.isGeneral);
   const regularPartners = partners.filter((p) => !p.isGeneral);
 
   if (loading) {
     return (
-      <section className="py-12 bg-white border-t border-[hsl(var(--border-light))]">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center gap-8">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="w-20 h-20 bg-[hsl(var(--light-cream))] rounded-full animate-pulse" />
-            ))}
-          </div>
+      <Section tone="muted">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-28 animate-pulse rounded-lg bg-background" />
+          ))}
         </div>
-      </section>
+      </Section>
     );
   }
 
@@ -61,142 +120,18 @@ export function PartnersBlock() {
     return null;
   }
 
+  // Генеральный партнёр — большая плитка 2×2 в общей сетке логотипов
   return (
-    <section className="py-12 bg-white border-t border-[hsl(var(--border-light))]">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* General Partner(s) */}
-        {generalPartners.length > 0 && (
-          <div className="mb-12">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent mx-auto w-fit uppercase">
-                {generalTitle}
-              </h2>
-            </div>
-            <div className="flex flex-wrap justify-center items-center gap-12">
-              {generalPartners.map((partner) => (
-                <div key={partner.id}>
-                  {partner.websiteUrl ? (
-                    <Link
-                      href={partner.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex flex-col items-center gap-3"
-                    >
-                      {partner.logo ? (
-                        <Image
-                          src={partner.logo}
-                          alt={partner.name}
-                          width={560}
-                          height={320}
-                          className="object-contain h-auto w-64 sm:w-80 md:w-[420px]"
-                        />
-                      ) : (
-                        <div className="w-56 h-56 md:w-80 md:h-80 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                          <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
-                            {partner.name.slice(0, 2)}
-                          </span>
-                        </div>
-                      )}
-                      <span className="text-sm text-center text-[hsl(var(--muted-foreground))] max-w-xs leading-tight">
-                        {partner.name}
-                      </span>
-                    </Link>
-                  ) : (
-                    <div className="flex flex-col items-center gap-3">
-                      {partner.logo ? (
-                        <Image
-                          src={partner.logo}
-                          alt={partner.name}
-                          width={560}
-                          height={320}
-                          className="object-contain h-auto w-64 sm:w-80 md:w-[420px]"
-                        />
-                      ) : (
-                        <div className="w-56 h-56 md:w-80 md:h-80 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                          <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
-                            {partner.name.slice(0, 2)}
-                          </span>
-                        </div>
-                      )}
-                      <span className="text-sm text-center text-[hsl(var(--muted-foreground))] max-w-xs leading-tight">
-                        {partner.name}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            {regularPartners.length > 0 && (
-              <div className="mt-10 border-b border-[hsl(var(--border-light))]" />
-            )}
-          </div>
-        )}
-
-        {/* Header */}
-        {regularPartners.length > 0 && (
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent mx-auto w-fit">
-              {sectionTitle}
-            </h2>
-          </div>
-        )}
-
-        {/* Partners Grid */}
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-          {regularPartners.map((partner) => (
-            <div key={partner.id}>
-              {partner.websiteUrl ? (
-                <Link
-                  href={partner.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2"
-                >
-                  {partner.logo ? (
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={80}
-                      height={80}
-                      className="object-contain w-16 h-16 md:w-20 md:h-20"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                      <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
-                        {partner.name.slice(0, 2)}
-                      </span>
-                    </div>
-                  )}
-                  <span className="text-[10px] text-center text-[hsl(var(--muted-foreground))] max-w-[100px] leading-tight">
-                    {partner.name}
-                  </span>
-                </Link>
-              ) : (
-                <div className="flex flex-col items-center gap-2">
-                  {partner.logo ? (
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={80}
-                      height={80}
-                      className="object-contain w-16 h-16 md:w-20 md:h-20"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[hsl(var(--light-cream))] flex items-center justify-center">
-                      <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
-                        {partner.name.slice(0, 2)}
-                      </span>
-                    </div>
-                  )}
-                  <span className="text-[10px] text-center text-[hsl(var(--muted-foreground))] max-w-[100px] leading-tight">
-                    {partner.name}
-                  </span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+    <Section tone="muted">
+      <SectionHeader title={t("title")} />
+      <div className="grid auto-rows-[112px] grid-cols-2 gap-4 sm:grid-cols-4 xl:grid-cols-6">
+        {generalPartners.map((partner) => (
+          <PartnerLogo key={partner.id} partner={partner} variant="general" label={t("general_title")} />
+        ))}
+        {regularPartners.map((partner) => (
+          <PartnerLogo key={partner.id} partner={partner} variant="regular" />
+        ))}
       </div>
-    </section>
+    </Section>
   );
 }

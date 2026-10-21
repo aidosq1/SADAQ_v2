@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { REGISTRATION_STATUS } from "@/lib/registration-status";
+import { PageHeader } from "@/components/ui/page-header";
+import { MetricCard } from "@/components/ui/metric-card";
 import { Textarea } from "@/components/ui/textarea";
 import {
     Table,
@@ -119,10 +122,10 @@ interface Registration {
 }
 
 const statusConfig = {
-    PENDING: { label: "На проверке", color: "bg-yellow-500", icon: Clock },
-    APPROVED: { label: "Одобрено", color: "bg-green-500", icon: CheckCircle },
-    REJECTED: { label: "Отклонено", color: "bg-red-500", icon: XCircle },
-    WITHDRAWN: { label: "Отозвано", color: "bg-gray-500", icon: XCircle },
+    PENDING: { ...REGISTRATION_STATUS.PENDING, icon: Clock },
+    APPROVED: { ...REGISTRATION_STATUS.APPROVED, icon: CheckCircle },
+    REJECTED: { ...REGISTRATION_STATUS.REJECTED, icon: XCircle },
+    WITHDRAWN: { ...REGISTRATION_STATUS.WITHDRAWN, icon: XCircle },
 };
 
 export default function AdminRegistrationsPage() {
@@ -253,70 +256,32 @@ export default function AdminRegistrationsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold">Заявки на турниры</h1>
-                <div className="flex gap-2">
-                    {isRegionalRep && (
-                        <Button asChild className="bg-green-600 hover:bg-green-700">
-                            <Link href={`/${locale}/tournaments/apply`}>
-                                <ExternalLink className="h-4 w-4 mr-2" />
-                                Подать заявку
-                            </Link>
+            <PageHeader
+               
+                title="Заявки на турниры"
+                actions={
+                    <>
+                        {isRegionalRep && (
+                            <Button variant="success" asChild>
+                                <Link href={`/${locale}/tournaments/apply`}>
+                                    <ExternalLink />
+                                    Подать заявку
+                                </Link>
+                            </Button>
+                        )}
+                        <Button variant="outline" onClick={fetchRegistrations}>
+                            <RefreshCcw />
+                            Обновить
                         </Button>
-                    )}
-                    <Button variant="outline" onClick={fetchRegistrations}>
-                        <RefreshCcw className="h-4 w-4 mr-2" />
-                        Обновить
-                    </Button>
-                </div>
-            </div>
+                    </>
+                }
+            />
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Всего</p>
-                                <p className="text-2xl font-bold">{registrations.length}</p>
-                            </div>
-                            <Users className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="border-yellow-500/50">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">На проверке</p>
-                                <p className="text-2xl font-bold text-yellow-600">{pendingCount}</p>
-                            </div>
-                            <Clock className="h-8 w-8 text-yellow-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="border-green-500/50">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Одобрено</p>
-                                <p className="text-2xl font-bold text-green-600">{approvedCount}</p>
-                            </div>
-                            <CheckCircle className="h-8 w-8 text-green-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="border-red-500/50">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Отклонено</p>
-                                <p className="text-2xl font-bold text-red-600">{rejectedCount}</p>
-                            </div>
-                            <XCircle className="h-8 w-8 text-red-500" />
-                        </div>
-                    </CardContent>
-                </Card>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+                <MetricCard label="Всего" value={registrations.length} icon={Users} />
+                <MetricCard label="На проверке" value={pendingCount} icon={Clock} tone="warning" />
+                <MetricCard label="Одобрено" value={approvedCount} icon={CheckCircle} tone="success" />
+                <MetricCard label="Отклонено" value={rejectedCount} icon={XCircle} tone="destructive" />
             </div>
 
             {/* Filters */}
@@ -401,7 +366,7 @@ export default function AdminRegistrationsPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge className={`${statusConfig[reg.status].color} hover:${statusConfig[reg.status].color}`}>
+                                            <Badge variant={statusConfig[reg.status].variant}>
                                                 <StatusIcon className="h-3 w-3 mr-1" />
                                                 {statusConfig[reg.status].label}
                                             </Badge>
@@ -425,7 +390,8 @@ export default function AdminRegistrationsPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="text-green-600"
+                                                            className="text-success hover:text-success"
+                                                            aria-label="Одобрить"
                                                             onClick={() => handleApprove(reg.id)}
                                                         >
                                                             <CheckCircle className="h-4 w-4" />
@@ -433,7 +399,8 @@ export default function AdminRegistrationsPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="text-red-600"
+                                                            className="text-destructive hover:text-destructive"
+                                                            aria-label="Отклонить"
                                                             onClick={() => openRejectDialog(reg)}
                                                         >
                                                             <XCircle className="h-4 w-4" />
@@ -466,7 +433,7 @@ export default function AdminRegistrationsPage() {
                         <div className="flex-1 overflow-y-auto space-y-6 pr-2">
                             {/* Status */}
                             <div className="flex items-center gap-2">
-                                <Badge className={`${statusConfig[selectedRegistration.status].color}`}>
+                                <Badge variant={statusConfig[selectedRegistration.status].variant}>
                                     {statusConfig[selectedRegistration.status].label}
                                 </Badge>
                                 {selectedRegistration.approvedAt && (
@@ -475,7 +442,7 @@ export default function AdminRegistrationsPage() {
                                     </span>
                                 )}
                                 {selectedRegistration.rejectionReason && (
-                                    <span className="text-sm text-red-600">
+                                    <span className="text-sm text-destructive">
                                         Причина: {selectedRegistration.rejectionReason}
                                     </span>
                                 )}
@@ -569,7 +536,7 @@ export default function AdminRegistrationsPage() {
                             <>
                                 <Button
                                     variant="outline"
-                                    className="text-red-600"
+                                    className="text-destructive"
                                     onClick={() => {
                                         setDetailsOpen(false);
                                         openRejectDialog(selectedRegistration);
@@ -579,7 +546,7 @@ export default function AdminRegistrationsPage() {
                                     Отклонить
                                 </Button>
                                 <Button
-                                    className="bg-green-600 hover:bg-green-700"
+                                    variant="success"
                                     onClick={() => handleApprove(selectedRegistration.id)}
                                     disabled={processing}
                                 >

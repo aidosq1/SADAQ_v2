@@ -1,285 +1,141 @@
 "use client";
 
 import Image from "next/image";
-import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
-import { useLanguage } from "@/context/LanguageContext";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 
+import { Link, usePathname } from "@/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, ChevronDown, User, LogOut, Instagram, Youtube } from "lucide-react";
-
+import { Container } from "@/components/ui/container";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { MobileMenu } from "./MobileMenu";
+import { NAV, isActivePath, isEntryActive, isGroup } from "./nav";
 
-export function Header() {
-    const { language, setLanguage } = useLanguage();
+// Пункт меню: активный раздел подчёркнут бордовой чертой по нижнему краю шапки
+const NAV_LINK =
+    "relative flex h-18 items-center gap-1 px-3 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:transition-colors";
+
+function navLinkClass(active: boolean): string {
+    return cn(
+        NAV_LINK,
+        active
+            ? "text-foreground after:bg-primary"
+            : "text-muted-foreground hover:text-foreground after:bg-transparent"
+    );
+}
+
+function AccountActions() {
     const t = useTranslations("Header");
     const { data: session, status } = useSession();
 
-    const navItems = [
-        { name: t("team"), href: "/team" },
-        { name: t("ranking"), href: "/ranking" },
-    ];
+    if (status === "loading") {
+        return <div className="size-9" aria-hidden="true" />;
+    }
 
-    const calendarItems = [
-        { name: t("competitions"), href: "/calendar" },
-        { name: t("protocols"), href: "/results" },
-    ];
-
-    const aboutItems = [
-        { name: t("about"), href: "/about" },
-        { name: t("leadership"), href: "/about/leadership" },
-        { name: t("regions"), href: "/about/regions" },
-        { name: t("history"), href: "/about/history" },
-        { name: t("documents"), href: "/documents" },
-    ];
-
-    const mediaItems = [
-        { name: t("news"), href: "/media/news" },
-        { name: t("media_gallery"), href: "/media/gallery" },
-    ];
-
-    const languages = [
-        { code: 'kk', label: 'ҚАЗ' },
-        { code: 'ru', label: 'РУС' },
-        { code: 'en', label: 'ENG' },
-    ];
+    if (session) {
+        return (
+            <div className="flex items-center gap-1">
+                <Button variant="outline" size="icon-sm" asChild>
+                    <Link href="/admin/dashboard" aria-label={t("admin")} title={t("admin")}>
+                        <User />
+                    </Link>
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title={t("logout")}
+                    aria-label={t("logout")}
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                    <LogOut />
+                </Button>
+            </div>
+        );
+    }
 
     return (
-        <header className="fixed top-0 z-50 w-full">
-            {/* Top Bar - Navy */}
-            <div className="bg-[hsl(var(--official-maroon))] text-white">
-                <div className="max-w-7xl mx-auto px-4 h-8 flex items-center justify-between text-xs">
-                    {/* Social Links */}
-                    <div className="flex items-center gap-3">
-                        <a
-                            href="https://www.instagram.com/kazarchery_official/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-[hsl(var(--official-gold))] transition-colors"
-                        >
-                            <Instagram className="h-4 w-4" />
-                        </a>
-                        <a
-                            href="https://www.youtube.com/watch?v=6xgw-YxIbmw"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-[hsl(var(--official-gold))] transition-colors"
-                        >
-                            <Youtube className="h-4 w-4" />
-                        </a>
-                    </div>
+        <Button variant="ghost" size="icon-sm" asChild>
+            <Link href="/auth/signin" aria-label={t("login")} title={t("login")}>
+                <User />
+            </Link>
+        </Button>
+    );
+}
 
-                    {/* Language Switcher */}
-                    <div className="flex items-center gap-1">
-                        {languages.map((lang, index) => (
-                            <button
-                                key={lang.code}
-                                onClick={() => setLanguage(lang.code)}
-                                className={`px-2 py-1 transition-colors ${
-                                    language === lang.code
-                                        ? 'text-[hsl(var(--official-gold))] font-semibold'
-                                        : 'text-white/70 hover:text-white'
-                                }`}
-                            >
-                                {lang.label}
-                                {index < languages.length - 1 && (
-                                    <span className="ml-2 text-white/30">|</span>
-                                )}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
+export function Header() {
+    const t = useTranslations("Header");
+    const pathname = usePathname();
 
-            {/* Main Bar - White */}
-            <div className="bg-white shadow-sm border-b border-[hsl(var(--border-light))]">
-                <div className="max-w-7xl mx-auto px-4 flex h-16 items-center justify-between">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 shrink-0">
-                        <Image
-                            src="/logo_federation_circular.png"
-                            alt="SADAQ Logo"
-                            width={56}
-                            height={56}
-                            className="h-14 w-auto object-contain"
-                        />
-                        <div className="hidden lg:flex flex-col leading-tight">
-                            <span className="text-[10px] font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
-                                {language === 'kk' ? 'Қазақстан Республикасының' : language === 'en' ? 'Republic of Kazakhstan' : 'Республики Казахстан'}
-                            </span>
-                            <span className="text-sm font-semibold text-[hsl(var(--official-maroon))] tracking-tight">
-                                {language === 'kk' ? 'Ұлттық Садақ Ату Федерациясы' : language === 'en' ? 'National Archery Federation' : 'Национальная Федерация Стрельбы из Лука'}
-                            </span>
-                        </div>
-                    </Link>
+    return (
+        <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
+            <Container className="flex h-18 items-center justify-between gap-4">
+                <Link href="/" className="flex min-w-0 items-center gap-3">
+                    <Image
+                        src="/logo_federation_circular.png"
+                        alt="SADAQ"
+                        width={48}
+                        height={48}
+                        priority
+                        className="size-11 shrink-0 object-contain md:size-12"
+                    />
+                    <span className="hidden max-w-[210px] font-heading text-sm leading-snug font-bold text-balance text-foreground sm:block lg:hidden xl:block">
+                        {t("logo_name")}
+                    </span>
+                </Link>
 
-                    {/* Navigation */}
-                    <nav className="hidden md:flex gap-1 lg:gap-2 items-center">
-                        {/* About Dropdown */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
-                                {t("about")} <ChevronDown className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="min-w-[200px]">
-                                {aboutItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="w-full cursor-pointer">
-                                            {item.name}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        {/* Calendar Dropdown */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
-                                {t("tournaments")} <ChevronDown className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start">
-                                {calendarItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="w-full cursor-pointer">
-                                            {item.name}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        {/* Regular Nav Items */}
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors"
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-
-                        {/* Media Dropdown */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[hsl(var(--official-maroon))] hover:text-[hsl(var(--official-red))] transition-colors focus:outline-none">
-                                {t("media")} <ChevronDown className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start">
-                                {mediaItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="w-full cursor-pointer">
-                                            {item.name}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </nav>
-
-                    {/* Right Side */}
-                    <div className="flex items-center gap-2">
-                        {status === "loading" ? (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                disabled
-                                className="hidden sm:flex opacity-50"
-                            >
-                                ...
-                            </Button>
-                        ) : session ? (
-                            <div className="hidden sm:flex items-center gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-[hsl(var(--official-maroon))] text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--official-maroon))] hover:text-white"
-                                    asChild
-                                >
-                                    <Link href="/admin/dashboard">
-                                        <User className="h-4 w-4 mr-1" />
-                                        {t("admin")}
-                                    </Link>
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--light-cream))]"
-                                    onClick={() => signOut({ callbackUrl: "/" })}
-                                >
-                                    <LogOut className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        ) : (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="hidden sm:flex border-[hsl(var(--official-maroon))] text-[hsl(var(--official-maroon))] hover:bg-[hsl(var(--official-maroon))] hover:text-white"
-                                asChild
-                            >
-                                <Link href="/auth/signin">{t("login")}</Link>
-                            </Button>
-                        )}
-
-                        {/* Mobile Menu */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="md:hidden text-[hsl(var(--official-maroon))]"
-                                >
-                                    <Menu className="h-5 w-5" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
-                                {aboutItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                <div className="h-px bg-border my-1" />
-                                {calendarItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                <div className="h-px bg-border my-1" />
-                                {navItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                <div className="h-px bg-border my-1" />
-                                {mediaItems.map((item) => (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href}>{item.name}</Link>
-                                    </DropdownMenuItem>
-                                ))}
-                                {session && (
-                                    <>
-                                        <div className="h-px bg-border my-1" />
-                                        <DropdownMenuItem asChild>
-                                            <Link href="/admin/dashboard">
-                                                <User className="h-4 w-4 mr-2" />
-                                                {t("admin")}
+                <nav className="hidden items-center lg:flex" aria-label="Main">
+                    {NAV.map((entry) =>
+                        isGroup(entry) ? (
+                            <DropdownMenu key={entry.labelKey} modal={false}>
+                                <DropdownMenuTrigger className={navLinkClass(isEntryActive(pathname, entry))}>
+                                    {t(entry.labelKey)}
+                                    <ChevronDown className="size-3.5 opacity-60" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="min-w-[220px]">
+                                    {entry.items.map((item) => (
+                                        <DropdownMenuItem key={item.href} asChild>
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    "w-full",
+                                                    isActivePath(pathname, item.href) && "font-semibold text-primary"
+                                                )}
+                                            >
+                                                {t(item.labelKey)}
                                             </Link>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-                                            <LogOut className="h-4 w-4 mr-2" />
-                                            {t("logout")}
-                                        </DropdownMenuItem>
-                                    </>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Link
+                                key={entry.href}
+                                href={entry.href}
+                                aria-current={isActivePath(pathname, entry.href) ? "page" : undefined}
+                                className={navLinkClass(isActivePath(pathname, entry.href))}
+                            >
+                                {t(entry.labelKey)}
+                            </Link>
+                        )
+                    )}
+                </nav>
+
+                <div className="flex shrink-0 items-center gap-2">
+                    <LanguageSwitcher className="hidden md:inline-flex" />
+                    <div className="hidden lg:block">
+                        <AccountActions />
                     </div>
+                    <MobileMenu />
                 </div>
-            </div>
+            </Container>
         </header>
     );
 }

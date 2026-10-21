@@ -1,6 +1,34 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { successResponse, errorResponse, requireAuthWithRegion } from '@/lib/api-utils';
+import { successResponse, errorResponse, requireAuthWithRegion, hasStaffSession } from '@/lib/api-utils';
+import { PUBLIC_ATHLETE_PROFILE_SELECT } from '@/lib/public-selects';
+import { positionsById } from '@/lib/ranking-position';
+
+interface AthleteRanking {
+  id: number;
+  category: string;
+  gender: string;
+  type: string;
+}
+
+// Место в каждой группе рейтинга — как на странице /ranking, а не поле rank из базы
+async function withRankingPositions<T extends { rankings: AthleteRanking[] }>(athlete: T) {
+  if (athlete.rankings.length === 0) return athlete;
+
+  const groupEntries = await prisma.rankingEntry.findMany({
+    where: {
+      athlete: { isActive: true },
+      OR: athlete.rankings.map(({ category, gender, type }) => ({ category, gender, type })),
+    },
+    select: { id: true, rank: true, points: true, category: true, gender: true, type: true },
+  });
+  const positions = positionsById(groupEntries);
+
+  return {
+    ...athlete,
+    rankings: athlete.rankings.map((ranking) => ({ ...ranking, position: positions.get(ranking.id) ?? null })),
+  };
+}
 
 // GET /api/team/[id] - Public
 export async function GET(
@@ -22,29 +50,20 @@ export async function GET(
       coach: true,
     };
 
-    if (isNaN(athleteId)) {
-      // Try to find by slug
-      const athlete = await prisma.athlete.findUnique({
-        where: { slug: id },
-        include,
-      });
-      if (!athlete) {
-        return errorResponse('Athlete not found', 404);
-      }
-      return successResponse(athlete);
-    }
-
-    const athlete = await prisma.athlete.findUnique({
-      where: { id: athleteId },
-      include,
-    });
+    // Нечисловой id — это slug
+    const where = isNaN(athleteId) ? { slug: id } : { id: athleteId };
+    // Полная карточка (ИИН, медицина, допинг, тренер) — только после входа в админку
+    const athlete = (await hasStaffSession())
+      ? await prisma.athlete.findUnique({ where, include })
+      : await prisma.athlete.findUnique({ where, select: PUBLIC_ATHLETE_PROFILE_SELECT });
 
     if (!athlete) {
       return errorResponse('Athlete not found', 404);
     }
 
-    return successResponse(athlete);
+    return successResponse(await withRankingPositions(athlete));
   } catch (error) {
+    console.error('Athlete API error:', error);
     return errorResponse('Failed to fetch athlete', 500);
   }
 }

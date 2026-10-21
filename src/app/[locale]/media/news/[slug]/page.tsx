@@ -1,9 +1,12 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Calendar, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Calendar } from "lucide-react";
+import { PageContainer } from "@/components/ui/container";
+import { BackLink } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
+import { ShareButton } from "@/components/news/ShareButton";
+import { getNewsCategoryLabel } from "@/lib/constants";
 import prisma from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
 import DOMPurify from "isomorphic-dompurify";
@@ -101,71 +104,49 @@ export default async function NewsArticlePage({ params }: Props) {
   const formattedDate = formatDate(news.publishedAt, locale);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      {/* Back Button */}
-      <Link href="/media/news">
-        <Button variant="ghost" className="mb-6 -ml-2 text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t("back_to_news")}
-        </Button>
-      </Link>
+    <PageContainer size="narrow">
+      <BackLink href="/media/news" label={t("back_to_news")} className="mb-6" />
 
-      {/* Article Header */}
       <article>
-        {/* Featured Image */}
+        <header className="mx-auto max-w-3xl">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="type-small flex items-center gap-3 text-muted-foreground">
+              <Badge variant="brand">{getNewsCategoryLabel(news.category, locale)}</Badge>
+              <span className="flex items-center gap-1.5">
+                <Calendar className="size-4" />
+                <time dateTime={news.publishedAt.toISOString()}>{formattedDate}</time>
+              </span>
+            </div>
+            <ShareButton title={title} label={t("share")} />
+          </div>
+          <h1 className="type-h1 mt-5 text-foreground">{title}</h1>
+        </header>
+
         {news.image && (
-          <div className="relative aspect-[2/1] mb-8 rounded-xl overflow-hidden">
+          <div className="relative mt-8 aspect-[2/1] overflow-hidden rounded-xl bg-secondary md:mt-10">
             <Image
               src={news.image}
               alt={title}
               fill
+              sizes="(max-width: 896px) 100vw, 896px"
               className="object-cover"
               priority
             />
           </div>
         )}
 
-        {/* Meta */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <time dateTime={news.publishedAt.toISOString()}>
-              {formattedDate}
-            </time>
-          </div>
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <Share2 className="h-4 w-4 mr-2" />
-            {t("share")}
-          </Button>
-        </div>
-
-        {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
-          {title}
-        </h1>
-
-        {/* Content */}
         <div
-          className="prose prose-lg max-w-none
-            prose-headings:font-bold
-            prose-p:text-foreground/90
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-            prose-img:rounded-lg
-            prose-blockquote:border-l-primary prose-blockquote:bg-muted/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
+          className="prose prose-lg mx-auto mt-8 max-w-3xl md:mt-10
+            prose-headings:font-heading prose-headings:text-foreground
+            prose-p:text-foreground/85
+            prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary-hover
+            prose-strong:text-foreground
+            prose-img:rounded-xl
+            prose-blockquote:border-l-gold prose-blockquote:bg-secondary prose-blockquote:py-1 prose-blockquote:px-5 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
           "
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(toNewsHtml(content), { ADD_ATTR: ["target"] }) }}
         />
       </article>
-
-      {/* Footer Navigation */}
-      <div className="mt-12 pt-8 border-t">
-        <Link href="/media/news">
-          <Button variant="outline">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("back_to_news")}
-          </Button>
-        </Link>
-      </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -334,7 +334,7 @@ function StatsTab() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleActive(item)}
-                      className={item.isActive ? "text-green-600" : "text-gray-400"}
+                      className={item.isActive ? "text-success" : "text-muted-foreground"}
                     >
                       {item.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                     </Button>
@@ -701,7 +701,7 @@ function HistoryTab() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleActive(item)}
-                      className={item.isActive ? "text-green-600" : "text-gray-400"}
+                      className={item.isActive ? "text-success" : "text-muted-foreground"}
                     >
                       {item.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                     </Button>
@@ -1468,16 +1468,16 @@ function TranslationsTab() {
                   <TableCell className="max-w-xs truncate">{item.ru}</TableCell>
                   <TableCell className="text-center">
                     {item.kk ? (
-                      <Check className="h-4 w-4 text-green-600 mx-auto" />
+                      <Check className="mx-auto size-4 text-success" />
                     ) : (
-                      <X className="h-4 w-4 text-gray-300 mx-auto" />
+                      <X className="mx-auto size-4 text-muted-foreground/50" />
                     )}
                   </TableCell>
                   <TableCell className="text-center">
                     {item.en ? (
-                      <Check className="h-4 w-4 text-green-600 mx-auto" />
+                      <Check className="mx-auto size-4 text-success" />
                     ) : (
-                      <X className="h-4 w-4 text-gray-300 mx-auto" />
+                      <X className="mx-auto size-4 text-muted-foreground/50" />
                     )}
                   </TableCell>
                   <TableCell>
@@ -1617,7 +1617,7 @@ function TranslationsTab() {
 export default function AdminContentPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Управление контентом</h1>
+      <h1 className="type-h1 text-foreground">Управление контентом</h1>
 
       <Tabs defaultValue="translations" className="w-full">
         <TabsList className="grid w-full grid-cols-4">

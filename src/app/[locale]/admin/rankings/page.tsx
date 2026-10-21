@@ -200,7 +200,7 @@ export default function AdminRankingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Рейтинг</h1>
+        <h1 className="type-h1 text-foreground">Рейтинг</h1>
         <Button onClick={openCreateDialog}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить
@@ -272,7 +272,7 @@ export default function AdminRankingsPage() {
                 <TableRow key={item.id}>
                   <TableCell className="font-bold">#{item.rank}</TableCell>
                   <TableCell className="font-medium">{item.athlete.name}</TableCell>
-                  <TableCell className="font-mono font-bold text-primary">{item.points}</TableCell>
+                  <TableCell className="type-number">{item.points}</TableCell>
                   <TableCell>{item.classification || "-"}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">

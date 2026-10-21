@@ -15,13 +15,13 @@ export default async function Home() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <>
       <h1 className="sr-only">{t("title")}</h1>
       <Hero initialSlides={slides} />
       <NewsBlock />
       <RankingWidget />
       <MediaBlock />
       <PartnersBlock />
-    </main>
+    </>
   );
 }

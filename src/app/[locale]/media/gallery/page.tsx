@@ -16,7 +16,10 @@ import {
   ExternalLink,
   ImageIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { PageContainer } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { Chip, ChipGroup } from "@/components/ui/chip";
+import { EmptyState, LoadingState } from "@/components/ui/states";
 
 interface GalleryItem {
   id: number;
@@ -194,83 +197,56 @@ export default function GalleryPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-10">
-        <h1 className="text-4xl font-bold mb-2">{t("title")}</h1>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </div>
+      <PageContainer>
+        <PageHeader title={t("title")} />
+        <LoadingState />
+      </PageContainer>
     );
   }
 
+  const cloudUrl = albumFilter !== "all" && items.length > 0 ? items[0].cloudUrl : null;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold mb-2">{t("title")}</h1>
-        <p className="text-muted-foreground text-lg">{t("subtitle")}</p>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title={t("title")}
+        actions={
+          cloudUrl && (
+            <Button asChild>
+              <a href={cloudUrl} target="_blank" rel="noopener noreferrer">
+                <ExternalLink />
+                {labels.openCloud}
+              </a>
+            </Button>
+          )
+        }
+      />
 
-      {/* Album Filter Tabs */}
       {albums.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => handleAlbumChange("all")}
-            className={cn(
-              "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-              albumFilter === "all"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted hover:bg-muted/80 text-muted-foreground"
-            )}
-          >
+        <ChipGroup className="mb-6">
+          <Chip active={albumFilter === "all"} onClick={() => handleAlbumChange("all")}>
             {labels.all}
-          </button>
+          </Chip>
           {albums.map((album) => (
-            <button
-              key={album}
-              onClick={() => handleAlbumChange(album)}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                albumFilter === album
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
-              )}
-            >
+            <Chip key={album} active={albumFilter === album} onClick={() => handleAlbumChange(album)}>
               {album}
-            </button>
+            </Chip>
           ))}
-        </div>
+        </ChipGroup>
       )}
 
-      {/* Album Cloud Link Banner */}
-      {albumFilter !== "all" && items.length > 0 && items[0].cloudUrl && (
-        <div className="flex items-center justify-end p-4 bg-muted rounded-lg">
-          <a
-            href={items[0].cloudUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-          >
-            <ExternalLink className="h-4 w-4" />
-            {labels.openCloud}
-          </a>
-        </div>
-      )}
-
-      {/* Gallery Grid */}
       {items.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground text-lg">{t("no_items")}</p>
-        </div>
+        <EmptyState icon={ImageIcon} title={t("no_items")} />
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {items.map((item, index) => {
             const thumbnailSrc = item.thumbnailUrl || item.url;
 
             return (
-              <div
+              <button
                 key={item.id}
-                className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer bg-muted"
+                type="button"
+                className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40"
                 onClick={() => openLightbox(item, index)}
               >
                 {thumbnailSrc ? (
@@ -278,45 +254,31 @@ export default function GalleryPage() {
                     src={thumbnailSrc}
                     alt={getLocalizedTitle(item, locale)}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ImageIcon className="h-12 w-12 text-muted-foreground" />
-                  </div>
+                  <span className="flex h-full w-full items-center justify-center">
+                    <ImageIcon className="size-10 text-muted-foreground/50" />
+                  </span>
                 )}
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-white text-sm font-medium line-clamp-2">
-                      {getLocalizedTitle(item, locale)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-left opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className="type-small line-clamp-2 font-medium text-white">
+                    {getLocalizedTitle(item, locale)}
+                  </span>
+                </span>
+              </button>
             );
           })}
         </div>
       )}
 
-      {/* Load More Button */}
       {page < totalPages && (
-        <div className="flex justify-center pt-4">
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleLoadMore}
-            disabled={loadingMore}
-          >
-            {loadingMore ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {t("load_more")}...
-              </>
-            ) : (
-              t("load_more")
-            )}
+        <div className="mt-10 flex justify-center">
+          <Button variant="outline" size="lg" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore && <Loader2 className="animate-spin" />}
+            {t("load_more")}
           </Button>
         </div>
       )}
@@ -329,7 +291,8 @@ export default function GalleryPage() {
               {/* Close Button */}
               <button
                 onClick={closeLightbox}
-                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                aria-label="Close"
+                className="absolute top-4 right-4 z-50 rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20"
               >
                 <X className="h-6 w-6 text-white" />
               </button>
@@ -339,12 +302,14 @@ export default function GalleryPage() {
                 <>
                   <button
                     onClick={() => navigateLightbox("prev")}
+                    aria-label="Previous"
                     className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                   >
                     <ChevronLeft className="h-8 w-8 text-white" />
                   </button>
                   <button
                     onClick={() => navigateLightbox("next")}
+                    aria-label="Next"
                     className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                   >
                     <ChevronRight className="h-8 w-8 text-white" />
@@ -368,7 +333,7 @@ export default function GalleryPage() {
               <div className="p-4 bg-black/50">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="type-h4 text-white">
                       {getLocalizedTitle(selectedItem, locale)}
                     </h3>
                     {(selectedItem.description ||
@@ -378,7 +343,7 @@ export default function GalleryPage() {
                         {getLocalizedDescription(selectedItem, locale)}
                       </p>
                     )}
-                    <div className="text-white/50 text-xs mt-2">
+                    <div className="mt-2 text-xs text-white/70">
                       {currentIndex + 1} / {items.length}
                     </div>
                   </div>
@@ -387,7 +352,7 @@ export default function GalleryPage() {
                       href={selectedItem.cloudUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors"
+                      className="flex shrink-0 items-center gap-2 rounded-md bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink className="h-4 w-4" />
@@ -400,6 +365,6 @@ export default function GalleryPage() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </PageContainer>
   );
 }

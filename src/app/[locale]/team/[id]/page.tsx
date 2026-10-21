@@ -1,7 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { PersonPlaceholder } from "@/components/ui/person-placeholder";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RankBadge } from "@/components/ui/rank-badge";
+import { PageContainer } from "@/components/ui/container";
+import { BackLink } from "@/components/ui/page-header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trophy } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -23,6 +25,8 @@ interface Ranking {
     type: string;
     points: number;
     rank: number;
+    // Место в группе рейтинга; null — спортсмен неактивен и в рейтинге не показывается
+    position: number | null;
 }
 
 interface Region {
@@ -68,9 +72,9 @@ async function getAthlete(id: string): Promise<Athlete | null> {
 }
 
 const LABELS = {
-    ru: { bestRank: "Лучший рейтинг", points: "Очки", rankings: "Рейтинги по категориям", category: "Категория", gender: "Пол", discipline: "Дисциплина", place: "Место" },
-    kk: { bestRank: "Үздік рейтинг", points: "Ұпай", rankings: "Санаттар бойынша рейтинг", category: "Санат", gender: "Жынысы", discipline: "Пән", place: "Орын" },
-    en: { bestRank: "Best ranking", points: "Points", rankings: "Rankings by category", category: "Category", gender: "Gender", discipline: "Discipline", place: "Place" },
+    ru: { back: "Сборная команда", bestRank: "Лучший рейтинг", points: "Очки", rankings: "Рейтинги по категориям", category: "Категория", gender: "Пол", discipline: "Дисциплина", place: "Место" },
+    kk: { back: "Ұлттық құрама", bestRank: "Үздік рейтинг", points: "Ұпай", rankings: "Санаттар бойынша рейтинг", category: "Санат", gender: "Жынысы", discipline: "Пән", place: "Орын" },
+    en: { back: "National Team", bestRank: "Best ranking", points: "Points", rankings: "Rankings by category", category: "Category", gender: "Gender", discipline: "Discipline", place: "Place" },
 } as const;
 
 export default async function AthleteProfile({ params }: { params: Promise<{ id: string; locale: string }> }) {
@@ -82,9 +86,9 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
         notFound();
     }
 
-    // Find the best ranking (lowest rank number = best position)
+    // Лучшее место среди всех групп рейтинга
     const bestRanking = athlete.rankings?.reduce((best, r) =>
-        !best || r.rank < best.rank ? r : best
+        r.position !== null && (!best || best.position === null || r.position < best.position) ? r : best
     , null as Ranking | null);
 
     // Get region display with localization
@@ -120,102 +124,91 @@ export default async function AthleteProfile({ params }: { params: Promise<{ id:
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <PageContainer>
+            <BackLink href="/team" label={labels.back} className="mb-6" />
 
-                {/* Left Column: Bio & Equipment */}
-                <div className="md:col-span-1 space-y-6">
-                    <Card>
-                        <CardContent className="pt-6 flex flex-col items-center">
-                            <Avatar className="w-48 h-48 mb-4 border-4 border-muted">
-                                <AvatarImage src={athlete.image || undefined} alt={getName()} />
-                                <AvatarFallback><PersonPlaceholder /></AvatarFallback>
-                            </Avatar>
-                            <h1 className="text-2xl font-bold text-center mb-1">{getName()}</h1>
-                            <div className="flex gap-2 mb-4 flex-wrap justify-center">
-                                <Badge variant="secondary">{regionDisplay}</Badge>
-                            </div>
-
-                            <div className="w-full space-y-3 text-sm">
-                                {athlete.dob && (
-                                    <div className="flex justify-between border-b pb-2">
-                                        <span className="text-muted-foreground">
-                                            {locale === 'kk' ? 'Туған күні' : locale === 'en' ? 'Date of birth' : 'Дата рождения'}
-                                        </span>
-                                        <span className="font-medium">{formatDate(athlete.dob, locale)}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Right Column: Stats & History */}
-                <div className="md:col-span-2 space-y-6">
-                    {/* Rank & Points Dashboard */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <Card className="bg-primary/5 border-primary/20">
-                            <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">{labels.bestRank}</div>
-                                <div className="text-4xl font-extrabold text-primary">
-                                    #{bestRanking?.rank || '-'}
-                                </div>
-                                {bestRanking && (
-                                    <div className="text-xs text-muted-foreground mt-1">
-                                        {getCategoryLabel(bestRanking.category)}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardContent className="pt-6 text-center">
-                                <div className="text-muted-foreground text-xs uppercase font-bold tracking-wider mb-1">{labels.points}</div>
-                                <div className="text-3xl font-bold">
-                                    {bestRanking?.points || 0}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Rankings by Category */}
-                    {athlete.rankings && athlete.rankings.length > 0 && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><Trophy className="h-5 w-5" /> {labels.rankings}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>{labels.category}</TableHead>
-                                            <TableHead>{labels.gender}</TableHead>
-                                            <TableHead>{labels.discipline}</TableHead>
-                                            <TableHead>{labels.place}</TableHead>
-                                            <TableHead>{labels.points}</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {athlete.rankings.map((ranking) => (
-                                            <TableRow key={ranking.id}>
-                                                <TableCell className="font-medium">{getCategoryLabel(ranking.category)}</TableCell>
-                                                <TableCell>{getGenderLabel(ranking.gender)}</TableCell>
-                                                <TableCell>{getBowTypeLabel(ranking.type)}</TableCell>
-                                                <TableCell>
-                                                    <Badge variant={ranking.rank <= 3 ? "default" : "secondary"}>
-                                                        #{ranking.rank}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell className="font-bold text-primary">{ranking.points}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </CardContent>
-                        </Card>
+            {/* Шапка профиля: портрет, имя, регион и главные цифры на тёмной поверхности */}
+            <section className="surface-inverse grid overflow-hidden rounded-2xl md:grid-cols-12">
+                <div className="relative aspect-[4/5] bg-white/5 md:col-span-5 lg:col-span-4">
+                    {athlete.image ? (
+                        <Image
+                            src={athlete.image}
+                            alt={getName()}
+                            fill
+                            priority
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover object-top"
+                        />
+                    ) : (
+                        <div className="flex h-full items-center justify-center">
+                            <PersonPlaceholder className="size-1/3 text-white/25" />
+                        </div>
                     )}
-
                 </div>
-            </div>
-        </div>
+                <div className="flex flex-col justify-end gap-8 p-6 md:col-span-7 md:p-10 lg:col-span-8 lg:p-12">
+                    <div>
+                        <Eyebrow tone="inverse" className="mb-3">{regionDisplay}</Eyebrow>
+                        <h1 className="type-h1 text-white">{getName()}</h1>
+                    </div>
+                    <dl className="grid grid-cols-2 gap-6 border-t border-white/10 pt-6 sm:grid-cols-3">
+                        <div>
+                            <dt className="type-small text-white/60">{labels.bestRank}</dt>
+                            <dd className="type-number mt-1 text-4xl text-gold">
+                                {bestRanking?.position ? `#${bestRanking.position}` : '—'}
+                            </dd>
+                            {bestRanking && (
+                                <dd className="type-caption mt-1 text-white/60">{getCategoryLabel(bestRanking.category)}</dd>
+                            )}
+                        </div>
+                        <div>
+                            <dt className="type-small text-white/60">{labels.points}</dt>
+                            <dd className="type-number mt-1 text-4xl text-white">{bestRanking?.points || 0}</dd>
+                        </div>
+                        {athlete.dob && (
+                            <div>
+                                <dt className="type-small text-white/60">
+                                    {locale === 'kk' ? 'Туған күні' : locale === 'en' ? 'Date of birth' : 'Дата рождения'}
+                                </dt>
+                                <dd className="mt-2 font-medium text-white">{formatDate(athlete.dob, locale)}</dd>
+                            </div>
+                        )}
+                    </dl>
+                </div>
+            </section>
+
+            {athlete.rankings && athlete.rankings.length > 0 && (
+                <section className="mt-10 md:mt-12">
+                    <h2 className="type-h3 mb-4 flex items-center gap-2 text-foreground">
+                        <Trophy className="size-5 text-primary" /> {labels.rankings}
+                    </h2>
+                    <div className="overflow-hidden rounded-lg border shadow-card">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>{labels.category}</TableHead>
+                                    <TableHead>{labels.gender}</TableHead>
+                                    <TableHead>{labels.discipline}</TableHead>
+                                    <TableHead>{labels.place}</TableHead>
+                                    <TableHead className="text-right">{labels.points}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {athlete.rankings.map((ranking) => (
+                                    <TableRow key={ranking.id}>
+                                        <TableCell className="font-medium">{getCategoryLabel(ranking.category)}</TableCell>
+                                        <TableCell>{getGenderLabel(ranking.gender)}</TableCell>
+                                        <TableCell>{getBowTypeLabel(ranking.type)}</TableCell>
+                                        <TableCell>
+                                            {ranking.position ? <RankBadge position={ranking.position} /> : '—'}
+                                        </TableCell>
+                                        <TableCell className="type-number text-right text-base">{ranking.points}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </section>
+            )}
+        </PageContainer>
     );
 }

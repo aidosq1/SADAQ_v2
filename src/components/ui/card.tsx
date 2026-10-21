@@ -2,12 +2,23 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+// Классы карточки для элементов, которые не могут быть <Card> (например, <Link>)
+const cardSurface = "bg-card text-card-foreground rounded-lg border shadow-card"
+const cardInteractive =
+  "transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-raised motion-reduce:hover:translate-y-0"
+
+interface CardProps extends React.ComponentProps<"div"> {
+  interactive?: boolean
+}
+
+function Card({ className, interactive = false, ...props }: CardProps) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        cardSurface,
+        "flex flex-col gap-6 py-6",
+        interactive && cardInteractive,
         className
       )}
       {...props}
@@ -32,7 +43,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
+      className={cn("type-h4 text-foreground", className)}
       {...props}
     />
   )
@@ -82,6 +93,8 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 export {
+  cardSurface,
+  cardInteractive,
   Card,
   CardHeader,
   CardFooter,

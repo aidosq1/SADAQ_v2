@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/date-format";
 import { getNewsCategoryLabel } from "@/lib/constants";
+import { Section, SectionHeader } from "@/components/ui/section";
+import { ArrowLink } from "@/components/ui/arrow-link";
+import { Badge } from "@/components/ui/badge";
+import { MediaCard } from "@/components/ui/media-card";
 
 interface NewsItem {
   id: number;
@@ -23,8 +25,6 @@ interface NewsBlockClientProps {
   translations: {
     sectionTitle: string;
     allNewsText: string;
-    pressCenter: string;
-    readMore: string;
   };
 }
 
@@ -34,82 +34,62 @@ function getLocalizedTitle(item: NewsItem, locale: string): string {
   return item.title;
 }
 
+function NewsDate({ date, locale }: { date: Date; locale: string }) {
+  return (
+    <>
+      <Calendar className="size-3.5" />
+      <span suppressHydrationWarning>{formatDate(date, locale)}</span>
+    </>
+  );
+}
 
+// Новости главной: последняя — крупно с текстом на фото, следующие — списком справа
 export function NewsBlockClient({ news, locale, translations }: NewsBlockClientProps) {
   if (news.length === 0) return null;
 
+  const [featured, ...rest] = news;
+
   return (
-    <section className="py-16 bg-[hsl(var(--light-cream))]">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <span className="text-xs font-medium text-[hsl(var(--official-gold))] uppercase tracking-wider mb-2 block">
-              {translations.pressCenter}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[hsl(var(--official-maroon))] gold-accent">
-              {translations.sectionTitle}
-            </h2>
-          </div>
-          <Link
-            href="/media/news"
-            className="hidden md:flex items-center gap-2 text-sm font-medium text-[hsl(var(--official-red))] hover:underline"
-          >
-            {translations.allNewsText}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+    <Section className="pt-12 md:pt-16">
+      <SectionHeader
+        title={translations.sectionTitle}
+        action={<ArrowLink href="/media/news">{translations.allNewsText}</ArrowLink>}
+      />
 
-        {/* News Grid - 4 columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {news.map((item) => (
-            <Link
-              key={item.id}
-              href={`/media/news/${item.slug}`}
-              className="group bg-white border border-[hsl(var(--border-light))] rounded-lg overflow-hidden hover-lift"
-            >
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={item.image || '/slides/archer_tokyo.png'}
-                  alt={getLocalizedTitle(item, locale)}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <MediaCard
+          variant="overlay"
+          href={`/media/news/${featured.slug}`}
+          title={getLocalizedTitle(featured, locale)}
+          image={featured.image}
+          aspect="aspect-[4/3] lg:aspect-auto"
+          sizes="(max-width: 1024px) 100vw, 58vw"
+          className="lg:col-span-7 lg:min-h-[440px]"
+          badge={<Badge variant="brand">{getNewsCategoryLabel(featured.category, locale)}</Badge>}
+          meta={<NewsDate date={featured.publishedAt} locale={locale} />}
+        />
+
+        {rest.length > 0 && (
+          <ul className="flex flex-col divide-y lg:col-span-5">
+            {rest.map((item) => (
+              <li key={item.id} className="py-5 first:pt-0 last:pb-0">
+                <MediaCard
+                  variant="row"
+                  href={`/media/news/${item.slug}`}
+                  title={getLocalizedTitle(item, locale)}
+                  image={item.image}
+                  badge={
+                    <span className="type-eyebrow text-gold-strong">
+                      {getNewsCategoryLabel(item.category, locale)}
+                    </span>
+                  }
+                  meta={<NewsDate date={item.publishedAt} locale={locale} />}
                 />
-                {/* Category Badge */}
-                <div className="absolute top-3 left-3">
-                  <span className="official-badge">
-                    {getNewsCategoryLabel(item.category, locale)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-4">
-                <div className="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))] mb-2" suppressHydrationWarning>
-                  <Calendar className="w-3 h-3" />
-                  <span suppressHydrationWarning>{formatDate(item.publishedAt, locale)}</span>
-                </div>
-                <h3 className="font-heading font-semibold text-[hsl(var(--official-maroon))] leading-snug line-clamp-2 group-hover:text-[hsl(var(--official-red))] transition-colors">
-                  {getLocalizedTitle(item, locale)}
-                </h3>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Mobile CTA */}
-        <div className="mt-8 md:hidden text-center">
-          <Link
-            href="/media/news"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[hsl(var(--official-maroon))] text-white font-medium rounded-lg hover:bg-[hsl(var(--official-maroon))]/90 transition-colors"
-          >
-            {translations.allNewsText}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    </section>
+    </Section>
   );
 }

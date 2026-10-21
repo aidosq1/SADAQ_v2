@@ -64,13 +64,14 @@ export function getTournamentStatus(tournament: TournamentForStatus): Tournament
 /**
  * Get status configuration for UI display
  */
+// Варианты Badge из UI kit (src/components/ui/badge.tsx)
+export type StatusVariant = 'success' | 'warning' | 'info' | 'neutral';
+
 export interface StatusConfig {
   label: string;
   labelKk: string;
   labelEn: string;
-  color: string;
-  bgClass: string;
-  textClass: string;
+  variant: StatusVariant;
 }
 
 export const TOURNAMENT_STATUS_CONFIG: Record<TournamentStatus, StatusConfig> = {
@@ -78,33 +79,25 @@ export const TOURNAMENT_STATUS_CONFIG: Record<TournamentStatus, StatusConfig> = 
     label: 'Регистрация открыта',
     labelKk: 'Тіркеу ашық',
     labelEn: 'Registration Open',
-    color: 'green',
-    bgClass: 'bg-green-100',
-    textClass: 'text-green-700',
+    variant: 'success',
   },
   REGISTRATION_CLOSED: {
     label: 'Регистрация закрыта',
     labelKk: 'Тіркеу жабық',
     labelEn: 'Registration Closed',
-    color: 'yellow',
-    bgClass: 'bg-yellow-100',
-    textClass: 'text-yellow-700',
+    variant: 'warning',
   },
   IN_PROGRESS: {
     label: 'Идёт турнир',
     labelKk: 'Турнир жүріп жатыр',
     labelEn: 'In Progress',
-    color: 'blue',
-    bgClass: 'bg-blue-100',
-    textClass: 'text-blue-700',
+    variant: 'info',
   },
   COMPLETED: {
     label: 'Завершён',
     labelKk: 'Аяқталды',
     labelEn: 'Completed',
-    color: 'gray',
-    bgClass: 'bg-gray-100',
-    textClass: 'text-gray-600',
+    variant: 'neutral',
   },
 };
 
@@ -126,12 +119,10 @@ export function getStatusLabel(status: TournamentStatus, locale: string = 'ru'):
 }
 
 /**
- * Get status CSS classes for Badge component
+ * Get Badge variant for status
  */
-export function getStatusClasses(status: TournamentStatus): string {
-  const config = TOURNAMENT_STATUS_CONFIG[status];
-  if (!config) return 'bg-gray-100 text-gray-600';
-  return `${config.bgClass} ${config.textClass}`;
+export function getStatusVariant(status: TournamentStatus): StatusVariant {
+  return TOURNAMENT_STATUS_CONFIG[status]?.variant ?? 'neutral';
 }
 
 /**

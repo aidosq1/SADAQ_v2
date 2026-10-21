@@ -282,7 +282,7 @@ export default function AdminJudgesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{labels.title}</h1>
+          <h1 className="type-h1 text-foreground">{labels.title}</h1>
           {!isAdmin && userRegion && (
             <p className="text-muted-foreground">{userRegion}</p>
           )}
@@ -353,7 +353,7 @@ export default function AdminJudgesPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleActive(item)}
-                      className={item.isActive ? "text-green-600" : "text-gray-400"}
+                      className={item.isActive ? "text-success" : "text-muted-foreground"}
                     >
                       {item.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                     </Button>
