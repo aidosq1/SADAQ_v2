@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { canOwnerEditRegistration, getAthleteEligibilityError, getMaxAthletes } from "@/lib/registration-rules";
 
 // Helper to check registration access and permissions
 async function checkRegistrationAccess(registrationId: number, session: any) {
@@ -30,8 +31,9 @@ async function checkRegistrationAccess(registrationId: number, session: any) {
         return { error: "Forbidden", status: 403 };
     }
 
-    // Check if registration can be edited
-    const canEdit = isAdmin || (isOwner && registration.status === 'PENDING');
+    // Owner edits only while the registration is pending and the tournament accepts applications
+    const tournament = registration.tournamentCategory?.tournament;
+    const canEdit = isAdmin || (isOwner && !!tournament && canOwnerEditRegistration(registration.status, tournament));
 
     return { registration, isAdmin, isOwner, canEdit, userId };
 }
@@ -162,7 +164,7 @@ export async function POST(
 
         const isHostRegion = access.registration.tournamentCategory?.tournament.organizingRegionId ===
             access.registration.regionId;
-        const maxAthletes = isHostRegion ? 6 : 4;
+        const maxAthletes = getMaxAthletes(isHostRegion);
 
         if (currentCount >= maxAthletes) {
             return NextResponse.json({
@@ -177,6 +179,18 @@ export async function POST(
 
         if (!athlete) {
             return NextResponse.json({ error: "Athlete not found" }, { status: 404 });
+        }
+
+        // Gender must match the category; a region adds only its own athletes
+        if (access.registration.tournamentCategory) {
+            const eligibilityError = getAthleteEligibilityError(
+                athlete,
+                access.registration.tournamentCategory,
+                access.isAdmin ? null : access.registration.regionId
+            );
+            if (eligibilityError) {
+                return NextResponse.json({ error: eligibilityError }, { status: 400 });
+            }
         }
 
         // Create athlete registration

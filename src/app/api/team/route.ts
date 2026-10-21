@@ -19,10 +19,12 @@ export async function GET(request: NextRequest) {
       const auth = await requireAuthWithRegion(['Admin', 'Editor', 'RegionalRepresentative']);
       if (!auth.authorized) return auth.error;
 
-      // Filter only by gender for admin view (type/category removed from Athlete)
+      // Filter only by gender and region for admin view (type/category removed from Athlete)
+      const regionIdParam = parseInt(searchParams.get('regionId') || '');
       const where: Record<string, unknown> = {
         ...(searchParams.get('gender') && gender !== 'all' && { gender }),
         ...(isActive !== null && { isActive: isActive !== 'false' }),
+        ...(!isNaN(regionIdParam) && { regionId: regionIdParam }),
       };
 
       // For RegionalRepresentative, filter by their region

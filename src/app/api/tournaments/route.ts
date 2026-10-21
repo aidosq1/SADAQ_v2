@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { successResponse, errorResponse, requireAuth, parseQueryParams } from '@/lib/api-utils';
+import { getTournamentDatesError, InvalidDateError } from '@/lib/tournament-input';
+import { pickTournamentFields, parseCategories, TournamentInputError } from '@/lib/tournament-write';
 
 // GET /api/tournaments - Public
 export async function GET(request: NextRequest) {
@@ -25,9 +27,9 @@ export async function GET(request: NextRequest) {
     const statusLower = status?.toLowerCase();
     if (statusLower) {
       if (statusLower === 'upcoming' || statusLower === 'registration_open') {
-        // Tournaments with open registration (not started yet, or deadline not passed)
+        // Tournaments with open registration: not started yet and deadline not passed
         where.isRegistrationOpen = true;
-        where.endDate = { gt: now }; // Tournament not finished
+        where.startDate = { gt: now };
         where.OR = [
           { registrationDeadline: null },
           { registrationDeadline: { gte: now } }
@@ -99,63 +101,49 @@ export async function POST(request: NextRequest) {
     if (!auth.authorized) return auth.error;
 
     const body = await request.json();
-    const {
-      title, titleKk, titleEn,
-      description, descriptionKk, descriptionEn,
-      startDate, endDate,
-      location, locationKk, locationEn,
-      regulationUrl,
-      isRegistrationOpen, registrationDeadline, isFeatured,
-      organizingRegionId,
-      categories = []
-    } = body;
+    const fields = pickTournamentFields(body);
+    const categories = parseCategories(body.categories ?? []);
+    const { title, location, startDate, endDate } = fields;
 
     if (!title || !startDate || !endDate || !location) {
       return errorResponse('Missing required fields: title, startDate, endDate, location');
     }
 
-    // If setting as featured, unset other featured tournaments
-    if (isFeatured) {
-      await prisma.tournament.updateMany({
-        where: { isFeatured: true },
-        data: { isFeatured: false },
-      });
-    }
+    const datesError = getTournamentDatesError(startDate, endDate);
+    if (datesError) return errorResponse(datesError);
 
-    const tournament = await prisma.tournament.create({
-      data: {
-        title,
-        titleKk,
-        titleEn,
-        description,
-        descriptionKk,
-        descriptionEn,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        location,
-        locationKk,
-        locationEn,
-        regulationUrl: regulationUrl || null,
-        isRegistrationOpen: isRegistrationOpen ?? true,
-        registrationDeadline: registrationDeadline ? new Date(registrationDeadline) : null,
-        isFeatured: isFeatured ?? false,
-        organizingRegionId: organizingRegionId ? parseInt(organizingRegionId) : null,
-        categories: {
-          create: categories.map((cat: { category: string; gender: string; type: string }) => ({
-            category: cat.category,
-            gender: cat.gender,
-            type: cat.type,
-          }))
-        }
-      },
-      include: {
-        organizingRegion: true,
-        categories: true
+    const tournament = await prisma.$transaction(async (tx) => {
+      // Only one featured tournament at a time
+      if (fields.isFeatured) {
+        await tx.tournament.updateMany({
+          where: { isFeatured: true },
+          data: { isFeatured: false },
+        });
       }
+
+      return tx.tournament.create({
+        data: {
+          ...fields,
+          title,
+          location,
+          startDate,
+          endDate,
+          isRegistrationOpen: fields.isRegistrationOpen ?? true,
+          isFeatured: fields.isFeatured ?? false,
+          categories: { create: categories },
+        },
+        include: {
+          organizingRegion: true,
+          categories: true
+        }
+      });
     });
 
     return successResponse(tournament);
   } catch (error) {
+    if (error instanceof TournamentInputError || error instanceof InvalidDateError) {
+      return errorResponse(error.message);
+    }
     console.error('Failed to create tournament:', error);
     return errorResponse('Failed to create tournament', 500);
   }

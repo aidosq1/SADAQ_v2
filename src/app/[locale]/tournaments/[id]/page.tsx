@@ -17,6 +17,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { formatDateRange } from "@/lib/date-format";
 import { getRegionName } from "@/lib/localization";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
+import { isRegistrationAvailable } from "@/lib/tournament-utils";
 
 interface TournamentResult {
     id: number;
@@ -76,7 +77,8 @@ interface Tournament {
     locationKk?: string;
     locationEn?: string;
     regulationUrl?: string | null;
-    isActive: boolean;
+    isRegistrationOpen: boolean;
+    registrationDeadline?: string | null;
     organizingRegion?: OrganizingRegion | null;
     categories: TournamentCategory[];
 }
@@ -212,6 +214,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
     const startDate = new Date(tournament.startDate);
     const endDate = new Date(tournament.endDate);
     const status = getTournamentStatus(startDate, endDate);
+    const canApply = isRegistrationAvailable(tournament);
 
     const statusConfig = {
         finished: { label: t("status_finished"), variant: "neutral" },
@@ -254,9 +257,9 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                         <p className="type-body max-w-3xl text-white/70">{getLocalizedDescription()}</p>
                     )}
 
-                    {(tournament.regulationUrl || ((status === "planned" || status === "ongoing") && tournament.isActive)) && (
+                    {(tournament.regulationUrl || canApply) && (
                         <div className="flex flex-wrap gap-3 pt-2">
-                            {(status === "planned" || status === "ongoing") && tournament.isActive && (
+                            {canApply && (
                                 <Button variant="inverse" size="lg" asChild>
                                     <Link href={`/tournaments/apply?tournamentId=${tournament.id}`}>
                                         {t("registration")}

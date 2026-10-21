@@ -5,18 +5,18 @@ import path from "path";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// Allowed file types
-const ALLOWED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-];
+// Allowed file types and their extensions: the browser-reported type alone can be spoofed
+const ALLOWED_TYPES: Record<string, string[]> = {
+  "image/jpeg": [".jpg", ".jpeg", ".jfif"],
+  "image/png": [".png"],
+  "image/gif": [".gif"],
+  "image/webp": [".webp"],
+  "application/pdf": [".pdf"],
+  "application/msword": [".doc"],
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+  "application/vnd.ms-excel": [".xls"],
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+};
 
 // Whitelist допустимых папок для загрузки (защита от path traversal)
 const ALLOWED_FOLDERS = [
@@ -95,7 +95,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    const extension = path.extname(file.name).toLowerCase();
+    if (!ALLOWED_TYPES[file.type]?.includes(extension)) {
       return NextResponse.json(
         { success: false, error: "File type not allowed" },
         { status: 400 }

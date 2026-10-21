@@ -268,7 +268,7 @@ export default function AdminTournamentsPage() {
         ...formData,
         startDate: formData.startDate ? new Date(formData.startDate).toISOString() : "",
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : "",
-        registrationDeadline: formData.registrationDeadline ? new Date(formData.registrationDeadline).toISOString() : "",
+        registrationDeadline: formData.registrationDeadline ? new Date(formData.registrationDeadline).toISOString() : null,
       };
 
       const res = await fetch(url, {

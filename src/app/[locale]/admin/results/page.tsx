@@ -35,6 +35,7 @@ import { FileUpload } from "@/components/admin/FileUpload";
 import { toast } from "sonner";
 import { useLocale } from "next-intl";
 import { CATEGORIES, GENDERS, BOW_TYPES, getLocalizedLabel } from "@/lib/constants";
+import { calculatePoints } from "@/lib/ranking-points";
 
 interface Athlete {
     id: number;
@@ -58,6 +59,9 @@ interface Tournament {
     titleEn?: string;
     startDate: string;
     endDate: string;
+    location: string;
+    locationKk?: string | null;
+    locationEn?: string | null;
     categories: TournamentCategory[];
 }
 
@@ -72,12 +76,6 @@ interface ResultEntry {
 interface ProtocolData {
     id?: number;
     fileUrl: string;
-}
-
-// Calculate points based on place: 1=100, 2=90, 3=80... 8=30, rest=0
-function calculatePoints(place: number): number {
-    if (place < 1 || place > 8) return 0;
-    return 100 - (place - 1) * 10;
 }
 
 export default function AdminResultsPage() {
@@ -219,7 +217,9 @@ export default function AdminResultsPage() {
                 titleKk: tournamentData?.titleKk || "",
                 titleEn: tournamentData?.titleEn || "",
                 eventDate: tournamentData?.startDate || new Date().toISOString(),
-                location: "Казахстан",
+                location: tournamentData?.location || "Казахстан",
+                locationKk: tournamentData?.locationKk || "",
+                locationEn: tournamentData?.locationEn || "",
                 year: new Date(tournamentData?.startDate || Date.now()).getFullYear(),
                 fileUrl: protocol.fileUrl,
                 tournamentCategoryId: parseInt(selectedCategoryId),
@@ -269,6 +269,9 @@ export default function AdminResultsPage() {
     const selectedTournament = tournaments.find(t => t.id === parseInt(selectedTournamentId));
     const selectedCategory = selectedTournament?.categories.find(c => c.id === parseInt(selectedCategoryId));
 
+    // Same table as the server: adults 100…30, younger categories 70…5
+    const pointsFor = (place: number) => calculatePoints(place, selectedCategory?.category ?? "");
+
     const getCategoryLabel = (cat: TournamentCategory) => {
         const categoryItem = CATEGORIES.find(c => c.id === cat.category);
         const genderItem = GENDERS.find(g => g.id === cat.gender);
@@ -298,7 +301,7 @@ export default function AdminResultsPage() {
             {
                 athleteId: 0,
                 place: nextPlace,
-                points: calculatePoints(nextPlace),
+                points: pointsFor(nextPlace),
                 score: undefined
             }
         ]);
@@ -310,7 +313,7 @@ export default function AdminResultsPage() {
         setResults(newResults.map((r, i) => ({
             ...r,
             place: i + 1,
-            points: calculatePoints(i + 1)
+            points: pointsFor(i + 1)
         })));
     }
 
@@ -322,7 +325,7 @@ export default function AdminResultsPage() {
 
             // Auto-calculate points when place changes
             if (field === 'place') {
-                updated.points = calculatePoints(parseInt(value) || 0);
+                updated.points = pointsFor(parseInt(value) || 0);
             }
 
             // Update athlete name if athleteId changes

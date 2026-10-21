@@ -3,19 +3,18 @@ import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { PUBLIC_ATHLETE_SELECT } from "@/lib/public-selects";
+import { calculatePoints, isValidPlace } from "@/lib/ranking-points";
 
-// Points tables based on category
-const SENIOR_POINTS = [100, 90, 80, 70, 60, 50, 40, 30]; // Adults
-const JUNIOR_POINTS = [70, 60, 50, 40, 30, 20, 10, 5];   // Youth, Juniors, Cadets, Cubs
+interface ResultInput {
+    athleteId: number;
+    place: number;
+    score?: number | null;
+}
 
-// Calculate points based on place and category
-function calculatePoints(place: number, category: string): number {
-    if (place < 1 || place > 8) return 0;
-
-    const isSenior = category.toLowerCase() === 'adults';
-    const points = isSenior ? SENIOR_POINTS : JUNIOR_POINTS;
-
-    return points[place - 1];
+function isValidResult(r: unknown): r is ResultInput {
+    const { athleteId, place, score } = (r ?? {}) as Record<string, unknown>;
+    const validScore = score === undefined || score === null || (Number.isInteger(score) && (score as number) >= 0);
+    return Number.isInteger(athleteId) && isValidPlace(place) && validScore;
 }
 
 // GET /api/tournaments/[id]/results - Get results for a tournament
@@ -107,8 +106,11 @@ export async function POST(
         const { categoryId, results } = body;
 
         // Validate
-        if (!categoryId || !results || !Array.isArray(results)) {
+        if (!Number.isInteger(categoryId) || !Array.isArray(results)) {
             return NextResponse.json({ error: "categoryId and results array are required" }, { status: 400 });
+        }
+        if (!results.every(isValidResult)) {
+            return NextResponse.json({ error: "Место — целое число от 1, результат — не меньше 0" }, { status: 400 });
         }
 
         // Verify category belongs to tournament
@@ -124,8 +126,8 @@ export async function POST(
         }
 
         // Validate results: check for duplicate places and athletes
-        const places = results.map((r: any) => r.place);
-        const athletes = results.map((r: any) => r.athleteId);
+        const places = results.map((r) => r.place);
+        const athletes = results.map((r) => r.athleteId);
 
         if (new Set(places).size !== places.length) {
             return NextResponse.json({ error: "Duplicate places found" }, { status: 400 });
@@ -152,7 +154,7 @@ export async function POST(
                         athleteId: r.athleteId,
                         place: r.place,
                         points: points,
-                        score: r.score || null
+                        score: r.score ?? null
                     },
                     include: {
                         athlete: {
