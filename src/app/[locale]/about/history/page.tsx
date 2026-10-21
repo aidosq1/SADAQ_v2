@@ -113,7 +113,7 @@ export default function HistoryPage() {
                                 <div className="absolute left-[28px] md:left-1/2 w-14 h-14 rounded-full bg-background border border-border flex items-center justify-center -translate-x-1/2 z-10 shadow-md top-0 md:top-1/2 md:-translate-y-1/2">
                                     {iconMap[event.iconType] || iconMap.calendar}
                                 </div>
-                                <div className="ml-20 md:ml-0 md:w-1/2 md:px-12 w-full">
+                                <div className="ml-20 md:ml-0 md:w-1/2 md:px-12 self-stretch md:self-auto">
                                     <TiltCard className="rounded-xl h-full">
                                         <Card className="bg-card border-border relative overflow-hidden group hover:shadow-lg transition-all shadow-md h-full">
                                             <CardContent className="p-8">
