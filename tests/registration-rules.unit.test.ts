@@ -8,6 +8,7 @@ import {
   getMaxAthletes,
   findDuplicateIds,
   getAthleteEligibilityError,
+  getAthleteEligibilityIssue,
   canOwnerEditRegistration,
   isActiveRegistrationStatus,
 } from '../src/lib/registration-rules';
@@ -38,6 +39,12 @@ test('спортсмен другого пола не подходит кате�
 test('спортсмен другого региона не подходит заявке региона', () => {
   const error = getAthleteEligibilityError({ name: 'Петров', gender: 'M', regionId: 16 }, { gender: 'M' }, 15);
   assert.match(error ?? '', /Петров/);
+});
+
+test('причина отказа отдаётся кодом: форма переводит её на язык сайта', () => {
+  assert.equal(getAthleteEligibilityIssue({ name: 'Иванова', gender: 'F', regionId: 15 }, { gender: 'M' }, 15), 'gender_mismatch');
+  assert.equal(getAthleteEligibilityIssue({ name: 'Петров', gender: 'M', regionId: 16 }, { gender: 'M' }, 15), 'other_region');
+  assert.equal(getAthleteEligibilityIssue({ name: 'Петров', gender: 'M', regionId: 15 }, { gender: 'M' }, 15), null);
 });
 
 test('без проверки региона (админ) важен только пол', () => {

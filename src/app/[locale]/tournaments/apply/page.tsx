@@ -521,7 +521,8 @@ export default function TournamentApplyPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                toast.error(data.error || t("submit_error"));
+                const errorKey = `err_${data.code}`;
+                toast.error(data.code && t.has(errorKey) ? t(errorKey, data.params) : data.error || t("submit_error"));
                 setIsSubmitting(false);
                 return;
             }
@@ -883,6 +884,7 @@ export default function TournamentApplyPage() {
                                             value={p.athleteId}
                                             onChange={(id) => updateParticipant(p.id, 'athleteId', id)}
                                             placeholder={t("choose_athlete")}
+                                            searchPlaceholder={t("search_athlete")}
                                         />
                                     </div>
 
@@ -894,6 +896,7 @@ export default function TournamentApplyPage() {
                                             value={p.coachId}
                                             onChange={(id) => updateParticipant(p.id, 'coachId', id)}
                                             placeholder={t("choose_coach")}
+                                            searchPlaceholder={t("search_coach")}
                                         />
                                     </div>
                                 </div>

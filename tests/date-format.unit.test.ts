@@ -9,8 +9,8 @@ import { formatDate, formatDateRange, formatDayAndShortMonth } from '../src/lib/
 // 12:00 по Алматы, чтобы граница суток не влияла на результат
 const d = (iso: string) => new Date(`${iso}T12:00:00+05:00`);
 
-test('kk: месяц словом, без "M10"', () => {
-  assert.equal(formatDate(d('2026-10-21'), 'kk'), '21 қазан 2026');
+test('kk: месяц словом, без "M10", год впереди с «жылғы»', () => {
+  assert.equal(formatDate(d('2026-10-21'), 'kk'), '2026 жылғы 21 қазан');
   assert.equal(formatDate(d('2026-01-05'), 'kk', { withYear: false }), '5 қаңтар');
 });
 
@@ -31,23 +31,23 @@ test('ru и en форматируются через Intl', () => {
 
 test('дата берётся по Алматы, а не по UTC', () => {
   // 21 октября 23:30 по Алматы = 21 октября 18:30 UTC
-  assert.equal(formatDate(new Date('2026-10-21T18:30:00Z'), 'kk'), '21 қазан 2026');
+  assert.equal(formatDate(new Date('2026-10-21T18:30:00Z'), 'kk'), '2026 жылғы 21 қазан');
   // 22 октября 01:00 по Алматы = 21 октября 20:00 UTC
-  assert.equal(formatDate(new Date('2026-10-21T20:00:00Z'), 'kk'), '22 қазан 2026');
+  assert.equal(formatDate(new Date('2026-10-21T20:00:00Z'), 'kk'), '2026 жылғы 22 қазан');
 });
 
 test('kk: диапазон в одном месяце', () => {
-  assert.equal(formatDateRange(d('2026-07-27'), d('2026-07-31'), 'kk'), '27–31 шілде 2026');
+  assert.equal(formatDateRange(d('2026-07-27'), d('2026-07-31'), 'kk'), '2026 жылғы 27–31 шілде');
 });
 
 test('kk: диапазон через месяц и через год', () => {
-  assert.equal(formatDateRange(d('2026-02-28'), d('2026-03-03'), 'kk'), '28 ақпан – 3 наурыз 2026');
-  assert.equal(formatDateRange(d('2026-12-30'), d('2027-01-02'), 'kk'), '30 желтоқсан 2026 – 2 қаңтар 2027');
+  assert.equal(formatDateRange(d('2026-02-28'), d('2026-03-03'), 'kk'), '2026 жылғы 28 ақпан – 3 наурыз');
+  assert.equal(formatDateRange(d('2026-12-30'), d('2027-01-02'), 'kk'), '2026 жылғы 30 желтоқсан – 2027 жылғы 2 қаңтар');
 });
 
 test('диапазон из одного дня = одна дата', () => {
-  assert.equal(formatDateRange(d('2026-05-05'), d('2026-05-05'), 'kk'), '5 мамыр 2026');
-  assert.equal(formatDateRange(d('2026-05-05'), null, 'kk'), '5 мамыр 2026');
+  assert.equal(formatDateRange(d('2026-05-05'), d('2026-05-05'), 'kk'), '2026 жылғы 5 мамыр');
+  assert.equal(formatDateRange(d('2026-05-05'), null, 'kk'), '2026 жылғы 5 мамыр');
 });
 
 test('ru: диапазон в одном месяце', () => {
@@ -62,6 +62,8 @@ test('плитка даты: число и короткий месяц по вр
   assert.deepEqual(formatDayAndShortMonth(d('2026-07-27'), 'kk'), { day: 27, month: 'шіл' });
   assert.deepEqual(formatDayAndShortMonth(d('2026-07-27'), 'ru'), { day: 27, month: 'июль' });
   assert.deepEqual(formatDayAndShortMonth(d('2026-07-27'), 'en'), { day: 27, month: 'Jul' });
+  // en-US, как в остальных английских датах: Sep, а не британское Sept
+  assert.deepEqual(formatDayAndShortMonth(d('2026-09-15'), 'en'), { day: 15, month: 'Sep' });
 });
 
 test('плитка даты: 00:30 по Алматы — уже новый день, хотя в UTC ещё вчера', () => {

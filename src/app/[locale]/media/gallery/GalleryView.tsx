@@ -64,7 +64,7 @@ export interface GalleryResponse {
 const GALLERY_LABELS = {
   ru: { all: "Все", openCloud: "Открыть в облаке", allInCloud: "Все фото в облаке" },
   kk: { all: "Барлығы", openCloud: "Бұлтта ашу", allInCloud: "Барлық фото бұлтта" },
-  en: { all: "All", openCloud: "Open in cloud", allInCloud: "All photos in cloud" },
+  en: { all: "All", openCloud: "Open in the cloud", allInCloud: "All photos in the cloud" },
 } as const;
 
 function pageCount(meta: GalleryResponse["meta"]): number {

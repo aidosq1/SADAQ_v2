@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAuthWithRegion, generateSlug } from "@/lib/api-utils";
 import { Prisma } from "@prisma/client";
-import { findDuplicateIds, getAthleteEligibilityError, getMaxAthletes } from "@/lib/registration-rules";
+import { findDuplicateIds, getAthleteEligibilityIssue, getAthleteEligibilityError, getMaxAthletes } from "@/lib/registration-rules";
+
+type ErrorParams = Record<string, string | number>;
+
+// code и params — для формы: она показывает ошибку на языке сайта (ключи ApplyPage.err_*), error — запасной текст
+function fail(error: string, status: number, code?: string, params?: ErrorParams) {
+    return NextResponse.json({ error, code, params }, { status });
+}
 
 interface NewJudge {
     name: string;
@@ -152,10 +159,10 @@ export async function POST(req: Request) {
         }
 
         if (findDuplicateIds(judgeEntries.map((j) => j.judgeId)).length > 0) {
-            return NextResponse.json({ error: "Судья указан в заявке дважды" }, { status: 400 });
+            return fail("Судья указан в заявке дважды", 400, "duplicate_judge");
         }
         if (findDuplicateIds(participants.map((p) => p.athleteId)).length > 0) {
-            return NextResponse.json({ error: "Спортсмен указан в заявке дважды" }, { status: 400 });
+            return fail("Спортсмен указан в заявке дважды", 400, "duplicate_athlete");
         }
 
         // Check if tournament category exists and tournament is open for registration
@@ -165,7 +172,7 @@ export async function POST(req: Request) {
         });
 
         if (!tournamentCategory) {
-            return NextResponse.json({ error: "Tournament category not found" }, { status: 404 });
+            return fail("Tournament category not found", 404, "category_not_found");
         }
 
         // Check if registration is open
@@ -174,17 +181,17 @@ export async function POST(req: Request) {
 
         // Tournament must not have started yet
         if (now >= new Date(tournament.startDate)) {
-            return NextResponse.json({ error: "Tournament has already started" }, { status: 400 });
+            return fail("Tournament has already started", 400, "tournament_started");
         }
 
         // Registration must be manually enabled
         if (!tournament.isRegistrationOpen) {
-            return NextResponse.json({ error: "Registration is not open for this tournament" }, { status: 400 });
+            return fail("Registration is not open for this tournament", 400, "registration_closed");
         }
 
         // Check registration deadline
         if (tournament.registrationDeadline && now > new Date(tournament.registrationDeadline)) {
-            return NextResponse.json({ error: "Registration deadline has passed" }, { status: 400 });
+            return fail("Registration deadline has passed", 400, "deadline_passed");
         }
 
         // Validate participants count based on whether user's region is the host
@@ -192,9 +199,7 @@ export async function POST(req: Request) {
         const maxParticipants = getMaxAthletes(isHostRegion);
 
         if (participants.length > maxParticipants) {
-            return NextResponse.json({
-                error: `Максимум ${maxParticipants} спортсменов для вашего региона`
-            }, { status: 400 });
+            return fail(`Максимум ${maxParticipants} спортсменов для вашего региона`, 400, "max_athletes", { max: maxParticipants });
         }
 
         // Athletes must match the category gender and belong to the user's region
@@ -206,18 +211,17 @@ export async function POST(req: Request) {
         for (const athleteId of athleteIds) {
             const athlete = selectedAthletes.find((a) => a.id === athleteId);
             if (!athlete) {
-                return NextResponse.json({ error: `Спортсмен #${athleteId} не найден` }, { status: 400 });
+                return fail(`Спортсмен #${athleteId} не найден`, 400, "athlete_not_found", { id: athleteId });
             }
-            const eligibilityError = getAthleteEligibilityError(athlete, tournamentCategory, userRegionId);
-            if (eligibilityError) {
-                return NextResponse.json({ error: eligibilityError }, { status: 400 });
+            const issue = getAthleteEligibilityIssue(athlete, tournamentCategory, userRegionId);
+            if (issue) {
+                const error = getAthleteEligibilityError(athlete, tournamentCategory, userRegionId) ?? issue;
+                return fail(error, 400, issue, { name: athlete.name });
             }
         }
         for (const p of participants) {
             if (!p.athleteId && p.newAthlete && p.newAthlete.gender !== tournamentCategory.gender) {
-                return NextResponse.json({
-                    error: `${p.newAthlete.name}: пол спортсмена не совпадает с категорией`
-                }, { status: 400 });
+                return fail(`${p.newAthlete.name}: пол спортсмена не совпадает с категорией`, 400, "gender_mismatch", { name: p.newAthlete.name });
             }
         }
 
@@ -402,17 +406,13 @@ export async function POST(req: Request) {
         });
     } catch (error) {
         if (error instanceof Error && error.message === "DUPLICATE_REGISTRATION") {
-            return NextResponse.json({
-                error: "Ваш регион уже подал заявку на эту категорию турнира"
-            }, { status: 400 });
+            return fail("Ваш регион уже подал заявку на эту категорию турнира", 400, "duplicate_registration");
         }
         // Unique constraints: the same athlete or judge twice, or a parallel duplicate registration
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-            return NextResponse.json({
-                error: "Заявка не сохранена: спортсмен, судья или заявка региона уже есть"
-            }, { status: 400 });
+            return fail("Заявка не сохранена: спортсмен, судья или заявка региона уже есть", 400, "conflict");
         }
         console.error('Registration error:', error);
-        return NextResponse.json({ error: "Не удалось сохранить заявку" }, { status: 500 });
+        return fail("Не удалось сохранить заявку", 500, "save_failed");
     }
 }

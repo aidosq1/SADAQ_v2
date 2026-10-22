@@ -78,25 +78,25 @@ export const TOURNAMENT_STATUS_CONFIG: Record<TournamentStatus, StatusConfig> = 
   REGISTRATION_OPEN: {
     label: 'Регистрация открыта',
     labelKk: 'Тіркеу ашық',
-    labelEn: 'Registration Open',
+    labelEn: 'Registration open',
     variant: 'success',
   },
   REGISTRATION_CLOSED: {
     label: 'Регистрация закрыта',
     labelKk: 'Тіркеу жабық',
-    labelEn: 'Registration Closed',
+    labelEn: 'Registration closed',
     variant: 'warning',
   },
   IN_PROGRESS: {
     label: 'Идёт турнир',
-    labelKk: 'Турнир жүріп жатыр',
-    labelEn: 'In Progress',
+    labelKk: 'Турнир өтуде',
+    labelEn: 'Ongoing',
     variant: 'info',
   },
   COMPLETED: {
     label: 'Завершён',
     labelKk: 'Аяқталды',
-    labelEn: 'Completed',
+    labelEn: 'Finished',
     variant: 'neutral',
   },
 };

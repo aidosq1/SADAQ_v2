@@ -64,9 +64,14 @@ function intlFormatter(locale: Exclude<DateLocale, 'kk'>, withYear: boolean): In
   });
 }
 
+// Казахская норма: год впереди с «жылғы» — «2026 жылғы 21 қазан»
+function kkYear(year: number): string {
+  return `${year} жылғы`;
+}
+
 function formatKk({ year, month, day }: DateParts, withYear: boolean): string {
   const base = `${day} ${KK_MONTHS[month]}`;
-  return withYear ? `${base} ${year}` : base;
+  return withYear ? `${kkYear(year)} ${base}` : base;
 }
 
 export function formatDate(date: DateInput, locale: string, options: FormatDateOptions = {}): string {
@@ -81,9 +86,9 @@ function formatKkRange(start: DateParts, end: DateParts): string {
     return `${formatKk(start, true)} – ${formatKk(end, true)}`;
   }
   if (start.month !== end.month) {
-    return `${formatKk(start, false)} – ${formatKk(end, true)}`;
+    return `${kkYear(start.year)} ${formatKk(start, false)} – ${formatKk(end, false)}`;
   }
-  return `${start.day}–${end.day} ${KK_MONTHS[end.month]} ${end.year}`;
+  return `${kkYear(end.year)} ${start.day}–${end.day} ${KK_MONTHS[end.month]}`;
 }
 
 function isSameDay(a: DateParts, b: DateParts): boolean {
@@ -122,7 +127,7 @@ export function formatMonthYear(date: DateInput, locale: string): string {
 
 const SHORT_MONTH_LOCALES: Record<Exclude<DateLocale, 'kk'>, string> = {
   ru: 'ru-RU',
-  en: 'en-GB',
+  en: 'en-US',
 };
 
 // Плитка даты: число и короткий месяц по времени Казахстана — одинаково на сервере и в браузере
