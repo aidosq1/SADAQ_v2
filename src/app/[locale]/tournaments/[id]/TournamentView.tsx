@@ -259,7 +259,7 @@ export default function TournamentView({ id, initialTournament }: TournamentView
                         </span>
                         <span className="flex items-center gap-2">
                             <Users className="size-4 text-gold" />
-                            {tournament.categories?.length || 0} {t("categories_count")}
+                            {t("categories_count", { count: tournament.categories?.length || 0 })}
                         </span>
                     </div>
 

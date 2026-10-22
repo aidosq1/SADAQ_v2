@@ -76,7 +76,7 @@ async function getAthlete(id: string): Promise<Athlete | null> {
 const LABELS = {
     ru: { back: "Сборная команда", bestRank: "Лучший рейтинг", points: "Очки", rankings: "Рейтинги по категориям", category: "Категория", gender: "Пол", discipline: "Дисциплина", place: "Место" },
     kk: { back: "Ұлттық құрама", bestRank: "Үздік рейтинг", points: "Ұпай", rankings: "Санаттар бойынша рейтинг", category: "Санат", gender: "Жынысы", discipline: "Пән", place: "Орын" },
-    en: { back: "National Team", bestRank: "Best ranking", points: "Points", rankings: "Rankings by category", category: "Category", gender: "Gender", discipline: "Discipline", place: "Place" },
+    en: { back: "National Team", bestRank: "Best rank", points: "Points", rankings: "Rankings by Category", category: "Category", gender: "Gender", discipline: "Discipline", place: "Place" },
 } as const;
 
 const PROFILE_DESCRIPTIONS = {

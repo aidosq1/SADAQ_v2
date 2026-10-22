@@ -93,7 +93,7 @@ export default function RegionsView({ initialRegions }: RegionsViewProps) {
             {loading ? (
                 <LoadingState />
             ) : regions.length === 0 ? (
-                <EmptyState icon={MapPin} title={t("no_branches") || "Филиалы не найдены"} />
+                <EmptyState icon={MapPin} title={t("no_branches") || "Региональные федерации не найдены"} />
             ) : (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {regions.map((region) => (

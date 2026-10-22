@@ -23,11 +23,11 @@ export const KAZAKHSTAN_REGIONS = [
 
 // Unified filter options with multilingual support
 export const CATEGORIES = [
-    { id: "Adults", ru: "Взрослые", kk: "Ересектер", en: "Adults" },
+    { id: "Adults", ru: "Взрослые", kk: "Ересектер", en: "Senior" },
     { id: "Youth", ru: "Молодёжь", kk: "Жастар", en: "Youth" },
-    { id: "Juniors", ru: "Юниор", kk: "Юниор", en: "Junior" },
-    { id: "Cadets", ru: "Юноша", kk: "Жасөспірім", en: "U18" },
-    { id: "Cubs", ru: "Младший юноша", kk: "Кіші жасөспірім", en: "U15" },
+    { id: "Juniors", ru: "Юниоры", kk: "Юниорлар", en: "U21" },
+    { id: "Cadets", ru: "Юноши", kk: "Жасөспірімдер", en: "U18" },
+    { id: "Cubs", ru: "Младшие юноши", kk: "Кіші жасөспірімдер", en: "U15" },
 ] as const;
 
 export const GENDERS = [
@@ -43,7 +43,7 @@ export const BOW_TYPES = [
 // Helper function to get localized label
 // News categories are stored by their Russian name (see admin/news)
 export const NEWS_CATEGORIES = [
-    { id: "Сборная", ru: "Сборная", kk: "Құрама", en: "National team" },
+    { id: "Сборная", ru: "Сборная", kk: "Құрама", en: "National Team" },
     { id: "Регионы", ru: "Регионы", kk: "Өңірлер", en: "Regions" },
     { id: "World Archery", ru: "World Archery", kk: "World Archery", en: "World Archery" },
     { id: "Праздники", ru: "Праздники", kk: "Мерекелер", en: "Holidays" },

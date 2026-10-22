@@ -32,19 +32,31 @@ export interface EligibleAthlete {
   regionId: number | null;
 }
 
+export type EligibilityIssue = 'gender_mismatch' | 'other_region';
+
+const ELIGIBILITY_MESSAGES: Record<EligibilityIssue, string> = {
+  gender_mismatch: 'пол спортсмена не совпадает с категорией',
+  other_region: 'спортсмен из другого региона',
+};
+
 // regionId = null — регион не проверяется (заявку правит админ)
+export function getAthleteEligibilityIssue(
+  athlete: EligibleAthlete,
+  category: { gender: string },
+  regionId: number | null
+): EligibilityIssue | null {
+  if (athlete.gender !== category.gender) return 'gender_mismatch';
+  if (regionId !== null && athlete.regionId !== regionId) return 'other_region';
+  return null;
+}
+
 export function getAthleteEligibilityError(
   athlete: EligibleAthlete,
   category: { gender: string },
   regionId: number | null
 ): string | null {
-  if (athlete.gender !== category.gender) {
-    return `${athlete.name}: пол спортсмена не совпадает с категорией`;
-  }
-  if (regionId !== null && athlete.regionId !== regionId) {
-    return `${athlete.name}: спортсмен из другого региона`;
-  }
-  return null;
+  const issue = getAthleteEligibilityIssue(athlete, category, regionId);
+  return issue ? `${athlete.name}: ${ELIGIBILITY_MESSAGES[issue]}` : null;
 }
 
 // Регион правит свою заявку, пока она на проверке и приём заявок открыт
